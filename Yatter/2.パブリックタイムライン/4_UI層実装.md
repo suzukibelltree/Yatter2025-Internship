@@ -279,7 +279,7 @@ PageとTemplateに関しては後述します。
 
 ### PublicTimelineActivityの実装
 パブリックタイムライン画面のベースとなるPublicTimelineActivityの実装を行います。
-まずは以下を写経しましょう。
+まずは次の内容を写経しましょう。
 
 ```Kotlin
 package com.dmm.bootcamp.yatter2023.ui.timeline
@@ -946,5 +946,39 @@ override fun onCreate(savedInstanceState: Bundle?) {
 `Surface`コンポーザブルでは、ダークテーマ対応をはじめとする背景色に対して適切なコンテンツカラーを利用できるようにサポートするコンポーザブルです。
 例えば白背景の上には黒文字といったコントラスト比を意識した画面は`Surface`を利用しなくとも実装できます。ですが、デバイスのダークテーマに合わせて背景色を黒をベースにした色に変わったときに文字色が黒文字のままで見えにくい・見えない画面になってしまいます。
 そこで`Surface `コンポーザブルを利用することで黒背景に対しては白文字など、背景色が変更されてもコントラスト比を保ったまま表示ができるようにしています。
+
+Activityの実装が完了したらプロジェクト内の`AndroidManifest.xml`というファイルを開きます。
+マニフェストファイルでは、アプリに関する重要な情報をAndroidビルドツール・Android OS・Google Playに対して説明するものです。
+
+マニフェストファイルには以下の要素が記載されています。
+- アプリが利用するパーミッション
+- アプリに存在するActivity
+- アプリ起動時にどのActivityを一番最初に呼び出すか
+- アプリのアイコン
+- アプリ名
+- アプリ全体のテーマ
+
+今回、PublicTimelineActivityを新規に作成したため、マニフェストファイルに追記します。
+
+```XML
+<?xml version="1.0" encoding="utf-8"?>
+<manifest ...>
+    <application ...>
+        <activity
+            android:name=".MainActivity"
+            ...>
+        </activity>
+
+<!--    追加    -->
+        <activity
+            android:name=".ui.timeline.PublicTimelineActivity"
+            android:exported="false" />
+
+    </application>
+</manifest>
+```
+
+こうすることにより`PublicTimelineActivity`という名前のActivityが存在することを定義します。
+もしこの定義がない状態で`PublicTimelineActivity`を起動しようとすると実行時エラーでクラッシュします。
 
 ここまでの実装でパブリックタイムラインのUI実装全体が完了しました。

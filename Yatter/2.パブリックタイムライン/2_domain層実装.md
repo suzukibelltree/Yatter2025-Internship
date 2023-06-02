@@ -53,6 +53,8 @@ Statusの一意性をidで表現するために`StatusId`クラスを`Identifier
 
 続いてAccountドメインです。
 Statusドメインですでに利用されている、投稿者を表すためのAccountドメインも定義します。
+ユーザー名が空文字になることは許容されていないため、Usernameドメインに`validate`メソッドを作成しバリデーションチェックできるようにしておきます。
+
 ```Kotlin
 abstract class Account(
   val username: Username, // ユーザー名
@@ -69,7 +71,9 @@ abstract class Account(
   abstract suspend fun followers(): List<Account>
 }
 
-class Username(value: String): Identifier<String>(value)
+class Username(value: String): Identifier<String>(value) {
+  fun validate(): Boolean = value.isNotBlank()
+}
 ```
 Accountドメインでも同じ表示名やアバターを使う可能性があるため、一意性を担保するため今回のプロジェクトではUsernameで一意になるようにします。  
 また、Accountドメインには`followings`と`followers`というメソッドを用意しています。
@@ -83,5 +87,35 @@ AccountドメインはStatusドメインと違い、[abstract](https://kotlinlan
 愚直に実装しようとした場合は`followings()`と`followers()`メソッド内でAPI実行のコードを書くことになります。
 ですが、設計方針としてAPIなどのアプリ外部へアクセスするのはinfra層でのみとしています。
 ドメインモデルから直接API呼び出しを行わずにdomain層ではあくまでドメインモデルの定義のみを行うために、abstractを付けて定義します。
+
+ドメインモデルを作成したらRepositoryの定義をします。
+`StatusRepository`ファイルを`com.dmm.bootcamp.yatter2023.domain.repositroy`パッケージに作成します。
+Domain層では、Repositoryのinterface定義のみをするので、interfaceとして`StatusRepository`を定義します。
+
+```Kotlin
+interface StatusRepository {
+}
+```
+
+`StatusRepository`でStatusの取得や作成、削除といったメソッドを定義していきます。
+
+```Kotlin
+interface StatusRepository : StatusReadOnlyRepository {
+  suspend fun findById(id: StatusId): Status?
+
+  suspend fun findAllPublic(): List<Status>
+
+  suspend fun findAllHome(): List<Status>
+
+  suspend fun create(
+    content: String,
+    attachmentList: List<File>
+  ): Status
+
+  suspend fun delete(
+    status: Status
+  )
+}
+```
 
 これでパブリックタイムライン画面で利用するdomain層の実装を行うことができました。

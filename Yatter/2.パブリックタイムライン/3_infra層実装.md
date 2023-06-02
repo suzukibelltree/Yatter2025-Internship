@@ -339,7 +339,7 @@ import com.dmm.bootcamp.yatter2023.domain.repository.StatusRepository
 class StatusRepositoryImpl : StatusRepository
 ```
 
-`StatusRepository`内のメソッドの実装を行なっていないため、`class StatusRepositoryImpl`に赤い波線が入っていると思います。赤い波線部にカーソルを当て、「option + return」を押して、`implemention members`を選択します。
+`StatusRepositoryImpl`で`StatusRepository`内のメソッドの実装を行なっていないため、`class StatusRepositoryImpl`に赤い波線が入っていると思います。赤い波線部にカーソルを当て、「option + return」を押して、`implemention members`を選択します。
 どのメソッドを実装するか確認するダイアログが表示されるため、全てのメソッドを選択しOKを押せば次のようなコードが生成されます。
 
 ```Kotlin
@@ -348,11 +348,11 @@ class StatusRepositoryImpl : StatusRepository {
     TODO("Not yet implemented")
   }
 
-  override suspend fun findAll(): List<Status> {
+  override suspend fun findAllPublic(): List<Status> {
     TODO("Not yet implemented")
   }
 
-  override suspend fun findAllFollowings(me: Me): List<Status> {
+  override suspend fun findAllHome(): List<Status> {
     TODO("Not yet implemented")
   }
 
@@ -366,7 +366,7 @@ class StatusRepositoryImpl : StatusRepository {
 }
 ```
 
-このメソッドの中で、まずは`findAll`の実装のみを行います。
+このメソッドの中で、まずは`findAllPublic`の実装のみを行います。
 他の`TODO`となっているところはそのままでも問題なくビルドは成功します。ですが実行時にはランタイムエラーがでクラッシュしますので必要になったタイミングで実装書ましょう。
 
 まずは、クラスのコンストラクタでAPI通信を行うための`YatterApi`を受け取ります。
