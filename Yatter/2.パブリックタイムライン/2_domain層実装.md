@@ -41,6 +41,17 @@ EntityやValue Objectの集約を扱います。
 パブリックタイムライン画面を実装する際に必要な概念を検討します。  
 まずパブリックタイムライン画面でStatusを表示するためにStatusドメインをEntityで定義します。  
 
+ドメインを実装する前に次のファイルを新規作成します。  
+domainパッケージ(ディレクトリ)は作成されていないためパッケージの作成からしましょう。  
+
+```
+domin/Status.kt
+domain/StatusId.kt
+domain/Account.kt
+domain/Username.kt
+```
+
+
 ```Kotlin
 // Status.kt
 class Status(
@@ -48,9 +59,9 @@ class Status(
   val account: Account, // 投稿者を表すドメイン
   val content: String, // 投稿内容
 ) : Entity<StatusId>(id)
+```
 
-
-
+```Kotlin
 // StatusId.kt
 class StatusId(value: String): Identifier<String>(value)
 ```
@@ -81,11 +92,14 @@ abstract class Account(
 
   abstract suspend fun followers(): List<Account>
 }
+```
 
+```Kotlin
 class Username(value: String): Identifier<String>(value) {
   fun validate(): Boolean = value.isNotBlank()
 }
 ```
+
 Accountドメインでも同じ表示名やアバターを使う可能性があるため、一意性を担保するため今回のプロジェクトではUsernameで一意になるようにします。  
 また、Accountドメインには`followings`と`followers`というメソッドを用意しています。  
 あるユーザーのフォローとフォロワーはそのユーザーのアカウントドメインに属する値として考えることができますが、`account/{username}`のAPIでは取得できない要素になります。  
@@ -103,7 +117,7 @@ AccountドメインはStatusドメインと違い、[abstract](https://kotlinlan
 
 ドメインモデルを作成したらRepositoryの定義をします。  
 `StatusRepository`ファイルを`com.dmm.bootcamp.yatter2023.domain.repositroy`パッケージに作成します。  
-Domain層では、Repositoryのinterface定義のみをするので、interfaceとして`StatusRepository`を定義します。  
+Domain層では、Repositoryのinterface定義のみをするので、interfaceとして`domain/repository`配下に`StatusRepository`を作成します。  
 
 ```Kotlin
 interface StatusRepository {

@@ -7,6 +7,8 @@ UI層は実際にユーザーが接する部分を実装します。
 クラス図では次に該当します。  
 ![public_timeline_UI](../image/2/public_timeline_class_ui.png)
 
+またパブリックタイムライン画面のUI層のファイルは`ui/timeline`パッケージ内に作成するようにしましょう。  
+
 UI層にはActivityやFragment、ViewModelといった要素がよく登場します。  
 
 ### Activity
@@ -21,7 +23,7 @@ Activityでユーザーに対してUIを表示するといったことと同様�
 
 ActivityとFragmentに関しては次の資料も併せて一読ください。  
 
-- Activitry: 
+- Activity: 
 https://git.dmm.com/dmm-bootcamp/android-doc-2023/blob/main/basic/2-Activity%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6.md
 - Fragment: https://git.dmm.com/dmm-bootcamp/android-doc-2023/blob/main/basic/11-Fragment%E3%81%AE%E7%94%BB%E9%9D%A2%E9%81%B7%E7%A7%BB%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6.md
 
@@ -64,16 +66,17 @@ https://git.dmm.com/dmm-bootcamp/android-doc-2023/blob/main/basic/13-JetpackComp
 ## UI実装
 ### BindingModelの作成
 まずは、BindingModelを定義します。  
-BindingModelは、画面を表示する上で必要な情報をまとめたdata classで実装されることがほとんどです。  
+BindingModelは、画面を表示する上で必要な情報をまとめた`data class`で実装されることがほとんどです。  
 `Status`などのドメインモデルクラスをそのままUI実装に利用することもできますが、アプリの画面では複数のドメインモデルを組み合わせたりドメインモデルの値を加工して利用したりすることが多いため、表示する値を保持するだけのBindingModelを用意します。  
 今回のパブリックタイムライン画面開発ではドメインモデルを特に加工することなく表示に利用できますが、プロジェクト全体で設計方針を統一するためにもBindingModelを実装します。  
 
 `StatusJson`ではJsonを表現したデータモデル、`Status`というドメインモデル、`StatusBindingModel`というuiに表示するためのデータモデルというように、責務によって使用するモデルを変換するようにしています。  
 
 タイムライン1行分の見た目に必要な値を`StatusBindingModel`に定義していきます。  
+BindingModelは`ui/timeline/bindingmodel`パッケージにファイルを作成していきましょう。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.ui.bindingmodel
+package com.dmm.bootcamp.yatter2023.ui.timeline.bindingmodel
 
 data class StatusBindingModel(
   val id: String,
@@ -85,12 +88,13 @@ data class StatusBindingModel(
 ```
 
 `Status`から`StatusBindingModel`に変換するための`StatusConverter`も実装しましょう。  
+`ui/bindingmodel/converter`パッケージにファイルを作成していきます。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.ui.bindingmodel.converter
+package com.dmm.bootcamp.yatter2023.ui.timeline.bindingmodel.converter
 
 import com.dmm.bootcamp.yatter2023.domain.model.Status
-import com.dmm.bootcamp.yatter2023.ui.bindingmodel.StatusBindingModel
+import com.dmm.bootcamp.yatter2023.ui.timeline.bindingmodel.StatusBindingModel
 
 object StatusConverter {
   fun convertToBindingModel(statusList: List<Status>): List<StatusBindingModel> =
@@ -115,6 +119,7 @@ UiStateで保持する値は、画面に表示されるデータ（BindingModel�
 そのため、パブリックタイムライン画面では次のようなUiStateが定義できます。  
 画面に表示されるデータ・ローディングフラグ・リフレッシュフラグを持ちます。  
 
+`PublicTimelineUiState`は`ui/timeline`パッケージ内に作成しましょう。
 ```Kotlin
 internal data class PublicTimelineUiState(
   val statusList: List<StatusBindingModel>,
@@ -408,13 +413,13 @@ ViewModelの準備ができたところでUI実装を本格的に始めていき
   - パブリックタイムラインのPageを実装
 - ui/timeline/PublicTimelineTemplate
   - パブリックタイムラインのTemplateを実装
-- ui/component/StatusRow
+- ui/timeline/StatusRow
 
 PageとTemplateに関しては後述します。  
 
 ### PublicTimelineActivityの実装
-パブリックタイムライン画面のベースとなるPublicTimelineActivityの実装を行います。  
-まずは次の内容を写経しましょう。  
+パブリックタイムライン画面のベースとなる`PublicTimelineActivity`の実装を行います。  
+`ui/timeline`にファイルを作成して、次の内容を写経しましょう。  
 
 ```Kotlin
 package com.dmm.bootcamp.yatter2023.ui.timeline
@@ -517,6 +522,7 @@ fun FirsstComposable() {
 ![status_preview](../image/2/status_row_preview.png)
 
 まずは、`StatusRow`コンポーザブルを定義します。  
+`ui/timeline`パッケージ内にファイルを作成します。  
 1つのStatusを表示するコンポーザブルになるため、必要な値が含まれている`StatusBindingModel`を引数にとります。  
 
 また、コンポーザブルを定義する時にはModifierも引数で受け取るようにしましょう。  

@@ -74,7 +74,7 @@ GET /timelines/public
 ちなみに、今回はシリアライザライブラリとして[Moshi](https://github.com/square/moshi)を使用します。
 
 早速、`StatusJson`クラス・`AccountJson`クラス・`MediaAttachmentJson`クラスを実装してみましょう。  
-`com.dmm.bootcamp.yatter2023.infra.api.json`パッケージを作り、そこにそれぞれのクラスを実装していきます。  
+`com.dmm.bootcamp.yatter2023.infra.api.json`パッケージを作り、そこにそれぞれのクラスを追加していきます。  
 まずは、サンプルとして`AccountJson`を実装してみます。`Account`のJsonはこうなってます。
 
 ```
@@ -221,7 +221,7 @@ data class MediaJson(
 ---
 
 必要なJsonクラスが定義できたところで、APIの実装を行います。  
-`com.dmm.bootcamp.yatter2023`に`YatterApi`のinterfaceを定義します。  
+`com.dmm.bootcamp.yatter2023/infra/api`に`YatterApi`のinterfaceを定義します。  
 
 ```Kotlin
 package com.dmm.bootcamp.yatter2023.infra.api
@@ -284,6 +284,7 @@ interface YatterApi {
 ---
 
 続いて、Yatter APIのインスタンスを作成するFactoryクラスを実装します。  
+`YatterApiFactory.kt`ファイルを`YatterApi`と同じパッケージ内に作成しましょう。  
 
 ```Kotlin
 class YatterApiFactory {
@@ -537,7 +538,7 @@ Androidアプリ開発での単体テストは、`app/src/test/java`ディレク
 
 ![](../image/2/test_dir.png)
 
-今回は`StatusRepositoryImpl`のテストを書くため、`infra/domain`パッケージに`StatusRepositoryImplSpec`というクラスを作成します。  
+今回は`StatusRepositoryImpl`のテストを書くため、`infra/domain/repository`パッケージに`StatusRepositoryImplSpec`というクラスを作成します。  
 
 Yatterアプリ開発ではテストクラスの命名規則として`${テスト対象クラス名}Spec`という名前にします。  
 `Spec`は仕様という意味のある`specification`の略で、テストは使用であるという意味合いを持たせています。  
