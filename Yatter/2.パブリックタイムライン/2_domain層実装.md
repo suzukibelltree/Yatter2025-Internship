@@ -49,6 +49,8 @@ class Status(
   val content: String, // 投稿内容
 ) : Entity<StatusId>(id)
 
+
+
 // StatusId.kt
 class StatusId(value: String): Identifier<String>(value)
 ```
