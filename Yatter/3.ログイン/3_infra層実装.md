@@ -5,6 +5,10 @@
 - MePreferencesの実装
 - LoginServiceの実装
 
+クラス図では次にあたります。  
+
+![login_class_infra](../image/3/login_class_infra.png)
+
 ## MePreferencesの実装
 
 Yatterアプリでは認証情報としてユーザー名を扱います。  

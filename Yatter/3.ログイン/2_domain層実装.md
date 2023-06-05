@@ -5,6 +5,9 @@
 - domain/modelPassword
 - domain/service/LoginService
 
+クラス図では次の箇所にあたります。  
+![login_class_domain](../image/3/login_class_domain.png)
+
 ## Passwordドメイン実装
 
 Passwordドメインモデルでは、パスワード文字列を保持しバリデーションチェックを行います。  

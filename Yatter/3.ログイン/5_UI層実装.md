@@ -3,7 +3,11 @@
 
 クラス図では次に該当します。  
 
+![login_class_ui](../image/3/login_class_ui.png)
+
 次のような見た目になることを目指して実装します。  
+
+![login_template_preview](../image/3/login_template_preview.png)
 
 基本的な実装の流れとしては、パブリックタイムライン画面を実装した時と変わりありません。  
 
@@ -175,15 +179,15 @@ fun onChangedPassword(password: String) {
 UiStateをStateFlowとして、ViewModelで保持していたように`SingleLiveEvent`もbacking fieldとして定義して、ViewModel内では`SingleLiveEvent`、外部からは`LiveData`として見えるように定義します。  
 
 ```Kotlin
-private val _navigateToPublicTimeLine: SingleLiveEvent<Unit> = SingleLiveEvent()
-val navigateToPublicTimeLine: LiveData<Unit> = _navigateToPublicTimeLine
+private val _navigateToPublicTimeline: SingleLiveEvent<Unit> = SingleLiveEvent()
+val navigateToPublicTimeline: LiveData<Unit> = _navigateToPublicTimeline
 ```
 
 この値は次のようにすることで、外部に画面遷移する必要があることを伝播します。  
 
 ```Kotlin
 // ViewModel内
-_navigateToPublicTimeLine.value = Unit
+_navigateToPublicTimeline.value = Unit
 
 // Activity側
 viewModel.navigateToPublicTimeline.observe(this) {
@@ -215,7 +219,7 @@ fun onClickLogin() {
         )
     ) {
       is LoginUseCaseResult.Success -> {
-        _navigateToAllTimeLine.value = Unit
+        _navigateToAllTimeline.value = Unit
     }
 
       is LoginUseCaseResult.Failure -> {
@@ -322,7 +326,7 @@ class LoginViewModelSpec {
       loginUseCase.execute(Username(username), Password(password))
     }
 
-    assertThat(subject.navigateToPublicTimeLine.value).isNotNull()
+    assertThat(subject.navigateToPublicTimeline.value).isNotNull()
     assertThat(subject.navigateToRegister.value).isNull()
   }
 
@@ -344,7 +348,7 @@ class LoginViewModelSpec {
       loginUseCase.execute(Username(username), Password(password))
     }
 
-    assertThat(subject.navigateToPublicTimeLine.value).isNull()
+    assertThat(subject.navigateToPublicTimeline.value).isNull()
     assertThat(subject.navigateToRegister.value).isNull()
   }
 
@@ -353,7 +357,7 @@ class LoginViewModelSpec {
     subject.onClickRegister()
 
     assertThat(subject.navigateToRegister.value).isNotNull()
-    assertThat(subject.navigateToPublicTimeLine.value).isNull()
+    assertThat(subject.navigateToPublicTimeline.value).isNull()
   }
 }
 ```
@@ -399,7 +403,7 @@ private val viewModel: LoginViewModel by viewModel()
 override fun onCreate(savedInstanceState: Bundle?) {
   super.onCreate(savedInstanceState)
 
-  viewModel.navigateToPublicTimeLine.observe(this) {
+  viewModel.navigateToPublicTimeline.observe(this) {
     startActivity(PublicTimelineActivity.newIntent(this))
     finish()
   }
