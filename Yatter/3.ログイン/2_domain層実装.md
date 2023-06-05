@@ -17,7 +17,7 @@ LoginServiceドメインサービスでは、ユーザー名とパスワード�
 まずは、`Password`ドメインモデルの定義をします。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.domain.model
+package com.dmm.bootcamp.yatter2023.domain
 
 data class Password(
   val value: String,

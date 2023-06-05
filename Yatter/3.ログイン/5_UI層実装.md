@@ -441,7 +441,7 @@ fun LoginTemplatePreview() {
 
 今回は用件満たしつつ、操作間違いが少なそうな次の見た目を作成することを目指します。  
 
-// スクショ貼る
+![](../image/3/login_template_preview.png)
 
 まずは、`LoginTemplate`の引数を決めます。  
 基本的にはパブリックタイムライン画面での引数と同じような流れでを引数を決めます。  
