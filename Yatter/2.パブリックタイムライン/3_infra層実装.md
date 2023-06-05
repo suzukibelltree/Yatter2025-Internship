@@ -529,6 +529,9 @@ Androidの単体テストにはJUnitが多く利用されます。
 YatterでもJUnitを使ってテストを書きます。  
 
 Androidアプリ開発での単体テストは、`app/src/test/java`ディレクトリ内にテスト対象のクラスと同じパッケージ内に定義します。  
+
+![](../image/2/test_dir.png)
+
 今回は`StatusRepositoryImpl`のテストを書くため、`infra/domain`パッケージに`StatusRepositoryImplSpec`というクラスを作成します。  
 
 Yatterアプリ開発ではテストクラスの命名規則として`${テスト対象クラス名}Spec`という名前にします。  

@@ -216,6 +216,10 @@ UI側のイベントに合わせた名前というのは、`on`から始まる�
 
 ViewModelのメソッド名を処理の内容に合わせたものではなくイベントに合わせた命名にしているのには次の理由があります。  
 
+- ユーザーのアクションに応じてどういった処理を行うべきかをUI側で考えないようにしたい
+- イベントに応じた処理をViewModelのテストで動作担保したい
+- UI側での処理呼び忘れを防ぐ
+
 今回の画面では画面を表示するたびに最新のリストを取得しておきたいため、`onResume`メソッドを用意します。  
 `onResume`メソッド内では以下の処理を行います。  
 
@@ -243,6 +247,9 @@ internal class PublicTimelineViewModel(...) {
 それぞれのViewModelで実装もできますが毎回管理するのは大変なため、呼び出したViewModelが生存しているタイミングのみ動作するcoroutineを起動することができる`viewModelScope`が用意されています。  
 
 ViewModelで非同期処理を呼び出す時は、`viewModelScope.launch`を行いViewModel用のcoroutineを扱うようにしましょう。  
+
+詳細は次のドキュメントをご覧ください。  
+https://developer.android.com/topic/libraries/architecture/coroutines?hl=ja#viewmodelscope
 
 画面を表示するたびに取得するメソッドは実装できましたので続いては、画面を下の方にスワイプして画面を更新するPullToRefresh時のメソッドを用意します。  
 画面リフレッシュしたい時に呼び出されるメソッドになる想定のため名前は`onRefresh`とします。  
@@ -499,7 +506,8 @@ fun FirsstComposable() {
 
 `StatusRow`ファイルを開き、パブリックタイムライン画面で表示するStatus一覧の1行分のUIを実装します。  
 次のような見た目になることを目指します。  
-// 画像貼る
+
+![](../image/2/status_row_preview.png)
 
 まずは、`StatusRow`コンポーザブルを定義します。  
 1つのStatusを表示するコンポーザブルになるため、必要な値が含まれている`StatusBindingModel`を引数にとります。  
@@ -795,6 +803,8 @@ LazyColumn(
 
 ここまで実装するとプレビューにリストが表示されるようになったと思います。  
 現状はプレビューに渡しているリストは1件のためプレビューにも1件しか表示されていませんのでプレビューに渡しているリストの要素数を増やして要素分リスト項目が表示されていることを確認してみてください。  
+
+![PublicTimelineのプレビュー例](../image/2/public_timeline_preview.png)
 
 `LazyColumn`を利用してリスト表示を行いましたが、ただリストを表示するだけであれば、`StatusRow`実装時にメディア一覧を表示したときのように`forEach`で並べてスクロールさせることもできます。  
 
