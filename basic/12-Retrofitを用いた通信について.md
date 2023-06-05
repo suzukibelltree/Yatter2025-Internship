@@ -115,6 +115,8 @@ data class AccountJson(
     val createAt: Date,
     @Json(name = "followers_count")
     val followersCount: Int,
+    @Json(name = "following_count")
+    val followingCount: Int,
     val note: String,
     val avatar: String,
     val header: String,
