@@ -384,11 +384,11 @@ class StatusRepositoryImpl : StatusRepository {
     TODO("Not yet implemented")
   }
 
-  override suspend fun create(me: Me, content: String, attachmentList: List<File>): Status {
+  override suspend fun create(content: String, attachmentList: List<File>): Status {
     TODO("Not yet implemented")
   }
 
-  override suspend fun delete(me: Me, status: Status) {
+  override suspend fun delete(status: Status) {
     TODO("Not yet implemented")
   }
 }
