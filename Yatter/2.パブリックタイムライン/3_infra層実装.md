@@ -417,11 +417,13 @@ class StatusRepositoryImpl(
 }
 ```
 
-`StatusRepositoryImpl#findAll()`を実装するには`YatterApi`の`getPublicTimeline`を呼び出し、取得したレスポンスのリストをアプリのドメインリストに変換する必要があります。  
+`StatusRepositoryImpl#findAllPublic()`を実装するには`YatterApi`の`getPublicTimeline`を呼び出し、取得したレスポンスのリストをアプリのドメインリストに変換する必要があります。  
 
 まずは、レスポンスのリストを取得するところまで実装します。  
+現時点でエラーになっているかと思いますが、後に実装しますので今はこのままで問題ありません。  
+
 ```Kotlin
-override suspend fun findAll(): List<Status> = withContext(Dispatchers.IO) {
+override suspend fun findAllPublic(): List<Status> = withContext(Dispatchers.IO) {
   val jsonList = yatterApi.getPublicTimeline()
   //ここで `List<StatusJson>` を `List<Status>` に変換
 }
@@ -531,7 +533,7 @@ object StatusConverter {
 
 ---
 
-最後に、`StatusRepositoryImpl#findAll()`の実装を仕上げます。  
+最後に、`StatusRepositoryImpl#findAllPublic()`の実装を仕上げます。  
 
 ```Kotlin
   override suspend fun findAllPublic(): List<Status> = withContext(IO) {
