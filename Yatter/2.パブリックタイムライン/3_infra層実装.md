@@ -86,6 +86,8 @@ GET /timelines/public
   "note": "string",
   "url": "string",
   "avatar": "string",
+  "following_count": 100,
+  "followers_count": 200,
   "header": "string"
 }
 ```
@@ -103,6 +105,8 @@ data class AccountJson(
   val url: String,
   val avatar: String,
   val header: String,
+  val following_count: Int,
+  val followers_count: Int,
   val create_at: String
 )
 ```
@@ -129,6 +133,8 @@ data class AccountJson(
   val url: String,
   val avatar: String,
   val header: String,
+  val followingCount: Int,
+  val followersCount: Int,
   val createAt: String
 )
 ```
@@ -147,6 +153,8 @@ data class AccountJson(
   @Json(name = "url") val url: String,
   @Json(name = "avatar") val avatar: String,
   @Json(name = "header") val header: String,
+  @Json(name = "following_count") val followingCount: Int,
+  @Json(name = "followers_count") val followersCount: Int,
   @Json(name = "create_at") val createAt: String
 )
 ```
@@ -166,6 +174,8 @@ data class AccountJson(
   val url: String,
   val avatar: String,
   val header: String,
+  @Json(name = "following_count") val followingCount: Int,
+  @Json(name = "followers_count") val followersCount: Int,
   @Json(name = "create_at") val createAt: String
 )
 ```
