@@ -1,10 +1,10 @@
 # ログイン画面のDI実装
-ログイン画面のDI実装を行います。
+ログイン画面のDI実装を行います。  
 
-基本的にはパブリックタイムライン画面実装で行なったことと同様です。
-ですが、ログイン画面では`UseCase`を実装したため、`UseCase`用のDIモジュールを新規作成します。
+基本的にはパブリックタイムライン画面実装で行なったことと同様です。  
+ですが、ログイン画面では`UseCase`を実装したため、`UseCase`用のDIモジュールを新規作成します。  
 
-UseCaseもシングルトンである必要はないため、`factory`を使って定義します。
+UseCaseもシングルトンである必要はないため、`factory`を使って定義します。  
 
 ```Kotlin
 val useCaseModule = module {
@@ -12,7 +12,7 @@ val useCaseModule = module {
 }
 ```
 
-作成したDIモジュールはApplicationファイルの`modules`に追加します。
+作成したDIモジュールはApplicationファイルの`modules`に追加します。  
 
 ```Kotlin
 modules(
@@ -25,9 +25,9 @@ modules(
 )
 ```
 
-UseCase用のDIモジュールの用意ができたところでログイン画面実装時に追加したクラスを各層のDIモジュールに定義していきます。
+UseCase用のDIモジュールの用意ができたところでログイン画面実装時に追加したクラスを各層のDIモジュールに定義していきます。  
 
-`DomainImplModule`に`LoginService`、`InfraModule`に`MePreferences`、`UseCaseModule`に`LoginUseCase`、`ViewModelModule`に`LoginViewModel`を定義してみましょう。
+`DomainImplModule`に`LoginService`、`InfraModule`に`MePreferences`、`UseCaseModule`に`LoginUseCase`、`ViewModelModule`に`LoginViewModel`を定義してみましょう。  
 
 ```Kotlin
 // DomainImplModule
@@ -63,4 +63,4 @@ val viewModelModule = module {
 }
 ```
 
-これでDI層の実装も完了です。
+これでDI層の実装も完了です。  
