@@ -1,6 +1,10 @@
 # パブリックタイムライン画面のdomain層実装
 パブリックタイムライン画面のdomain層の実装を行います。  
 
+クラス図の次の部分に当たります。  
+
+![public_timeline_domain](../image/2/public_timeline_class_domain.png)
+
 ## ドメイン層の説明
 設計方針にもあるように、domain層では言語化された事業ドメインをそのままコードに落とし込むことに専念します。  
 

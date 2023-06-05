@@ -6,7 +6,7 @@ infra層では純粋な技術的関心ごとを実装します。
 domain層で定義したRepositoryやDomainServiceをはじめとするinterfaceの実装もinfra層で具体的な技術を使って実装します。  
 
 クラス図では次に該当します。  
-// クラス図貼る
+![public_timeline_infra](../image/2/public_timeline_class_infra.png)
 
 ## API接続実装
 まずは、APIと接続する部分を実装します。  

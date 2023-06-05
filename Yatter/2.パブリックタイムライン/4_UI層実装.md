@@ -5,7 +5,7 @@
 UI層は実際にユーザーが接する部分を実装します。  
 
 クラス図では次に該当します。  
-// クラス図貼る
+![public_timeline_UI](../image/2/public_timeline_class_ui.png)
 
 UI層にはActivityやFragment、ViewModelといった要素がよく登場します。  
 
