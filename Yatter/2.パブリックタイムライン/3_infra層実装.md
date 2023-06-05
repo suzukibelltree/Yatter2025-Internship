@@ -440,14 +440,16 @@ import com.dmm.bootcamp.yatter2023.domain.model.Username
 import java.net.URL
 
 class AccountImpl(
+  id: AccountId,
   username: Username,
   displayName: String?,
   note: String?,
-  avatar: URL?,
-  header: URL?,
+  avatar: URL,
+  header: URL,
   followingCount: Int,
   followerCount: Int,
 ) : Account(
+  id,
   username,
   displayName,
   note,
@@ -486,8 +488,8 @@ object AccountConverter {
     username = Username(json.username),
     displayName = json.displayName,
     note = json.note,
-    avatar = json.avatar?.let { URL(BuildConfig.API_URL + "/v1/" + it) },
-    header = json.header?.let { URL(BuildConfig.API_URL + "/v1/" + it) },
+    avatar = URL(BuildConfig.API_URL + "/v1/" + json.avatar),
+    header = URL(BuildConfig.API_URL + "/v1/" + json.header),
     followingCount = json.followingCount,
     followerCount = json.followersCount,
   )
@@ -612,8 +614,8 @@ val jsonList = listOf(
       username = "username",
       displayName = "display name",
       note = "note",
-      avatar = null,
-      header = null,
+      avatar = "avatar",
+      header = "header",
       followingCount = 100,
       followersCount = 200,
       createAt = "2023-06-02T12:44:35.030Z"
@@ -631,8 +633,8 @@ val expect = listOf(
       username = Username("username"),
       displayName = "display name",
       note = "note",
-      avatar = null,
-      header = null,
+      avatar = "avatar",
+      header = "header",
       followingCount = 100,
       followerCount = 200
     ),

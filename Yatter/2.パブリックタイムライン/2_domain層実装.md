@@ -79,14 +79,15 @@ Statusドメインですでに利用されている、投稿者を表すため�
 
 ```Kotlin
 abstract class Account(
+  id: AccountId,
   val username: Username, // ユーザー名
   val displayName: String?, // 表示名
   val note: String?, // アカウントノート
-  val avatar: URL?, // アバター画像URL
-  val header: URL?, // ヘッダー画像URL
+  val avatar: URL, // アバター画像URL
+  val header: URL, // ヘッダー画像URL
   val followingCount: Int, // フォロー数
   val followerCount: Int, // フォロワー数
-) : Entity<Username>(username) {
+) : Entity<AccountId>(id) {
 
   abstract suspend fun followings(): List<Account>
 
@@ -95,12 +96,16 @@ abstract class Account(
 ```
 
 ```Kotlin
+class AccountId(value: String) : Identifier<String>(value)
+```
+
+```Kotlin
 class Username(value: String): Identifier<String>(value) {
   fun validate(): Boolean = value.isNotBlank()
 }
 ```
 
-Accountドメインでも同じ表示名やアバターを使う可能性があるため、一意性を担保するため今回のプロジェクトではUsernameで一意になるようにします。  
+Accountドメインでも同じ表示名やアバターを使う可能性があるため、一意性を担保するため今回のプロジェクトではidで一意になるようにします。  
 また、Accountドメインには`followings`と`followers`というメソッドを用意しています。  
 あるユーザーのフォローとフォロワーはそのユーザーのアカウントドメインに属する値として考えることができますが、`account/{username}`のAPIでは取得できない要素になります。  
 そこで前述したようなドメインメソッドを用意することによって、ドメインを扱う側としては通常のアカウントドメイン内の値の一部として読み取ることができます。  
