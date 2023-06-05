@@ -45,7 +45,7 @@ EntityやValue Objectの集約を扱います。
 domainパッケージ(ディレクトリ)は作成されていないためパッケージの作成からしましょう。  
 
 ```
-domin/Status.kt
+domain/Status.kt
 domain/StatusId.kt
 domain/Account.kt
 domain/Username.kt

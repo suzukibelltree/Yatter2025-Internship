@@ -443,10 +443,10 @@ package通りに配置していってください。
 
 ### AccountImpl
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.infra.domain.model
+package com.dmm.bootcamp.yatter2023.infra.domain
 
-import com.dmm.bootcamp.yatter2023.domain.model.Account
-import com.dmm.bootcamp.yatter2023.domain.model.Username
+import com.dmm.bootcamp.yatter2023.domain.Account
+import com.dmm.bootcamp.yatter2023.domain.Username
 import java.net.URL
 
 class AccountImpl(
@@ -483,10 +483,10 @@ class AccountImpl(
 package com.dmm.bootcamp.yatter2023.infra.domain.converter
 
 import com.dmm.bootcamp.yatter2023.BuildConfig
-import com.dmm.bootcamp.yatter2023.domain.model.Account
-import com.dmm.bootcamp.yatter2023.domain.model.Username
+import com.dmm.bootcamp.yatter2023.domain.Account
+import com.dmm.bootcamp.yatter2023.domain.Username
 import com.dmm.bootcamp.yatter2023.infra.api.json.AccountJson
-import com.dmm.bootcamp.yatter2023.infra.domain.model.AccountImpl
+import com.dmm.bootcamp.yatter2023.infra.domain.AccountImpl
 import java.net.URL
 
 object AccountConverter {
@@ -510,8 +510,8 @@ object AccountConverter {
 ```Kotlin
 package com.dmm.bootcamp.yatter2023.infra.domain.converter
 
-import com.dmm.bootcamp.yatter2023.domain.model.Status
-import com.dmm.bootcamp.yatter2023.domain.model.StatusId
+import com.dmm.bootcamp.yatter2023.domain.Status
+import com.dmm.bootcamp.yatter2023.domain.StatusId
 import com.dmm.bootcamp.yatter2023.infra.api.json.StatusJson
 import com.dmm.bootcamp.yatter2023.ui.bindingmodel.StatusBindingModel
 

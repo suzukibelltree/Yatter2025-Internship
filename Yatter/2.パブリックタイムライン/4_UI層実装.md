@@ -93,7 +93,7 @@ data class StatusBindingModel(
 ```Kotlin
 package com.dmm.bootcamp.yatter2023.ui.timeline.bindingmodel.converter
 
-import com.dmm.bootcamp.yatter2023.domain.model.Status
+import com.dmm.bootcamp.yatter2023.domain.Status
 import com.dmm.bootcamp.yatter2023.ui.timeline.bindingmodel.StatusBindingModel
 
 object StatusConverter {
