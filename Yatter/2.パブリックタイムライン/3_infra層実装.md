@@ -661,6 +661,7 @@ coEvery {
 ```
 
 値の準備ができたら、実際に対象のメソッドを呼び出し、結果が取得できていることを確認します。  
+ここで利用してる`assertThat`は`Truth`ライブラリのものを利用していますので、`com.google.common.truth.Truth.assertThat`をimportされていることを確認してください。  
 
 ```Kotlin
 val result: List<Status> = subject.findAllPublic()
