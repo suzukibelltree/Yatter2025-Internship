@@ -113,7 +113,7 @@ interface StatusRepository {
 `StatusRepository`でStatusの取得や作成、削除といったメソッドを定義していきます。  
 
 ```Kotlin
-interface StatusRepository : StatusReadOnlyRepository {
+interface StatusRepository {
   suspend fun findById(id: StatusId): Status?
 
   suspend fun findAllPublic(): List<Status>
