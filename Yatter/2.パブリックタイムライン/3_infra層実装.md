@@ -497,6 +497,7 @@ object AccountConverter {
   ): List<Account> = jsonList.map { convertToDomainModel(it) }
 
   fun convertToDomainModel(json: AccountJson): Account = AccountImpl(
+    id = AccountId(json.id),
     username = Username(json.username),
     displayName = json.displayName,
     note = json.note,
@@ -515,7 +516,6 @@ package com.dmm.bootcamp.yatter2023.infra.domain.converter
 import com.dmm.bootcamp.yatter2023.domain.Status
 import com.dmm.bootcamp.yatter2023.domain.StatusId
 import com.dmm.bootcamp.yatter2023.infra.api.json.StatusJson
-import com.dmm.bootcamp.yatter2023.ui.bindingmodel.StatusBindingModel
 
 object StatusConverter {
   fun convertToDomainModel(jsonList: List<StatusJson>): List<Status> =
