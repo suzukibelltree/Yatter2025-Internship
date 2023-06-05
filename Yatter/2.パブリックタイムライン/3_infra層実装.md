@@ -25,6 +25,10 @@ Javaで説明されていますが、次の内容を抑えられれば良いで�
   - レスポンスの表現の仕方
 - converterを指定することでいろんなタイプのレスポンスやシリアライザを指定できること
 
+また、次の資料でもRetrofitの使い方を解説していますので合わせてご一読ください。  
+
+https://git.dmm.com/dmm-bootcamp/android-doc-2023/blob/main/basic/12-Retrofit%E3%82%92%E7%94%A8%E3%81%84%E3%81%9F%E9%80%9A%E4%BF%A1%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6.md
+
 ---
 
 Retrofitのドキュメントを一読したら実装に入ります。  
@@ -338,7 +342,8 @@ class YatterApiFactory {
 
 これにより、debugビルドをするとdebug用のAPI_URLが利用され、releaseビルドを行えばrelease用のAPI_URLを利用することができます。  
 Android Studioではこの`Build Type`を`Build Variants`ページからどの`Build Type`を利用するか指定することができます。  
-// Build Variantsの写真
+
+![build_variant](../image/2/build_variant.png)
 
 これで`YatterApiFactory`の完成です。  
 

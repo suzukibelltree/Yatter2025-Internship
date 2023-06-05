@@ -1,7 +1,8 @@
 # パブリックタイムラインのDI実装
 UI実装まで完了したらDIの実装を行いパブリックタイムライン画面を仕上げていきます。  
 DIについては次の資料をまずはご一読ください。  
-// DIについて
+
+https://developer.android.com/training/dependency-injection?hl=ja
 
 Androidアプリ開発ではよくDIが用いられます。  
 DIライブラリとしてDagger/Dagger Hilt・Koin・Kodeinがよく利用されます。  

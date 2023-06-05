@@ -19,7 +19,11 @@ Activityとは、ユーザーが写真を撮る・メールを送信する・地
 Fragmentとは、アプリのUIのさまざまな部分で再利用できる独自のUIとライフサイクルを持ったコンポーネントです。  
 Activityでユーザーに対してUIを表示するといったことと同様なことが行うことができ、Activityより生成コストが低くFragmentの上にFragmentを載せるなど親子関係を持てることもあり、画面遷移にFragmentが利用されることも最近では多いです。  
 
-ActivityとFragmentに関しては以下の資料も併せて一読ください。  
+ActivityとFragmentに関しては次の資料も併せて一読ください。  
+
+- Activitry: 
+https://git.dmm.com/dmm-bootcamp/android-doc-2023/blob/main/basic/2-Activity%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6.md
+- Fragment: https://git.dmm.com/dmm-bootcamp/android-doc-2023/blob/main/basic/11-Fragment%E3%81%AE%E7%94%BB%E9%9D%A2%E9%81%B7%E7%A7%BB%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6.md
 
 ### ViewModel
 ViewModelはライフサイクルを意識した方法でUIに関するデータの保存や管理を行うクラスです。  
@@ -35,6 +39,7 @@ ViewModelはActivityやFragmentが破棄された後も生存しているため�
 
 ViewModelについての詳細は次の資料もご一読ください。  
 
+https://git.dmm.com/dmm-bootcamp/android-doc-2023/blob/main/basic/8-ViewModel%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6.md
 
 ### AndroidのUI開発方法
 Androidアプリ開発においてUIを構築する方法は主に`Android View`と`Jetpack Compose`の2つになります。  
@@ -53,6 +58,8 @@ Jetpack ComposeでのUI構築方法はシンプルで分かりやすい場合が
 DMMとしても新規アプリをJetpack Composeで開発しており、既存アプリもJetpack Composeに置き換えはじめています。  
 
 Jetpack Composeの詳細に関しては次のリンク先で解説していますのでまずはご一読ください。  
+
+https://git.dmm.com/dmm-bootcamp/android-doc-2023/blob/main/basic/13-JetpackCompose%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6.md
 
 ## UI実装
 ### BindingModelの作成
@@ -507,7 +514,7 @@ fun FirsstComposable() {
 `StatusRow`ファイルを開き、パブリックタイムライン画面で表示するStatus一覧の1行分のUIを実装します。  
 次のような見た目になることを目指します。  
 
-![](../image/2/status_row_preview.png)
+![status_preview](../image/2/status_row_preview.png)
 
 まずは、`StatusRow`コンポーザブルを定義します。  
 1つのStatusを表示するコンポーザブルになるため、必要な値が含まれている`StatusBindingModel`を引数にとります。  
@@ -560,6 +567,8 @@ private fun StatusRowPreview() {
 プレビュー機能には静止画のプレビュー表示の他にアニメーションのプレビュー・実際のデバイスのように操作できるInteractive Mode・プレビューの内容をデバイス上で確認できるRun Previewがあります。  
 画面右側にあるプレビュー画面にカーソルを合わせると次のようなアイコンが表示されるとおもいます。  
 この3つのアイコンを選択することでアニメーションをプレビューしたりプレビューを操作してみたりデバイスで動作確認したりすることができます。  
+
+![compose preview](../image/2/compose_preview.png)
 
 `StatusRow`コンポーザブルの実装を進めていきます。  
 
