@@ -164,8 +164,8 @@ data class AccountJson(
   @Json(name = "display_name") val displayName: String,
   val note: String,
   val url: String,
-  @val avatar: String,
-  @val header: String,
+  val avatar: String,
+  val header: String,
   @Json(name = "create_at") val createAt: String
 )
 ```
