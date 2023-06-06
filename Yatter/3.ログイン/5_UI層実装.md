@@ -28,7 +28,7 @@ internal data class LoginBindingModel(
 続いては`UiState`の実装です。  
 BindingModelと同様に、`ui/login`パッケージ内に`LoginUiState`を用意します。  
 
-パブリックドメイん画面の時と同様に、`bindingModel`と`isLoading`を用意します。  
+パブリックタイムライン画面の時と同様に、`bindingModel`と`isLoading`を用意します。  
 
 ```Kotlin
 internal data class LoginUiState(
