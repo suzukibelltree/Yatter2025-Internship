@@ -26,7 +26,7 @@ internal data class LoginBindingModel(
 
 ## UiStateの実装
 続いては`UiState`の実装です。  
-BindingModelと同様に。`ui/login`パッケージ内に`LoginUiState`を用意します。  
+BindingModelと同様に、`ui/login`パッケージ内に`LoginUiState`を用意します。  
 
 パブリックドメイん画面の時と同様に、`bindingModel`と`isLoading`を用意します。  
 
@@ -39,7 +39,7 @@ internal data class LoginUiState(
 
 ログイン画面ではUiStateにユーザー名やパスワードがきちんと入力されているかどうかというフラグを持たせて、ログイン処理実行可能な状態になってからログインボタンを押せるようにするとユーザーフレンドリーです。  
 
-もちろんUseCase内でも弾いているためUIそうで対策しなくても良い内容ですが、念の為実施します。  
+もちろんUseCase内でも弾いているためUI層で対策しなくても良い内容ですが、ユーザーが利用しやすいように実施します。  
 
 ```Kotlin
 internal data class LoginUiState(
@@ -57,22 +57,24 @@ internal data class LoginUiState(
 最後に`LoginUiState`でも初期化用の`empty`メソッドを実装して、`UiState`は完了です。  
 
 ```Kotlin
-companion object {
-  fun empty(): LoginUiState = LoginUiState(
-    loginBindingModel = LoginBindingModel(
-      username = "",
-      password = ""
-    ),
-    validUsername = false,
-    validPassword = false,
-    isLoading = false,
-  )
+internal data class LoginUiState(...) {
+  companion object {
+    fun empty(): LoginUiState = LoginUiState(
+      loginBindingModel = LoginBindingModel(
+        username = "",
+        password = ""
+      ),
+      validUsername = false,
+      validPassword = false,
+      isLoading = false,
+    )
+  }
 }
 ```
 
 ## ViewModelの実装
 ViewModelの実装に移ります。  
-`Ui/login`パッケージに`LoginViewModel`ファイルを作成しましょう。  
+`Ui/login`パッケージに`LoginViewModel`クラスを作成しましょう。  
 ログイン処理に必要な`LoginUseCase`も引数に追加しておきます。  
 
 ```Kotlin
@@ -100,28 +102,39 @@ UiStateの保持ができたら、イベントメソッドの定義を行いま�
 - onClickLogin()
 - onClickRegister()
 
-`onChanged~`メソッドはテキストボックスにユーザーが文字を入力したときに、入力された文字にUiState内の値を更新するために用意されています。  
+`onChanged~`メソッドはテキストボックスにユーザーが文字を入力したときに、UiState内の値を入力された文字に更新するために用意されています。  
 パスワードのバリデーションチェックもこのタイミングで行います。  
 
-`onClick~`メソッドはログインボタンや会員登録へ進むためのボタンをユーザーが押下したときに呼び出されるメソッドです。  
-ログインボタンの場合はログイン処理を会員登録ボタンは会員登録画面への遷移を実装します。  
+`onClick~`メソッドはログインボタンや会員登録へ進むためのボタンをユーザーが押下したときに呼び出すメソッドです。  
+ログインボタンの場合はログイン処理を、会員登録ボタンは会員登録画面への遷移を実装します。  
 会員登録画面の実装自体は本研修では解説しないため時間がある時に実装してみてください。  
 
 まずは、メソッドの定義からです。  
 
 ```Kotlin
-fun onChangedUsername(username: String) {}
-fun onChangedPassword(password: String) {}
-fun onClickLogin()
-fun onClickRegister()
+internal class LoginViewModel(...) : ViewModel() {
+
+  fun onChangedUsername(username: String) {}
+
+  fun onChangedPassword(password: String) {}
+
+  fun onClickLogin()
+
+  fun onClickRegister()
+}
 ```
 
 後述もしますが、Jetpack Composeでテキスト入力を行うには、`TextField`コンポーザブルを利用します。  
-このコンポーザブルの引数に`(String) -> Unit`な関数ラムダを渡すことで、ユーザーがテキストボックスで入力・削除した最新の文字列を監視することができます。  
+このコンポーザブルの引数に`(String) -> Unit`なラムダ式を渡すことで、ユーザーがテキストボックスで入力・削除した最新の文字列を監視することができます。  
 
 そのため、ユーザー名とパスワードの入力状況を監視するように`onChangedUsename`と`onChangedPassword`メソッドを実装します。  
 
-`onChangedUsername`から実装を進めます。  
+ラムダ式については次で詳細に説明されているため、興味ある方はご覧ください。  
+https://developer.android.com/codelabs/basic-android-kotlin-compose-function-types-and-lambda?hl=ja#0
+
+---
+
+まず、`onChangedUsername`から実装を進めます。  
 `onChangedUsername`で行う処理は次の通りです。  
 
 - usernameのバリデーションチェック結果をUiStateに更新
@@ -176,6 +189,9 @@ fun onChangedPassword(password: String) {
 
 `SingleLiveEvent`は公式で用意されているものではありませんが、一般的に利用されているクラスです。  
 
+`LiveData`の詳細は次もご覧ください。  
+https://developer.android.com/topic/libraries/architecture/livedata?hl=ja
+
 UiStateをStateFlowとして、ViewModelで保持していたように`SingleLiveEvent`もbacking fieldとして定義して、ViewModel内では`SingleLiveEvent`、外部からは`LiveData`として見えるように定義します。  
 
 ```Kotlin
@@ -208,7 +224,7 @@ viewModel.navigateToPublicTimeline.observe(this) {
 ```Kotlin
 fun onClickLogin() {
   viewModelScope.launch {
-    _uiState.update { it.copy(isLoading = true) }
+    _uiState.update { it.copy(isLoading = true) } // 1
 
     val snapBindingModel = uiState.value.loginBindingModel
     when (
@@ -216,18 +232,19 @@ fun onClickLogin() {
         loginUseCase.execute(
           Username(snapBindingModel.username),
           Password(snapBindingModel.password),
-        )
+        ) // 2
     ) {
       is LoginUseCaseResult.Success -> {
-        _navigateToAllTimeline.value = Unit
+        _navigateToAllTimeline.value = Unit // 3
     }
 
       is LoginUseCaseResult.Failure -> {
+        // 4
         // エラー表示
       }
     }
 
-    _uiState.update { it.copy(isLoading = true) }
+    _uiState.update { it.copy(isLoading = true) } // 5
   }
 }
 ```
@@ -446,7 +463,8 @@ fun LoginTemplatePreview() {
 まずは、`LoginTemplate`の引数を決めます。  
 基本的にはパブリックタイムライン画面での引数と同じような流れでを引数を決めます。  
 まずは、画面に表示するための`username`・`password`・`isLoading`の3つです。  
-そして、今回はテキストボックスに入力されたら実行するメソッドラムダ(`(String) -> Unit`)とボタンを押された時に実行するメソッドラムダ(`(Unit) -> Unit`)がありますのでそれぞれ名前をつけて引数に追加します。  
+そして、今回はテキストボックスに入力されたら実行するラムダ式(`(String) -> Unit`)とボタンを押された時に実行するラムダ式(`() -> Unit`)がありますのでそれぞれ名前をつけて引数に追加します。  
+そして、ログインボタンを活性化するための`isEnableLogin`も追加します。  
 
 最終的に引数は次のようになります。
 ```Kotlin
@@ -492,29 +510,36 @@ fun LoginTemplatePreview() {
 パブリックタイムライン画面の実装時を思い出しつつ実装してみてください。  
 
 ```Kotlin
-Scaffold(
-  topBar = {
-    TopAppBar(
-      title = {
-        Text(text = "ログイン")
-      }
-    )
-  }
-) {}
+@Composable
+fun LoginTemplate(...) {
+  Scaffold(
+    topBar = {
+      TopAppBar(
+        title = {
+          Text(text = "ログイン")
+        }
+      )
+    }
+  ) {}
+}
 ```
 
 プレビューを確認すると画面上部にAppBarとログインタイトルが表示されます。  
 
 画面全体ローディング表示ができるように`Box`コンポーザブルを用意しておきます。  
-画面全体を覆うようにし、ScaffoldのpaddingValue、画面調整用の`8dp`をpaddingにします。  
+画面全体を覆うようにし、ScaffoldのpaddingValue(it)、画面調整用の`8dp`をpaddingにします。  
 
 ```Kotlin
-Box(
-  modifier = Modifier
-    .fillMaxSize()
-    .padding(it)
-    .padding(8.dp),
-) {
+@Composable
+fun LoginTemplate(...) {
+  Scaffold(...) {
+    Box(
+      modifier = Modifier
+        .fillMaxSize()
+        .padding(it)
+        .padding(8.dp),
+    ) {}
+  }
 }
 ```
 
@@ -531,40 +556,48 @@ Jetpack Composeでテキストボックスを実装するために利用する�
 サイズ等は調整していますが、好きな値にしても問題ありません。  
 
 ```Kotlin
-Column(modifier = Modifier.fillMaxSize()) {
-  Text(
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(top = 16.dp),
-    text = "ユーザー名"
-  )
-  OutlinedTextField(
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(bottom = 16.dp),
-    value = userName,
-    onValueChange = onChangedUserName,
-    placeholder = {
-      Text(text = "username")
-    },
-  )
+fun LoginTemplate(...) {
+  Scaffold(...) {
+    Box(...) {
+      Column(modifier = Modifier.fillMaxSize()) {
+        Text(
+          modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp),
+          text = "ユーザー名"
+        )
+        OutlinedTextField(
+          modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp),
+          value = userName,
+          onValueChange = onChangedUserName,
+          placeholder = {
+            Text(text = "username")
+          },
+        )
 
-  Text(
-    modifier = Modifier.fillMaxWidth(),
-    text = "パスワード"
-  )
-  OutlinedTextField(
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(bottom = 16.dp),
-    value = password,
-    onValueChange = onChangedPassword,
-    placeholder = {
-      Text(text = "password")
-    },
-  )
+        Text(
+          modifier = Modifier.fillMaxWidth(),
+          text = "パスワード"
+        )
+        OutlinedTextField(
+          modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp),
+          value = password,
+          onValueChange = onChangedPassword,
+          placeholder = {
+            Text(text = "password")
+          },
+        )
+      }
+    }
+  }
 }
 ```
+
+![login_text_field](../image/3/login_text_field.png)
 
 入力箇所の表示ができたら続いてはログインボタン、および会員登録画面への遷移ボタンを配置します。  
 
@@ -576,31 +609,41 @@ Column(modifier = Modifier.fillMaxSize()) {
 
 基本的には名前の通りになりますが、`Button`コンポーザブルは丸角四角形状で塗りつぶしているボタン、`TextButton`は文字ボタンで`Button`コンポーザブルほど目立たせはしないがボタンの動作をするコンポーザブル、そして`Divider`は区切り線になります。  
 
-```Kotlin
-Column(...) {
-  ...
-  Button(
-    enabled = isEnableLogin,
-    onClick = onClickLogin,
-    modifier = Modifier
-        .fillMaxWidth(),
-  ) {
-    Text(text = "ログイン")
-  }
+![login_new_composable](../image/3/login_new_composable.png)
 
-  Divider(modifier = Modifier.padding(vertical = 16.dp))
-  
-  Text(
-    text = "はじめてご利用の方は",
-    modifier = Modifier.fillMaxWidth(),
-    textAlign = TextAlign.Center,
-    style = MaterialTheme.typography.body2
-  )
-  TextButton(
-    onClick = onClickRegister,
-    modifier = Modifier.fillMaxWidth()
-  ) {
-    Text(text = "新規会員登録")
+ログイン画面用にコンポーザブルを組み合わせて実装します。  
+
+```Kotlin
+fun LoginTemplate(...) {
+  Scaffold(...) {
+    Box(...) {
+      Column(...) {
+        ...
+        Button(
+          enabled = isEnableLogin,
+          onClick = onClickLogin,
+          modifier = Modifier
+              .fillMaxWidth(),
+        ) {
+          Text(text = "ログイン")
+        }
+
+        Divider(modifier = Modifier.padding(vertical = 16.dp))
+        
+        Text(
+          text = "はじめてご利用の方は",
+          modifier = Modifier.fillMaxWidth(),
+          textAlign = TextAlign.Center,
+          style = MaterialTheme.typography.body2
+        )
+        TextButton(
+          onClick = onClickRegister,
+          modifier = Modifier.fillMaxWidth()
+        ) {
+          Text(text = "新規会員登録")
+        }
+      }
+    }
   }
 }
 ```
@@ -609,8 +652,16 @@ Column(...) {
 パブリックタイムライン画面でローディング実装をした時と同様に`Box`コンポーザブル内で`isLoading`の状態に合わせて表示します。  
 
 ```Kotlin
-if (isLoading) {
-  CircularProgressIndicator()
+fun LoginTemplate(...) {
+  Scaffold(...) {
+    Box(...) {
+      Column(...) {...}
+
+      if (isLoading) {
+        CircularProgressIndicator()
+      }
+    }
+  }
 }
 ```
 
@@ -619,10 +670,17 @@ if (isLoading) {
 Templateまで実装できたらPageの実装を行います。  
 パブリックタイムライン画面と同様にViewModelとTemplateの繋ぎこみを行います。  
 
+`viewModel::メソッド名`のように記述することで、関数オブジェクトを渡すことができます。  
+ひとまずはこうすることによって、メソッドを変数のように扱うことができるくらいの認識でも問題ありません。  
+
+関数オブジェクトの詳細について知りたい方は次の資料をご一読ください。  
+https://developer.android.com/codelabs/basic-android-kotlin-compose-function-types-and-lambda?hl=ja#0
+
 ```Kotlin
 @Composable
 internal fun LoginPage(viewModel: LoginViewModel) {
   val uiState: LoginUiState by viewModel.uiState.collectAsStateWithLifecycle()
+
   LoginTemplate(
     userName = uiState.loginBindingModel.username,
     onChangedUserName = viewModel::onChangedUsername,
