@@ -368,6 +368,29 @@ Androidアプリ開発ではKotlin Coroutineという非同期処理の実装に
 - https://kotlinlang.org/docs/coroutines-basics.html
 - https://developer.android.com/kotlin/coroutines
 
+---
+
+ここまでで、API通信するための実装をしました。  
+ですが、このままでは実際の通信は行えません。その理由としてはAndroidアプリの権限に起因します。  
+Androidアプリ開発時にAndroidスマホ備え付けの機能を利用する際に権限が必要なケースが多くあり、API通信をはじめとするインターネット接続もそのケースに含まれます。  
+
+Androidアプリのインターネット接続を許可するためには、`AndroidManifest.xml`とというマニフェストファイルに権限を宣言する必要があります。  
+マニフェストファイルについては後述しますので、ひとまずは権限を利用するための宣言をする場所くらいの認識で問題ありません。  
+
+`AndroidManifest.xml`ファイルを見つけたら次の一文を追加してインターネット接続を許可します。  
+
+```XML
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--  追加  -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application ...>
+
+```
+
+
 ## Repositoryの実装
 `com.dmm.bootcamp.yatter2023.infra.domain.repository`というパッケージを作成します。  
 作成したパッケージに属するように、`StatusRepositoryImpl`クラスを作成し、`StatusRepository`の実装を行います。  
