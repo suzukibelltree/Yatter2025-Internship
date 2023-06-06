@@ -2,7 +2,7 @@
 ログイン画面に必要なdomain層の実装を行います。  
 ログイン画面に新規実装が必要なdomain層のファイルは次のようになります。  
 
-- domain/modelPassword
+- domain/Password
 - domain/service/LoginService
 
 クラス図では次の箇所にあたります。  
