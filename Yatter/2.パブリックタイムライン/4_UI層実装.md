@@ -1175,6 +1175,7 @@ class MainActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContent {...}
     
+    // 追加
     startActivity(PublicTimelineActivity.newIntent(this))
     finish()
   }
