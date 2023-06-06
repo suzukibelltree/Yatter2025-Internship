@@ -552,7 +552,7 @@ Androidアプリ開発での単体テストは、`app/src/test/java`ディレク
 
 ![](../image/2/test_dir.png)
 
-今回は`StatusRepositoryImpl`のテストを書くため、`infra/domain/repository`パッケージに`StatusRepositoryImplSpec`というクラスを作成します。  
+今回は`StatusRepositoryImpl`のテストを書くため、`infra/domain/repository`パッケージをtestディレクトリ内にも作成し、作成したパッケージに`StatusRepositoryImplSpec`というクラスも作成します。  
 
 Yatterアプリ開発ではテストクラスの命名規則として`${テスト対象クラス名}Spec`という名前にします。  
 `Spec`は仕様という意味のある`specification`の略で、テストは使用であるという意味合いを持たせています。  
