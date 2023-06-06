@@ -84,7 +84,6 @@ GET /timelines/public
   "display_name": "string",
   "create_at": "2019-04-23T04:42:43.836Z",
   "note": "string",
-  "url": "string",
   "avatar": "string",
   "following_count": 100,
   "followers_count": 200,
@@ -100,14 +99,13 @@ package com.dmm.bootcamp.yatter2023.infra.api.json
 data class AccountJson(
   val id: String,
   val username: String,
-  val display_name: String,
-  val note: String,
-  val url: String,
-  val avatar: String,
-  val header: String,
+  val display_name: String?,
+  val note: String?,
+  val avatar: String?,
+  val header: String?,
   val following_count: Int,
   val followers_count: Int,
-  val create_at: String
+  val create_at: String,
 )
 ```
 
@@ -128,14 +126,13 @@ package com.dmm.bootcamp.yatter2023.infra.api.json
 data class AccountJson(
   val id: String,
   val username: String,
-  val displayName: String,
-  val note: String,
-  val url: String,
-  val avatar: String,
-  val header: String,
+  val displayName: String?,
+  val note: String?,
+  val avatar: String?,
+  val header: String?,
   val followingCount: Int,
   val followersCount: Int,
-  val createAt: String
+  val createAt: String,
 )
 ```
 
@@ -148,11 +145,10 @@ package com.dmm.bootcamp.yatter2023.infra.api.json
 data class AccountJson(
   @Json(name = "id") val id: String,
   @Json(name = "username") val username: String,
-  @Json(name = "display_name") val displayName: String,
-  @Json(name = "note") val note: String,
-  @Json(name = "url") val url: String,
-  @Json(name = "avatar") val avatar: String,
-  @Json(name = "header") val header: String,
+  @Json(name = "display_name") val displayName: String?,
+  @Json(name = "note") val note: String?,
+  @Json(name = "avatar") val avatar: String?,
+  @Json(name = "header") val header: String?,
   @Json(name = "following_count") val followingCount: Int,
   @Json(name = "followers_count") val followersCount: Int,
   @Json(name = "create_at") val createAt: String
@@ -169,11 +165,10 @@ package com.dmm.bootcamp.yatter2023.infra.api.json
 data class AccountJson(
   val id: String,
   val username: String,
-  @Json(name = "display_name") val displayName: String,
-  val note: String,
-  val url: String,
-  val avatar: String,
-  val header: String,
+  @Json(name = "display_name") val displayName: String?,
+  val note: String?,
+  val avatar: String?,
+  val header: String?,
   @Json(name = "following_count") val followingCount: Int,
   @Json(name = "followers_count") val followersCount: Int,
   @Json(name = "create_at") val createAt: String
@@ -187,7 +182,7 @@ data class AccountJson(
 data class StatusJson(
   ...
   val account: AccountJson,
-  @Json(name = "media_attachments") val attachmentMediaList: List<MediaJson>,
+  @Json(name = "media_attachments") val attachmentMediaList: List<MediaJson>?,
   ...
 )
 ```
@@ -210,7 +205,7 @@ data class StatusJson(
   val account: AccountJson,
   val content: String?,
   @Json(name = "create_at") val createAt: String,
-  @Json(name = "media_attachments") val attachmentMediaList: List<MediaJson>
+  @Json(name = "media_attachments") val attachmentMediaList: List<MediaJson>?,
 )
 ```
 
@@ -223,7 +218,7 @@ data class MediaJson(
   val id: String,
   val type: String,
   val url: String,
-  val description: String
+  val description: String,
 )
 ```
 </details>
