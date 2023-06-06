@@ -764,10 +764,8 @@ fun PublicTimelineTemplatePreview() {
           )
         ),
         isLoading = false,
-        onClickAdd = {},
         isRefreshing = false,
         onRefresh = {},
-        onClickProfile = {}
       )
     }
   }
