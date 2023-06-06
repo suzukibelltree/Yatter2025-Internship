@@ -1,14 +1,14 @@
 # ツイート画面のdomain層実装
 
-ツイート画面実装に必要なdomain層実装を行います。
+ツイート画面実装に必要なdomain層実装を行います。  
 
-まずはQuery部分から実装します。
+まずはQuery部分から実装します。  
 
-必要なドメインモデルとして、ログインしているユーザーの情報を扱う`Me`ドメインも実装します。
-`Me`ドメインの実態は`Account`ドメインと同じ値を保持しますが、自身のアカウントであるという情報を扱いやすくするために、`Account`ドメインを継承して定義します。
+必要なドメインモデルとして、ログインしているユーザーの情報を扱う`Me`ドメインも実装します。  
+`Me`ドメインの実態は`Account`ドメインと同じ値を保持しますが、自身のアカウントであるという情報を扱いやすくするために、`Account`ドメインを継承して定義します。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.domain.model
+package com.dmm.bootcamp.yatter2023.domain
 
 abstract class Me(
   username: Username,
@@ -34,9 +34,9 @@ abstract class Me(
 }
 ```
 
-続いてDomainServiceの実装を行います。
-必要なDomainServiceは`GetMeService`です。
-このDomainServiceを利用して、ログイン済みのアカウント情報を取得し、ツイート画面のアイコン表示やトークン取得に活用します。
+続いてDomainServiceの実装を行います。  
+必要なDomainServiceは`GetMeService`です。  
+このDomainServiceを利用して、ログイン済みのアカウント情報を取得し、ツイート画面のアイコン表示やトークン取得に活用します。  
 
 ```Kotlin
 package com.dmm.bootcamp.yatter2023.domain.service
@@ -46,11 +46,11 @@ interface GetMeService {
 }
 ```
 
-最後にRepositoryの実装を行います。
+最後にRepositoryの実装を行います。  
 
-アカウント情報を保持するための`AccountRepository`を追加します。
+アカウント情報を保持するための`AccountRepository`を`domin/repository`に追加します。  
 
-AccountRepositoryでアカウントの検索や追加、更新といったアカウント周りの制御・操作を行えるようにします。
+`AccountRepository`でアカウントの検索や追加、更新といったアカウント周りの制御・操作を行えるようにします。  
 
 ```Kotlin
 interface AccountRepository {
@@ -73,14 +73,16 @@ interface AccountRepository {
 }
 ```
 
+---
 
-続いて、Command部分の実装です。
+続いて、Command部分の実装です。  
 
-ツイート処理は`StatusRepository`にメソッドを追加して実装します。
+ツイート処理は`StatusRepository`にメソッドを追加して実装します。  
 
-ツイート処理専用の`DomainService`を作ることも可能ですが、Statusを`StatusRepository`で集約することによりキャッシュを有効活用したりRepositoryパターンの概念としても合っていたりするため、`StatusRepository#create`を定義します。
+ツイート処理専用の`DomainService`を作ることも可能ですが、Statusを`StatusRepository`で集約することによりキャッシュを有効活用したりRepositoryパターンの概念としても合っていたりするため、`StatusRepository#create`を定義します。  
 
-`StatusRepository`に次のメソッドを追加します。
+`StatusRepository`に次のメソッドを追加します。  
+`Status`を投稿(=新規作成)するため、`create`というメソッド名にします。  
 
 ```Kotlin
 interface StatusRepository {
@@ -91,4 +93,4 @@ interface StatusRepository {
 }
 ```
 
-
+これにてツイート機能に必要なdomain層の実装は完了です。  
