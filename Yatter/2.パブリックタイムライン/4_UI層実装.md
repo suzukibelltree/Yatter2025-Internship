@@ -479,6 +479,12 @@ val data = intent?.getStringExtra("data")
 1の問題に対しては、`newIntent`の引数に欲しいデータを追加することでActivityに遷移するために必要な値強制することができるため、渡し間違えや忘れることがありません。  
 2の問題に対しては、値を渡すことと受け取ることを1つのクラスで完結することができるため、キー用の定数を用意して間違えることを防ぐことができます。  
 
+`newIntent`メソッドを用意した場合の画面遷移は次のような実装になります。  
+```Kotlin
+startActivity(${遷移したいActivityのクラス}.newIntent(this))
+```
+---
+
 `PublitTimelineActivity`内で先ほど実装したViewModelをインスタンス化します。  
 
 ```Kotlin
@@ -856,13 +862,14 @@ https://developer.android.com/jetpack/compose/lists?hl=ja
 また、この`Box`コンポーザブルが画面全体を覆えるように`fillMaxSize()`の指定、`Box`コンポーザブル内の要素が画面中央に配置されるように`contentAlignment`の指定をします。  
 
 ```Kotlin
-Box(
-  modifier = Modifier
-    .fillMaxSize()
-    .padding(it),
-  contentAlignment = Alignment.Center,
-) {
-  LazyColumn(...)  
+internal fun PublicTimelineTemplate(...) {
+  Box(
+    modifier = Modifier
+      .fillMaxSize(),
+    contentAlignment = Alignment.Center,
+  ) {
+    LazyColumn(...)  
+  }
 }
 ```
 
@@ -872,7 +879,21 @@ PullToRefreshには`PullRefreshIndicator`コンポーザブルを利用します
 こうすることにより、PullToRefreshが実行されたときに、`onRefresh`の処理を発火することができます。  
 
 ```Kotlin
-val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefresh)
+internal fun PublicTimelineTemplate(...) {
+  val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefresh)
+  Box(...) {
+    LazyColumn(...)
+  }
+}
+```
+
+また、今回利用する`PullRefreshIndicator`はまだStableでは無いため、そのままではAndroid Studio上でエラー表示になっていると思います。  
+実験的に追加されているAPIを利用するためにも、`@OptIn(ExperimentalMaterialApi::class)`を` PublicTimelineTemplate`の上部に追加して利用できるようにしましょう。  
+
+```Kotlin
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+internal fun PublicTimelineTemplate(...)
 ```
 
 状態オブジェクトが定義できたら、`PullRefreshIndicator`を配置します。  
@@ -880,12 +901,14 @@ val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefresh)
 こうすることにより、`isRefreshing`が`true`の間にローディングインディケータが表示され、`false`になると非表示になります。  
 
 ```Kotlin
-LazyColumn(...)
-PullRefreshIndicator(
-  isRefreshing,
-  pullRefreshState,
-  Modifier.align(Alignment.TopCenter)
-)
+Box(...) {
+  LazyColumn(...)
+  PullRefreshIndicator(
+    isRefreshing,
+    pullRefreshState,
+    Modifier.align(Alignment.TopCenter)
+  )
+}
 ```
 
 PullToRefresh実装の仕上げです。  
@@ -962,7 +985,7 @@ internal fun PublicTimelineTemplate(...) {
         .fillMaxSize()
         .padding(it)
         .pullRefresh(pullRefreshState),
-    )
+    ) {...}
   }
 }
 ```
@@ -1139,7 +1162,28 @@ Activityの実装が完了したらプロジェクト内の`AndroidManifest.xml`
 こうすることにより`PublicTimelineActivity`という名前のActivityが存在することを定義します。  
 もしこの定義がない状態で`PublicTimelineActivity`を起動しようとすると実行時エラーでクラッシュします。  
 
+`PublicTimelineActivity`の定義ができたら実際に`PublicTimelineActivity`をアプリ起動時に表示できるように`MainActivity`にコードを追記します。  
+
+画面遷移するためのコードは前述したように、`startActivity(${遷移したいActivityのクラス}.newIntent(this))`を呼び出します。  
+また、今回は一度パブリックタイムライン画面に遷移した後に`MainActivity`に戻ることはないので、`finish()`メソッドを呼び出してActivityを終了させておきます。  
+
+```Kotlin
+class MainActivity : AppCompatActivity() {
+  ...
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContent {...}
+    
+    startActivity(PublicTimelineActivity.newIntent(this))
+    finish()
+  }
+}
+
+```
+
 ここまでの実装でパブリックタイムラインのUI実装全体が完了しました。  
+現状のままではアプリを起動してもアプリがクラッシュして見ることができないと思います。  
+DIの設定がまだできていないことが原因ですので次のDI層実装に進みましょう。  
 
 ## Appendix
 今回、UI構築を行う際にタイトルや`contentDescription`を文字列で直書きしています。  
