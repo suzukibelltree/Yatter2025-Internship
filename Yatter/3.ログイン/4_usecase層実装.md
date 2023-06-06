@@ -14,7 +14,7 @@ UseCaseは副作用を伴うような業務手順をロジックとしてコー�
 4. パスワードのバリデーションチェックが通過するかの確認
 5. ログイン処理
 
-UI層で弾く予定の処理も含まれますが、UseCaseは複数箇所から呼ばれる可能性もありその呼び出し元全てにおいて、ログインするために必要な確認・処理を実装する方針にすると実装ミスや漏れが発生しやすい部分になりますのでUseCseで実装します。  
+UI層で弾く予定の処理も含まれますが、UseCaseは複数箇所から呼ばれる可能性もありその呼び出し元全てにおいて、ログインするために必要な確認・処理を実装する方針にすると実装ミスや漏れが発生しやすい部分になりますのでUseCseでもきちんと確認できるように実装します。  
 
 UseCaseを実装する際には1つのUseCaseに対して、3つのファイルを作成します。  
 
@@ -24,7 +24,7 @@ UseCaseを実装する際には1つのUseCaseに対して、3つのファイル�
 
 の3つです。  
 
-UseCase(interface)とUseCaseImpl(class)自体はRepositoryやDomainServiceで実装した時と同様です。  
+UseCase(interface)とUseCaseImpl(class)自体はRepositoryやDomainServiceで実装した時と同様なイメージです。  
 
 UseCaseの戻り値はResultとして値を返すようにします。ResultのFailureは、UseCase層での関心事(バリデーションなど)で起きうるエラーを定義し、UseCase層以外の関心事(ネットワークエラーなど)に関してはOtherErrorとして定義します。  
 
@@ -42,10 +42,11 @@ UseCaseの実行結果をResultとして表現することによりUseCase内で
   - ユーザー名が空
   - パスワードが空
   - パスワードのバリデーションチェックが遠らない
+  - その他のエラー
 
 UseCaseResultは[`sealed class/interface`](https://kotlinlang.org/docs/sealed-classes.html)で定義すると扱いやすいです。  
 
-sealed interfaceで`UseCaseResult`と`Failure`を定義し継承することでUseCaseResultを表現します。  
+sealed interfaceで`UseCaseResult`と`Failure`を定義し、継承することでUseCaseResultを表現します。  
 
 ```Kotlin
 sealed interface LoginUseCaseResult {
@@ -62,7 +63,7 @@ sealed interface LoginUseCaseResult {
 ---
 
 続いては、UseCase(interface)を定義します。  
-基本的にはDomainServiceの定義と同じような書き方です。  
+基本的にはDomainServiceの定義と同じような書き方で、先ほど定義したUseCaseResultを返却するようにします。  
 
 ```Kotlin
 interface LoginUseCase {
@@ -77,31 +78,60 @@ interface LoginUseCase {
 
 それでは、`LoginUseCaseImpl`の実装に移ります。  
 
-まずは、`username`、`password`が空文字であった場合の結果を返却します。  
+まずは、`LoginUseCase`を継承して、必要なメソッドをオーバーライドします。  
+引数に`LoginService`を受け取り、利用できるようにします。  
+
+```Kotlin
+internal class LoginUseCaseImpl(
+  private val loginService: LoginService,
+) : LoginUseCase {
+
+  override suspend fun execute(
+    username: Username,
+    password: Password
+  ): LoginUseCaseResult {
+    TODO("Not yet implemented")
+  }
+}
+```
+
+executeメソッドの実装を進めます。  
+`username`、`password`が空文字であった場合の結果を返却します。  
 `IllegalArgumentException`を使って処理に渡されて引数に問題があることを表現し、さらに引数に問題の詳細を記載しています。  
 
 ```Kotlin
-if (username.value.isBlank()) return LoginUseCaseResult.Failure.EmptyUsername
-if (password.value.isBlank()) return LoginUseCaseResult.Failure.EmptyPassword
+override suspend fun execute(...): LoginUseCaseResult {
+  if (username.value.isBlank()) return LoginUseCaseResult.Failure.EmptyUsername
+  if (password.value.isBlank()) return LoginUseCaseResult.Failure.EmptyPassword
+}
 
 ```
 
-続いて、パスワードが空文字でなくともdomain層の実装で定義していたパスワードのバリデーションチェックが通っていない場合も例外をスローします。  
-```Kotlin
-if (!password.validate()) return LoginUseCaseResult.Failure.InvalidPassword
+続いて、パスワードが空文字でなくともdomain層の実装で定義していたパスワードのバリデーションチェックが通っていない場合も失敗のUseCaseResultを返します。  
 
+```Kotlin
+override suspend fun execute(...): LoginUseCaseResult {
+  ...
+  if (!password.validate()) return LoginUseCaseResult.Failure.InvalidPassword
+}
 ```
 
 最後にinfra層で実装した`LoginService`を呼び出してログイン処理を行います。  
 
 ```Kotlin
-loginService.execute(username, password)
+override suspend fun execute(...): LoginUseCaseResult {
+  ...
+  loginService.execute(username, password)
+}
 ```
 
 全ての処理が完了したら呼び出し元に問題なく完了したことを伝えるために、`Success`を返却します。  
 
 ```Kotlin
-return LoginUseCaseResult.Success
+override suspend fun execute(...): LoginUseCaseResult {
+  ...
+  return LoginUseCaseResult.Success
+}
 ```
 
 さらに、UseCase内の一連の処理の中でUseCaseResultで定義していない例外が発生した時に`OtherError`として呼び出し元に返却できるように全体の処理を`try/catch`でラップします。  
@@ -118,11 +148,43 @@ class LoginUseCaseImpl(...) {
   }
 }
 ```
+
 これにてLoginUseCaseの実装は完了です。  
+
+<details>
+<summary>LoginUseCaseの実装全体</summary>
+
+```Kotlin
+internal class LoginUseCaseImpl(
+  private val loginService: LoginService,
+) : LoginUseCase {
+  override suspend fun execute(
+    username: Username,
+    password: Password
+  ): LoginUseCaseResult {
+    try {
+      if (username.value.isBlank()) return LoginUseCaseResult.Failure.EmptyUsername
+      if (password.value.isBlank()) return LoginUseCaseResult.Failure.EmptyPassword
+
+      if (!password.validate()) return LoginUseCaseResult.Failure.InvalidPassword
+      loginService.execute(username, password)
+
+      return LoginUseCaseResult.Success
+    } catch (e: Exception) {
+      return LoginUseCaseResult.Failure.OtherError(e)
+    }
+  }
+}
+```
+
+</details>
+
+---
 
 ### LoginUseCaseImplの単体テスト
 `LoginUseCaseImpl`にも単体テストを書いてみましょう。  
 UseCaseには成功以外にも失敗ケースも定義していますので、そのテストも記述しましょう。  
+テストの実装が完了したら次のテスト例を参考に抜けているテストがないか確認して、`LoginUseCaseImpl`の処理に問題ないか検証しましょう。  
 
 <details>
 <summary>LoginUseCaseImplのテスト例</summary>

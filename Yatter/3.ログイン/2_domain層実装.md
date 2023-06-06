@@ -8,11 +8,11 @@
 クラス図では次の箇所にあたります。  
 ![login_class_domain](../image/3/login_class_domain.png)
 
-## Passwordドメイン実装
-
 Passwordドメインモデルでは、パスワード文字列を保持しバリデーションチェックを行います。  
 
 LoginServiceドメインサービスでは、ユーザー名とパスワードが問題ないか確認しログイン処理を行います。  
+
+## Passwordドメイン実装
 
 まずは、`Password`ドメインモデルの定義をします。  
 
@@ -41,19 +41,23 @@ data class Password(...) {
 続いて、`大文字`・`小文字`・`記号`・`文字数`をチェックするプライベートメソッドを用意しバリデーションチェックをします。  
 
 ```Kotlin
-fun validate(): Boolean = value.isNotEmpty() &&
-  hasUpperCase() &&
-  hasLowerCase() &&
-  hasSymbol() &&
-  hasMinLength()
+data class Password(...) {
+  companion object {...}
 
-private fun hasUpperCase(): Boolean = value.toCharArray().any { it.isUpperCase() }
+  fun validate(): Boolean = value.isNotEmpty() &&
+    hasUpperCase() &&
+    hasLowerCase() &&
+    hasSymbol() &&
+    hasMinLength()
 
-private fun hasLowerCase(): Boolean = value.toCharArray().any { it.isLowerCase() }
+  private fun hasUpperCase(): Boolean = value.toCharArray().any { it.isUpperCase() }
 
-private fun hasSymbol(): Boolean = value.toCharArray().any { SYMBOLS.contains(it) }
+  private fun hasLowerCase(): Boolean = value.toCharArray().any { it.isLowerCase() }
 
-private fun hasMinLength(): Boolean = value.length >= MIN_LENGTH
+  private fun hasSymbol(): Boolean = value.toCharArray().any { SYMBOLS.contains(it) }
+
+  private fun hasMinLength(): Boolean = value.length >= MIN_LENGTH
+}
 ```
 
 これで`Password`ドメインモデルの実装が完了しました。  
@@ -62,11 +66,11 @@ private fun hasMinLength(): Boolean = value.length >= MIN_LENGTH
 
 いくつかのケースに応じて`validate`の結果が正しくなるか確認しましょう。  
 
-- abc: false
-- abcdefghi: false
-- Abcdefghi: false
-- Abcdefghi10: false
-- Abcdefghi10%: true
+- abc → false
+- abcdefghi → false
+- Abcdefghi → false
+- Abcdefghi10 → false
+- Abcdefghi10% → true
 - etc...
 
 例として5つのケースを挙げましたが、きちんとロジックを確認するには2^4ケース分必要になります。  
