@@ -299,6 +299,9 @@ interface YatterApi {
 ```Kotlin
 class YatterApiFactory {
   fun create(): YatterApi {
+    val moshi = Moshi.Builder()
+      .add(KotlinJsonAdapterFactory())
+      .build()
     return Retrofit.Builder()
       .baseUrl("http://10.0.2.2:8080/v1/")
       .client(
@@ -310,7 +313,7 @@ class YatterApiFactory {
           )
           .build()
       )
-      .addConverterFactory(MoshiConverterFactory.create())
+      .addConverterFactory(MoshiConverterFactory.create(moshi))
       .addCallAdapterFactory(CoroutineCallAdapterFactory())
       .build()
       .create(YatterApi::class.java)
