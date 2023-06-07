@@ -486,8 +486,11 @@ startActivity(${遷移したいActivityのクラス}.newIntent(this))
 ---
 
 `PublitTimelineActivity`内で先ほど実装したViewModelをインスタンス化します。  
+インスタンス化するときはimportする内容に気をつけてください。  
 
 ```Kotlin
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
 internal class PublicTimelineActivity : AppCompatActivity() {
   companion object {...}
   ...
