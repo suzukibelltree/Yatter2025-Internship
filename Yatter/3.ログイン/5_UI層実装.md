@@ -431,6 +431,19 @@ override fun onCreate(savedInstanceState: Bundle?) {
 }
 ```
 
+`LoginActivity`の用意ができたら`AndroidManifest.xml`へのActivityの定義も忘れずに行いましょう。  
+
+```XML
+<application ...>
+  <activity .../>
+
+  <activity
+      android:name=".ui.login.LoginActivity"
+      android:exported="false" />
+</application>
+
+```
+
 これでログイン処理が完了するととパブリックタイムライン画面に遷移することができるようになりました。  
 
 ### Composeの実装
