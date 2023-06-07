@@ -97,7 +97,7 @@ internal class LoginUseCaseImpl(
 
 executeメソッドの実装を進めます。  
 `username`、`password`が空文字であった場合の結果を返却します。  
-`IllegalArgumentException`を使って処理に渡されて引数に問題があることを表現し、さらに引数に問題の詳細を記載しています。  
+ユーザー名とパスワードが空の状態でUseCaseに渡されたことを`LoginUserCaseResult.Failure`の適した値を返却することで表現しています。  
 
 ```Kotlin
 override suspend fun execute(...): LoginUseCaseResult {
