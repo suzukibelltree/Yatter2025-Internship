@@ -337,7 +337,14 @@ buildTypes {
 ```
 
 buildTypesには`debug`と`release`が用意されており、そこに`API_URL`を定義しています。現状では`debug`も`release`も同じ`http://10.0.2.2:8080/`を指定していますが、本番環境用のURLができたら変更しましょう。  
-書き換えた後は一度プロジェクトをビルドします。ビルドすることによって`Build Type`に指定した設定値をコードから利用することができます。  
+書き換えた後は一度プロジェクトを`Gradle Sync`とビルドをします。そうするすることによって`Build Type`に指定した設定値が`BuildConfig`という生成クラスに生成され、コードから利用することができます。  
+
+![sync_and_build](../image/2/sync_and_build.png)
+
+`Gradle Sync`に関して少し補足をします。  
+Androidアプリ開発では`build.gradle`のようなgradleのファイルに利用するライブラリやバージョン、build Typeといったプロジェクト全体の設定を記述して利用するケースが多いです。  
+そのgradleファイルに記述した設定を反映させる処理が`Gradle Sync`となっています。  
+そのため、gradleファイルを編集したら`Gradly Sync`が必要なんだなと理解していただければ問題ありません。  
 
 ビルドが完了したらFactoryクラスの修正を行います。  
 
