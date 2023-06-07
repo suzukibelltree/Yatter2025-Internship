@@ -79,16 +79,17 @@ interface AccountRepository {
 
 ツイート処理は`StatusRepository`にメソッドを追加して実装します。  
 
-ツイート処理専用の`DomainService`を作ることも可能ですが、Statusを`StatusRepository`で集約することによりキャッシュを有効活用したりRepositoryパターンの概念としても合っていたりするため、`StatusRepository#create`を定義します。  
+ツイート処理専用の`DomainService`を作ることも可能ですが、Statusを`StatusRepository`で集約することによりキャッシュを有効活用したりRepositoryパターンの概念としても合っていたりするため、`StatusRepository#create`で実施します。  
 
-`StatusRepository`に次のメソッドを追加します。  
-`Status`を投稿(=新規作成)するため、`create`というメソッド名にします。  
+`StatusRepository`インターフェースを確認し、`create`メソッドが定義されていない場合は次のメソッドを追加します。  
+`Status`を投稿(=新規作成)するため、`create`というメソッド名にしています。  
 
 ```Kotlin
 interface StatusRepository {
   ...
   suspend fun create(
     status: String,
+    attachmentList: List<File>
   ): Status
 }
 ```
