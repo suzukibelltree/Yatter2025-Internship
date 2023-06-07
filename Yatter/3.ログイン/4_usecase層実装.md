@@ -184,7 +184,7 @@ internal class LoginUseCaseImpl(
 ### LoginUseCaseImplの単体テスト
 `LoginUseCaseImpl`にも単体テストを書いてみましょう。  
 UseCaseには成功以外にも失敗ケースも定義していますので、そのテストも記述しましょう。  
-テストの実装が完了したら次のテスト例を参考に抜けているテストがないか確認して、`LoginUseCaseImpl`の処理に問題ないか検証しましょう。  
+テストの実装が完了したら次のテスト例を参考に抜けているテストがないか確認して、`LoginUseCaseImpl`の処理に問題ないか検証します。  
 
 <details>
 <summary>LoginUseCaseImplのテスト例</summary>

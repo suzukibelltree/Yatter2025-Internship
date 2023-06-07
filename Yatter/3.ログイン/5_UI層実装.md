@@ -87,7 +87,7 @@ internal class LoginViewModel(
 まずは、`UiState`を`StateFlow`としてViewModel内で保持します。  
 
 ```Kotlin
-internal class LoginViewModel(...) {
+internal class LoginViewModel(...) : ViewModel() {
   private val _uiState: MutableStateFlow<LoginUiState> = MutableStateFlow(LoginUiState.empty())
   val uiState: StateFlow<LoginUiState> = _uiState
 }
@@ -580,6 +580,7 @@ fun LoginTemplate(...) {
           text = "ユーザー名"
         )
         OutlinedTextField(
+          singleLine = true,
           modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 16.dp),
@@ -595,6 +596,7 @@ fun LoginTemplate(...) {
           text = "パスワード"
         )
         OutlinedTextField(
+          singleLine = true,
           modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 16.dp),
