@@ -11,14 +11,16 @@
 package com.dmm.bootcamp.yatter2023.domain
 
 abstract class Me(
+  id: AccountId,
   username: Username,
   displayName: String?,
   note: String?,
-  avatar: URL?,
-  header: URL?,
+  avatar: URL,
+  header: URL,
   followingCount: Int,
   followerCount: Int,
 ) : Account(
+  id,
   username,
   displayName,
   note,
@@ -32,6 +34,7 @@ abstract class Me(
 
   abstract suspend fun unfollow(username: Username)
 }
+
 ```
 
 続いてDomainServiceの実装を行います。  
