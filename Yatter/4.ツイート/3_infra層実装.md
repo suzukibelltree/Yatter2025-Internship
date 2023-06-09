@@ -68,7 +68,7 @@ object MeConverter {
 必要な引数と`impl`クラスの定義を`infra/domain/repository`に追加します。  
 
 ```Kotlin
-class AccountRepositoryImpl constructor(
+class AccountRepositoryImpl(
   private val yatterApi: YatterApi,
   private val mePreferences: MePreferences
 ) : AccountRepository {
@@ -77,7 +77,7 @@ class AccountRepositoryImpl constructor(
 必要なメソッドをオーバーライドします。  
 
 ```Kotlin
-class AccountRepositoryImpl constructor(
+class AccountRepositoryImpl(
   private val yatterApi: YatterApi,
   private val mePreferences: MePreferences
 ) : AccountRepository {
