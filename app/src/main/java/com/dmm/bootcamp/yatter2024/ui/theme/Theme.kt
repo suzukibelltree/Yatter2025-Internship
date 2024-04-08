@@ -17,7 +17,7 @@ private val lightColorScheme = lightColors(
 )
 
 @Composable
-fun yatter2024Theme(
+fun Yatter2024Theme(
   darkTheme: Boolean = isSystemInDarkTheme(),
   content: @Composable () -> Unit
 ) {

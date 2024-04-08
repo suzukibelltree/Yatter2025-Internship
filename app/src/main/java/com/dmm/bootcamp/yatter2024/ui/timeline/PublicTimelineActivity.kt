@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.Surface
 import com.dmm.bootcamp.yatter2024.ui.post.PostActivity
 import com.dmm.bootcamp.yatter2024.ui.profile.ProfileActivity
-import com.dmm.bootcamp.yatter2024.ui.theme.yatter2024Theme
+import com.dmm.bootcamp.yatter2024.ui.theme.Yatter2024Theme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 internal class PublicTimelineActivity : AppCompatActivity() {
@@ -25,7 +25,7 @@ internal class PublicTimelineActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
 
     setContent {
-      yatter2024Theme {
+      Yatter2024Theme {
         Surface {
           PublicTimelinePage(viewModel = viewModel)
         }

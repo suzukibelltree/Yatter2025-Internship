@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.Surface
-import com.dmm.bootcamp.yatter2024.ui.theme.yatter2024Theme
+import com.dmm.bootcamp.yatter2024.ui.theme.Yatter2024Theme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -36,7 +36,7 @@ class ProfileActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
 
     setContent {
-      yatter2024Theme {
+      Yatter2024Theme {
         Surface {
           ProfilePage(viewModel = viewModel)
         }

@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.dmm.bootcamp.yatter2024.ui.bindingmodel.StatusBindingModel
-import com.dmm.bootcamp.yatter2024.ui.theme.yatter2024Theme
+import com.dmm.bootcamp.yatter2024.ui.theme.Yatter2024Theme
 
 @Composable
 internal fun StatusRow(
@@ -72,7 +72,7 @@ internal fun StatusRow(
 @Preview
 @Composable
 private fun StatusRowPreview() {
-  yatter2024Theme {
+  Yatter2024Theme {
     Surface {
       StatusRow(
         statusBindingModel = StatusBindingModel(

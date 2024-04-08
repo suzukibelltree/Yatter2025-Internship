@@ -9,7 +9,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import com.dmm.bootcamp.yatter2024.ui.login.LoginActivity
-import com.dmm.bootcamp.yatter2024.ui.theme.yatter2024Theme
+import com.dmm.bootcamp.yatter2024.ui.theme.Yatter2024Theme
 import com.dmm.bootcamp.yatter2024.ui.timeline.PublicTimelineActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent {
-      yatter2024Theme {
+      Yatter2024Theme {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
         }

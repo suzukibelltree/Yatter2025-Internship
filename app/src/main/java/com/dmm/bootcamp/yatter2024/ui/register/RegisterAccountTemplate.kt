@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.dmm.bootcamp.yatter2024.ui.theme.yatter2024Theme
+import com.dmm.bootcamp.yatter2024.ui.theme.Yatter2024Theme
 
 @Composable
 fun RegisterAccountTemplate(
@@ -114,7 +114,7 @@ fun RegisterAccountTemplate(
 @Preview
 @Composable
 fun RegisterAccountTemplatePreview() {
-  yatter2024Theme {
+  Yatter2024Theme {
     RegisterAccountTemplate(
       userName = "username",
       onChangedUserName = {},

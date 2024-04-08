@@ -27,7 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.dmm.bootcamp.yatter2024.ui.theme.yatter2024Theme
+import com.dmm.bootcamp.yatter2024.ui.theme.Yatter2024Theme
 
 @Composable
 fun PostTemplate(
@@ -110,7 +110,7 @@ fun PostTemplate(
 @Preview
 @Composable
 fun PostTemplatePreview() {
-  yatter2024Theme {
+  Yatter2024Theme {
     Surface {
       PostTemplate(
         postBindingModel = PostBindingModel(

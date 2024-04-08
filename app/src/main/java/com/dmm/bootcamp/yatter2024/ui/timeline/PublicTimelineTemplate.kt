@@ -28,7 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dmm.bootcamp.yatter2024.ui.bindingmodel.StatusBindingModel
 import com.dmm.bootcamp.yatter2024.ui.component.StatusRow
-import com.dmm.bootcamp.yatter2024.ui.theme.yatter2024Theme
+import com.dmm.bootcamp.yatter2024.ui.theme.Yatter2024Theme
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -98,7 +98,7 @@ internal fun PublicTimelineTemplate(
 @Preview
 @Composable
 fun PublicTimelineTemplatePreview() {
-  yatter2024Theme {
+  Yatter2024Theme {
     Surface {
       PublicTimelineTemplate(
         statusList = listOf(
