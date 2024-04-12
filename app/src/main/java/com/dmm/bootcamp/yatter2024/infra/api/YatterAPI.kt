@@ -3,6 +3,8 @@ package com.dmm.bootcamp.yatter2024.infra.api
 import com.dmm.bootcamp.yatter2024.infra.api.json.AccountJson
 import com.dmm.bootcamp.yatter2024.infra.api.json.CreateAccountJson
 import com.dmm.bootcamp.yatter2024.infra.api.json.FollowAccountJson
+import com.dmm.bootcamp.yatter2024.infra.api.json.LoginRequestBodyJson
+import com.dmm.bootcamp.yatter2024.infra.api.json.LoginResponseJson
 import com.dmm.bootcamp.yatter2024.infra.api.json.PostStatusJson
 import com.dmm.bootcamp.yatter2024.infra.api.json.StatusJson
 import kotlinx.coroutines.Deferred
@@ -14,6 +16,11 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface YatterApi {
+
+  @GET("auth/login")
+  suspend fun login(
+    @Body requestBody: LoginRequestBodyJson,
+  ): LoginResponseJson
 
   @GET("timelines/home")
   suspend fun getHomeTimeline(
