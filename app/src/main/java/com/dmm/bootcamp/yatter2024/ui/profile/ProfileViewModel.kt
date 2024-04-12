@@ -1,6 +1,5 @@
 package com.dmm.bootcamp.yatter2024.ui.profile
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dmm.bootcamp.yatter2024.domain.model.Me
@@ -10,9 +9,11 @@ import com.dmm.bootcamp.yatter2024.domain.repository.StatusRepository
 import com.dmm.bootcamp.yatter2024.domain.service.GetMeService
 import com.dmm.bootcamp.yatter2024.ui.bindingmodel.converter.AccountBindingModelConverter
 import com.dmm.bootcamp.yatter2024.ui.bindingmodel.converter.StatusConverter
-import com.dmm.bootcamp.yatter2024.util.SingleLiveEvent
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -25,8 +26,8 @@ class ProfileViewModel(
   private val _uiState: MutableStateFlow<ProfileUiState> = MutableStateFlow(ProfileUiState.empty())
   val uiState: StateFlow<ProfileUiState> = _uiState
 
-  private val _goBack: SingleLiveEvent<Unit> = SingleLiveEvent()
-  val goBack: LiveData<Unit> = _goBack
+  private val _goBack = MutableSharedFlow<Unit>()
+  val goBack: SharedFlow<Unit> = _goBack.asSharedFlow()
 
   init {
     viewModelScope.launch {
@@ -74,6 +75,6 @@ class ProfileViewModel(
   }
 
   fun onClickNavIcon() {
-    _goBack.value = Unit
+    _goBack.tryEmit(Unit)
   }
 }

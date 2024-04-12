@@ -1,13 +1,17 @@
 package com.dmm.bootcamp.yatter2024.ui.timeline
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dmm.bootcamp.yatter2024.common.navigation.Destination
 import com.dmm.bootcamp.yatter2024.domain.repository.StatusRepository
 import com.dmm.bootcamp.yatter2024.ui.bindingmodel.converter.StatusConverter
-import com.dmm.bootcamp.yatter2024.util.SingleLiveEvent
+import com.dmm.bootcamp.yatter2024.ui.post.PostDestination
+import com.dmm.bootcamp.yatter2024.ui.profile.ProfileDestination
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -18,11 +22,8 @@ internal class PublicTimelineViewModel(
     MutableStateFlow(PublicTimelineUiState.empty())
   val uiState: StateFlow<PublicTimelineUiState> = _uiState
 
-  private val _navigateToPost: SingleLiveEvent<Unit> = SingleLiveEvent()
-  val navigateToPost: LiveData<Unit> = _navigateToPost
-
-  private val _navigateToMyProfile: SingleLiveEvent<Unit> = SingleLiveEvent()
-  val navigateToMyProfile: LiveData<Unit> = _navigateToMyProfile
+  private val _destination = MutableSharedFlow<Destination>()
+  val destination: SharedFlow<Destination> = _destination.asSharedFlow()
 
   fun onResume() {
     viewModelScope.launch {
@@ -33,7 +34,7 @@ internal class PublicTimelineViewModel(
   }
 
   fun onClickPost() {
-    _navigateToPost.value = Unit
+    _destination.tryEmit(PostDestination())
   }
 
   fun onRefresh() {
@@ -45,7 +46,7 @@ internal class PublicTimelineViewModel(
   }
 
   fun onClickProfile() {
-    _navigateToMyProfile.value = Unit
+    _destination.tryEmit(ProfileDestination(null))
   }
 
   private suspend fun fetchPublicTimeline() {

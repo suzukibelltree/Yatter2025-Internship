@@ -1,15 +1,19 @@
 package com.dmm.bootcamp.yatter2024.ui.login
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dmm.bootcamp.yatter2024.common.navigation.Destination
 import com.dmm.bootcamp.yatter2024.domain.model.Password
 import com.dmm.bootcamp.yatter2024.domain.model.Username
+import com.dmm.bootcamp.yatter2024.ui.register.RegisterAccountDestination
+import com.dmm.bootcamp.yatter2024.ui.timeline.PublicTimelineDestination
 import com.dmm.bootcamp.yatter2024.usecase.login.LoginUseCase
 import com.dmm.bootcamp.yatter2024.usecase.login.LoginUseCaseResult
-import com.dmm.bootcamp.yatter2024.util.SingleLiveEvent
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -19,11 +23,8 @@ internal class LoginViewModel(
   private val _uiState: MutableStateFlow<LoginUiState> = MutableStateFlow(LoginUiState.empty())
   val uiState: StateFlow<LoginUiState> = _uiState
 
-  private val _navigateToPublicTimeline: SingleLiveEvent<Unit> = SingleLiveEvent()
-  val navigateToPublicTimeline: LiveData<Unit> = _navigateToPublicTimeline
-
-  private val _navigateToRegister: SingleLiveEvent<Unit> = SingleLiveEvent()
-  val navigateToRegister: LiveData<Unit> = _navigateToRegister
+  private val _destination = MutableSharedFlow<Destination>()
+  val destination: SharedFlow<Destination> = _destination.asSharedFlow()
 
   fun onChangedUsername(username: String) {
     val snapshotBindingModel = uiState.value.loginBindingModel
@@ -62,7 +63,7 @@ internal class LoginViewModel(
           )
       ) {
         is LoginUseCaseResult.Success -> {
-          _navigateToPublicTimeline.value = Unit
+          _destination.tryEmit(PublicTimelineDestination())
         }
 
         is LoginUseCaseResult.Failure -> {
@@ -76,6 +77,6 @@ internal class LoginViewModel(
   }
 
   fun onClickRegister() {
-    _navigateToRegister.value = Unit
+    _destination.tryEmit(RegisterAccountDestination())
   }
 }
