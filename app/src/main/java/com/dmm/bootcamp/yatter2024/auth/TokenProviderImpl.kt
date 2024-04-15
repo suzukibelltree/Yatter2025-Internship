@@ -2,10 +2,10 @@ package com.dmm.bootcamp.yatter2024.auth
 
 import android.accounts.AuthenticatorException
 import com.dmm.bootcamp.yatter2024.domain.service.GetMeService
+import com.dmm.bootcamp.yatter2024.infra.pref.TokenPreferences
 
-class TokenProviderImpl(private val getMeService: GetMeService) : TokenProvider {
+class TokenProviderImpl(private val tokenPreferences: TokenPreferences) : TokenProvider {
   override suspend fun provide(): String {
-    val me = getMeService.execute()
-    return me?.username?.value?.let { "username $it" } ?: throw AuthenticatorException()
+    return tokenPreferences.getAccessToken()?.let { "username $it" } ?: throw AuthenticatorException()
   }
 }
