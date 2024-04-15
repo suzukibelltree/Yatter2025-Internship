@@ -3,16 +3,26 @@ package com.dmm.bootcamp.yatter2024.infra.domain.service
 import com.dmm.bootcamp.yatter2024.domain.model.Password
 import com.dmm.bootcamp.yatter2024.domain.model.Username
 import com.dmm.bootcamp.yatter2024.domain.service.LoginService
-import com.dmm.bootcamp.yatter2024.infra.pref.MePreferences
+import com.dmm.bootcamp.yatter2024.infra.api.YatterApi
+import com.dmm.bootcamp.yatter2024.infra.api.json.LoginRequestBodyJson
+import com.dmm.bootcamp.yatter2024.infra.pref.TokenPreferences
 
 class LoginServiceImpl(
-  private val mePreferences: MePreferences
+  private val yatterApi: YatterApi,
+  private val tokenPreferences: TokenPreferences,
 ) : LoginService {
 
   override suspend fun execute(
     username: Username,
-    password: Password
+    password: Password,
   ) {
-    mePreferences.putUserName(username.value)
+    val response = yatterApi.login(
+      LoginRequestBodyJson(
+        username.value,
+        password.value,
+      )
+    )
+
+    tokenPreferences.putAccessToken(response.username)
   }
 }

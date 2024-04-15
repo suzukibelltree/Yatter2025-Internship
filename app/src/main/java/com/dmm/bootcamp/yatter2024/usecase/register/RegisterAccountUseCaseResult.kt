@@ -6,5 +6,7 @@ sealed class RegisterAccountUseCaseResult {
     object EmptyUsername : Failure()
     object EmptyPassword : Failure()
     object InvalidPassword : Failure()
+    data class CreateAccountError(val throwable: Throwable) : Failure()
+    data class LoginError(val throwable: Throwable) : Failure()
   }
 }
