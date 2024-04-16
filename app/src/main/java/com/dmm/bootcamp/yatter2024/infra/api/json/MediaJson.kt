@@ -1,7 +1,9 @@
 package com.dmm.bootcamp.yatter2024.infra.api.json
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class MediaJson(
   @Json(name = "id") val id: String,
   @Json(name = "type") val type: String,
