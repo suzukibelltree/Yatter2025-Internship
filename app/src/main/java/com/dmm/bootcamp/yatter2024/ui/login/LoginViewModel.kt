@@ -9,11 +9,9 @@ import com.dmm.bootcamp.yatter2024.ui.register.RegisterAccountDestination
 import com.dmm.bootcamp.yatter2024.ui.timeline.PublicTimelineDestination
 import com.dmm.bootcamp.yatter2024.usecase.login.LoginUseCase
 import com.dmm.bootcamp.yatter2024.usecase.login.LoginUseCaseResult
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -23,8 +21,8 @@ internal class LoginViewModel(
   private val _uiState: MutableStateFlow<LoginUiState> = MutableStateFlow(LoginUiState.empty())
   val uiState: StateFlow<LoginUiState> = _uiState
 
-  private val _destination = MutableSharedFlow<Destination>()
-  val destination: SharedFlow<Destination> = _destination.asSharedFlow()
+  private val _destination = MutableStateFlow<Destination?>(null)
+  val destination: StateFlow<Destination?> = _destination.asStateFlow()
 
   fun onChangedUsername(username: String) {
     val snapshotBindingModel = uiState.value.loginBindingModel
@@ -63,7 +61,9 @@ internal class LoginViewModel(
           )
       ) {
         is LoginUseCaseResult.Success -> {
-          _destination.tryEmit(PublicTimelineDestination())
+          _destination.value = PublicTimelineDestination {
+            launchSingleTop = true
+          }
         }
 
         is LoginUseCaseResult.Failure -> {
@@ -77,6 +77,10 @@ internal class LoginViewModel(
   }
 
   fun onClickRegister() {
-    _destination.tryEmit(RegisterAccountDestination())
+    _destination.value = RegisterAccountDestination()
+  }
+
+  fun completeNavigation() {
+    _destination.value = null
   }
 }

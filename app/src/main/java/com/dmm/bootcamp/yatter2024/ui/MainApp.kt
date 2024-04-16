@@ -2,6 +2,7 @@ package com.dmm.bootcamp.yatter2024.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -15,6 +16,7 @@ import com.dmm.bootcamp.yatter2024.ui.post.PostDestination
 import com.dmm.bootcamp.yatter2024.ui.profile.ProfileDestination
 import com.dmm.bootcamp.yatter2024.ui.register.RegisterAccountDestination
 import com.dmm.bootcamp.yatter2024.ui.timeline.PublicTimelineDestination
+import org.koin.androidx.compose.getViewModel
 
 val LocalNavController = compositionLocalOf<NavController> {
   error("Not set a NavController!")
@@ -22,10 +24,10 @@ val LocalNavController = compositionLocalOf<NavController> {
 
 @Composable
 fun MainApp(
-  viewModel: MainViewModel,
+  viewModel: MainViewModel = getViewModel(),
 ) {
   val navController = rememberNavController()
-  val startDestination = viewModel.destination.collectAsStateWithLifecycle(null).value
+  val startDestination = viewModel.destination.collectAsState(initial = null).value
   LifecycleEventEffect(
     event = Lifecycle.Event.ON_CREATE,
   ) {

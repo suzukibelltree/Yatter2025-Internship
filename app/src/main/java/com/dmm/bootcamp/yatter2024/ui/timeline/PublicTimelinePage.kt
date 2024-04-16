@@ -16,14 +16,13 @@ internal fun PublicTimelinePage(
   viewModel: PublicTimelineViewModel = getViewModel(),
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+  val destination by viewModel.destination.collectAsStateWithLifecycle()
   val navController = LocalNavController.current
-  val lifecycleOwner = LocalLifecycleOwner.current
-  LaunchedEffect(viewModel, lifecycleOwner) {
-    viewModel.destination
-      .flowWithLifecycle(lifecycleOwner.lifecycle)
-      .collect {
-        it.navigate(navController)
-      }
+  LaunchedEffect(destination) {
+    destination?.let {
+      it.navigate(navController)
+      viewModel.completeNavigation()
+    }
   }
   LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {
     viewModel.onResume()

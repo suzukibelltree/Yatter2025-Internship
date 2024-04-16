@@ -7,11 +7,9 @@ import com.dmm.bootcamp.yatter2024.common.navigation.PopBackDestination
 import com.dmm.bootcamp.yatter2024.domain.service.GetMeService
 import com.dmm.bootcamp.yatter2024.usecase.post.PostStatusUseCase
 import com.dmm.bootcamp.yatter2024.usecase.post.PostStatusUseCaseResult
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -22,8 +20,8 @@ class PostViewModel(
   private val _uiState: MutableStateFlow<PostUiState> = MutableStateFlow(PostUiState.empty())
   val uiState: StateFlow<PostUiState> = _uiState
 
-  private val _destination = MutableSharedFlow<Destination>()
-  val destination: SharedFlow<Destination> = _destination.asSharedFlow()
+  private val _destination = MutableStateFlow<Destination?>(null)
+  val destination: StateFlow<Destination?> = _destination.asStateFlow()
 
   fun onCreate() {
     viewModelScope.launch {
@@ -55,7 +53,7 @@ class PostViewModel(
       )
       when (result) {
         PostStatusUseCaseResult.Success -> {
-          _destination.tryEmit(PopBackDestination)
+          _destination.value = PopBackDestination
         }
 
         is PostStatusUseCaseResult.Failure -> {
@@ -67,6 +65,10 @@ class PostViewModel(
   }
 
   fun onClickNavIcon() {
-    _destination.tryEmit(PopBackDestination)
+    _destination.value = PopBackDestination
+  }
+
+  fun completeNavigation() {
+    _destination.value = null
   }
 }

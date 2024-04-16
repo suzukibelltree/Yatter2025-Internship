@@ -7,11 +7,9 @@ import com.dmm.bootcamp.yatter2024.domain.repository.StatusRepository
 import com.dmm.bootcamp.yatter2024.ui.bindingmodel.converter.StatusConverter
 import com.dmm.bootcamp.yatter2024.ui.post.PostDestination
 import com.dmm.bootcamp.yatter2024.ui.profile.ProfileDestination
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -22,8 +20,8 @@ internal class PublicTimelineViewModel(
     MutableStateFlow(PublicTimelineUiState.empty())
   val uiState: StateFlow<PublicTimelineUiState> = _uiState
 
-  private val _destination = MutableSharedFlow<Destination>()
-  val destination: SharedFlow<Destination> = _destination.asSharedFlow()
+  private val _destination = MutableStateFlow<Destination?>(null)
+  val destination: StateFlow<Destination?> = _destination.asStateFlow()
 
   fun onResume() {
     viewModelScope.launch {
@@ -34,7 +32,7 @@ internal class PublicTimelineViewModel(
   }
 
   fun onClickPost() {
-    _destination.tryEmit(PostDestination())
+    _destination.value = PostDestination()
   }
 
   fun onRefresh() {
@@ -46,7 +44,7 @@ internal class PublicTimelineViewModel(
   }
 
   fun onClickProfile() {
-    _destination.tryEmit(ProfileDestination(null))
+    _destination.value = ProfileDestination(null)
   }
 
   private suspend fun fetchPublicTimeline() {
@@ -56,5 +54,9 @@ internal class PublicTimelineViewModel(
         statusList = StatusConverter.convertToBindingModel(statusList),
       )
     }
+  }
+
+  fun completeNavigation() {
+    _destination.value = null
   }
 }

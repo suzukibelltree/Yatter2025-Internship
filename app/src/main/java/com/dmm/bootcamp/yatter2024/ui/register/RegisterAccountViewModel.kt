@@ -7,11 +7,9 @@ import com.dmm.bootcamp.yatter2024.ui.login.LoginDestination
 import com.dmm.bootcamp.yatter2024.ui.timeline.PublicTimelineDestination
 import com.dmm.bootcamp.yatter2024.usecase.register.RegisterAccountUseCase
 import com.dmm.bootcamp.yatter2024.usecase.register.RegisterAccountUseCaseResult
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -22,8 +20,8 @@ class RegisterAccountViewModel(
     MutableStateFlow(RegisterAccountUiState.empty())
   val uiState: StateFlow<RegisterAccountUiState> = _uiState
 
-  private val _destination = MutableSharedFlow<Destination>()
-  val destination: SharedFlow<Destination> = _destination.asSharedFlow()
+  private val _destination = MutableStateFlow<Destination?>(null)
+  val destination: StateFlow<Destination?> = _destination.asStateFlow()
 
   fun onClickRegister() {
     viewModelScope.launch {
@@ -36,7 +34,9 @@ class RegisterAccountViewModel(
           registerAccountUseCase.execute(snapBindingModel.userName, snapBindingModel.password)
       ) {
         is RegisterAccountUseCaseResult.Success -> {
-          _destination.emit(PublicTimelineDestination())
+          _destination.value = PublicTimelineDestination {
+            launchSingleTop = true
+          }
         }
 
         is RegisterAccountUseCaseResult.Failure -> {
@@ -49,7 +49,7 @@ class RegisterAccountViewModel(
   }
 
   fun onClickLogin() {
-    _destination.tryEmit(LoginDestination())
+    _destination.value = LoginDestination()
   }
 
   fun onChangedUserName(userName: String) {
@@ -60,5 +60,9 @@ class RegisterAccountViewModel(
   fun onChangedPassword(password: String) {
     val snapBindingModel = uiState.value.bindingModel
     _uiState.update { it.copy(bindingModel = snapBindingModel.copy(password = password)) }
+  }
+
+  fun completeNavigation() {
+    _destination.value = null
   }
 }
