@@ -17,7 +17,7 @@ import retrofit2.http.Query
 
 interface YatterApi {
 
-  @GET("auth/login")
+  @POST("auth/login")
   suspend fun login(
     @Body requestBody: LoginRequestBodyJson,
   ): LoginResponseJson
