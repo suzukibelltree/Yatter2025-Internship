@@ -4,5 +4,5 @@ data class MediaBindingModel(
   val id: String,
   val type: String,
   val url: String,
-  val description: String,
+  val description: String?,
 )
