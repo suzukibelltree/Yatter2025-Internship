@@ -54,9 +54,4 @@ interface YatterApi {
     @Header("Authentication") token: String,
     @Body statusJson: PostStatusJson
   ): StatusJson
-
-  @GET("accounts/{username}/follow")
-  suspend fun followAccount(
-    @Path("username") username: String
-  ): FollowAccountJson
 }
