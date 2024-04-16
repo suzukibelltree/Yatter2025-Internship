@@ -17,7 +17,7 @@ import retrofit2.http.Query
 
 interface YatterApi {
 
-  @GET("auth/login")
+  @POST("auth/login")
   suspend fun login(
     @Body requestBody: LoginRequestBodyJson,
   ): LoginResponseJson
@@ -28,7 +28,7 @@ interface YatterApi {
     @Query("only_media") onlyMedia: Boolean = false,
     @Query("max_id") maxId: String? = null,
     @Query("since_id") sinceId: String? = null,
-    @Query("limit") limit: Int = 80
+    @Query("limit") limit: Int = 40
   ): List<StatusJson>
 
   @GET("timelines/public")
@@ -54,9 +54,4 @@ interface YatterApi {
     @Header("Authentication") token: String,
     @Body statusJson: PostStatusJson
   ): StatusJson
-
-  @GET("accounts/{username}/follow")
-  suspend fun followAccount(
-    @Path("username") username: String
-  ): FollowAccountJson
 }

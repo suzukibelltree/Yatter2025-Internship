@@ -6,5 +6,5 @@ class Media(
   id: MediaId,
   val type: String,
   val url: String,
-  val description: String,
+  val description: String?,
 ) : Entity<MediaId>(id)
