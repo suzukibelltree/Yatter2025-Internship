@@ -28,7 +28,7 @@ interface YatterApi {
     @Query("only_media") onlyMedia: Boolean = false,
     @Query("max_id") maxId: String? = null,
     @Query("since_id") sinceId: String? = null,
-    @Query("limit") limit: Int = 80
+    @Query("limit") limit: Int = 40
   ): List<StatusJson>
 
   @GET("timelines/public")
