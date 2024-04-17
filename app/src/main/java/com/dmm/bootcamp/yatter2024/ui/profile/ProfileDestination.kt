@@ -7,29 +7,31 @@ import com.dmm.bootcamp.yatter2024.common.navigation.Destination
 
 class ProfileDestination(
   private val username: String?
-) : Destination(route) {
+) : Destination(ROUTE) {
   override fun buildRoute(): String {
     return buildString {
-      append("profile")
+      append(ROUTE_PATH)
       if (username != null) {
-        append("?username=$username")
+        append("?$KEY_USERNAME=$username")
       }
     }
   }
 
   companion object {
-    private const val route = "profile?username={username}"
+    private const val ROUTE_PATH = "profile"
+    private const val KEY_USERNAME = "username"
+    private const val ROUTE = "$ROUTE_PATH?$KEY_USERNAME={$KEY_USERNAME}"
 
     fun createNode(builder: NavGraphBuilder) {
       builder.composable(
-        route = route,
+        route = ROUTE,
         arguments = listOf(
-          navArgument("username") {
+          navArgument(KEY_USERNAME) {
             nullable = true
           },
         ),
       ) { backStackEntry ->
-        val username = backStackEntry.arguments?.getString("username")
+        val username = backStackEntry.arguments?.getString(KEY_USERNAME)
         ProfilePage(username)
       }
     }

@@ -4,12 +4,12 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.dmm.bootcamp.yatter2024.common.navigation.Destination
 
-class RegisterAccountDestination : Destination(route) {
+class RegisterAccountDestination : Destination(ROUTE) {
   companion object {
-    private const val route = "registerAccount"
+    private const val ROUTE = "registerAccount"
 
     fun createNode(builder: NavGraphBuilder) {
-      builder.composable(route) {
+      builder.composable(ROUTE) {
         RegisterAccountPage()
       }
     }

@@ -7,12 +7,12 @@ import com.dmm.bootcamp.yatter2024.common.navigation.Destination
 
 class PublicTimelineDestination(
   builder: (NavOptionsBuilder.() -> Unit)? = null,
-) : Destination(route, builder) {
+) : Destination(ROUTE, builder) {
   companion object {
-    private const val route = "publicTimeline"
+    private const val ROUTE = "publicTimeline"
 
     fun createNode(builder: NavGraphBuilder) {
-      builder.composable(route) {
+      builder.composable(ROUTE) {
         PublicTimelinePage()
       }
     }
