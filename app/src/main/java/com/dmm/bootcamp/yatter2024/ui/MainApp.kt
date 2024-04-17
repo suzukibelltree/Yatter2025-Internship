@@ -6,7 +6,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
@@ -27,7 +26,7 @@ fun MainApp(
   viewModel: MainViewModel = getViewModel(),
 ) {
   val navController = rememberNavController()
-  val startDestination = viewModel.destination.collectAsState(initial = null).value
+  val startDestination = viewModel.startDestination.collectAsState(initial = null).value
   LifecycleEventEffect(
     event = Lifecycle.Event.ON_CREATE,
   ) {

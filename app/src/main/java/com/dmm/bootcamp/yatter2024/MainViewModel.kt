@@ -15,15 +15,15 @@ class MainViewModel(
   private val checkLoginService: CheckLoginService,
 ) : ViewModel() {
 
-  private val _destination = MutableStateFlow<Destination?>(null)
-  val destination: StateFlow<Destination?> = _destination.asStateFlow()
+  private val _startDestination = MutableStateFlow<Destination?>(null)
+  val startDestination: StateFlow<Destination?> = _startDestination.asStateFlow()
 
   fun onCreate() {
     viewModelScope.launch {
       if (checkLoginService.execute()) {
-        _destination.value = PublicTimelineDestination()
+        _startDestination.value = PublicTimelineDestination()
       } else {
-        _destination.value = LoginDestination()
+        _startDestination.value = LoginDestination()
       }
     }
   }
