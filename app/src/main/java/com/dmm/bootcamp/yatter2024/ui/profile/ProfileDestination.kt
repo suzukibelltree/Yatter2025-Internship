@@ -1,6 +1,7 @@
 package com.dmm.bootcamp.yatter2024.ui.profile
 
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.dmm.bootcamp.yatter2024.common.navigation.Destination
@@ -28,6 +29,7 @@ class ProfileDestination(
         arguments = listOf(
           navArgument(KEY_USERNAME) {
             nullable = true
+            type = NavType.StringType
           },
         ),
       ) { backStackEntry ->
