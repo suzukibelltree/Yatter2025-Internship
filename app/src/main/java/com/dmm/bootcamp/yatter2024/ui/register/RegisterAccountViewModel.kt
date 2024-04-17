@@ -62,7 +62,7 @@ class RegisterAccountViewModel(
     _uiState.update { it.copy(bindingModel = snapBindingModel.copy(password = password)) }
   }
 
-  fun completeNavigation() {
+  fun onCompleteNavigation() {
     _destination.value = null
   }
 }

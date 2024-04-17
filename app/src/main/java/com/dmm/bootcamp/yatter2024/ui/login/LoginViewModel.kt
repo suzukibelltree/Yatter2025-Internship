@@ -80,7 +80,7 @@ internal class LoginViewModel(
     _destination.value = RegisterAccountDestination()
   }
 
-  fun completeNavigation() {
+  fun onCompleteNavigation() {
     _destination.value = null
   }
 }

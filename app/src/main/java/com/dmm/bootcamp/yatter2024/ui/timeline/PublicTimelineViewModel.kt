@@ -56,7 +56,7 @@ internal class PublicTimelineViewModel(
     }
   }
 
-  fun completeNavigation() {
+  fun onCompleteNavigation() {
     _destination.value = null
   }
 }

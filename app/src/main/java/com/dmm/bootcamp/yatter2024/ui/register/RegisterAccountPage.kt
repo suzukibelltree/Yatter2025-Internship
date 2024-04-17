@@ -18,7 +18,7 @@ fun RegisterAccountPage(
   LaunchedEffect(destination) {
     destination?.let {
       it.navigate(navController)
-      viewModel.completeNavigation()
+      viewModel.onCompleteNavigation()
     }
   }
   RegisterAccountTemplate(

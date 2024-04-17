@@ -18,7 +18,7 @@ fun PostPage(
   val navController = LocalNavController.current
   LaunchedEffect(destination) {
     destination?.navigate(navController)
-    viewModel.completeNavigation()
+    viewModel.onCompleteNavigation()
   }
   LifecycleEventEffect(event = Lifecycle.Event.ON_CREATE) {
     viewModel.onCreate()

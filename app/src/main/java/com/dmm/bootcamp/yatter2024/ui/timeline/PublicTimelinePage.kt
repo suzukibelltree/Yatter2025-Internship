@@ -21,7 +21,7 @@ internal fun PublicTimelinePage(
   LaunchedEffect(destination) {
     destination?.let {
       it.navigate(navController)
-      viewModel.completeNavigation()
+      viewModel.onCompleteNavigation()
     }
   }
   LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {

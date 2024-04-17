@@ -20,7 +20,7 @@ fun ProfilePage(
   val navController = LocalNavController.current
   LaunchedEffect(destination) {
     destination?.navigate(navController)
-    viewModel.completeNavigation()
+    viewModel.onCompleteNavigation()
   }
   ProfileTemplate(
     accountBindingModel = uiState.accountBindingModel,

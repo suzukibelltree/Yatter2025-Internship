@@ -68,7 +68,7 @@ class PostViewModel(
     _destination.value = PopBackDestination
   }
 
-  fun completeNavigation() {
+  fun onCompleteNavigation() {
     _destination.value = null
   }
 }
