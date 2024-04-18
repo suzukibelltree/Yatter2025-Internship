@@ -1,15 +1,17 @@
 package com.dmm.bootcamp.yatter2024.ui.login
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dmm.bootcamp.yatter2024.common.navigation.Destination
 import com.dmm.bootcamp.yatter2024.domain.model.Password
 import com.dmm.bootcamp.yatter2024.domain.model.Username
+import com.dmm.bootcamp.yatter2024.ui.register.RegisterAccountDestination
+import com.dmm.bootcamp.yatter2024.ui.timeline.PublicTimelineDestination
 import com.dmm.bootcamp.yatter2024.usecase.login.LoginUseCase
 import com.dmm.bootcamp.yatter2024.usecase.login.LoginUseCaseResult
-import com.dmm.bootcamp.yatter2024.util.SingleLiveEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -19,11 +21,8 @@ internal class LoginViewModel(
   private val _uiState: MutableStateFlow<LoginUiState> = MutableStateFlow(LoginUiState.empty())
   val uiState: StateFlow<LoginUiState> = _uiState
 
-  private val _navigateToPublicTimeline: SingleLiveEvent<Unit> = SingleLiveEvent()
-  val navigateToPublicTimeline: LiveData<Unit> = _navigateToPublicTimeline
-
-  private val _navigateToRegister: SingleLiveEvent<Unit> = SingleLiveEvent()
-  val navigateToRegister: LiveData<Unit> = _navigateToRegister
+  private val _destination = MutableStateFlow<Destination?>(null)
+  val destination: StateFlow<Destination?> = _destination.asStateFlow()
 
   fun onChangedUsername(username: String) {
     val snapshotBindingModel = uiState.value.loginBindingModel
@@ -62,7 +61,9 @@ internal class LoginViewModel(
           )
       ) {
         is LoginUseCaseResult.Success -> {
-          _navigateToPublicTimeline.value = Unit
+          _destination.value = PublicTimelineDestination {
+            launchSingleTop = true
+          }
         }
 
         is LoginUseCaseResult.Failure -> {
@@ -76,6 +77,10 @@ internal class LoginViewModel(
   }
 
   fun onClickRegister() {
-    _navigateToRegister.value = Unit
+    _destination.value = RegisterAccountDestination()
+  }
+
+  fun onCompleteNavigation() {
+    _destination.value = null
   }
 }

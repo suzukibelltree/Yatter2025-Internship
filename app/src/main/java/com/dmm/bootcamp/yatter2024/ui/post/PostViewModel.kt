@@ -1,14 +1,15 @@
 package com.dmm.bootcamp.yatter2024.ui.post
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dmm.bootcamp.yatter2024.common.navigation.Destination
+import com.dmm.bootcamp.yatter2024.common.navigation.PopBackDestination
 import com.dmm.bootcamp.yatter2024.domain.service.GetMeService
 import com.dmm.bootcamp.yatter2024.usecase.post.PostStatusUseCase
 import com.dmm.bootcamp.yatter2024.usecase.post.PostStatusUseCaseResult
-import com.dmm.bootcamp.yatter2024.util.SingleLiveEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -19,8 +20,8 @@ class PostViewModel(
   private val _uiState: MutableStateFlow<PostUiState> = MutableStateFlow(PostUiState.empty())
   val uiState: StateFlow<PostUiState> = _uiState
 
-  private val _goBack: SingleLiveEvent<Unit> = SingleLiveEvent()
-  val goBack: LiveData<Unit> = _goBack
+  private val _destination = MutableStateFlow<Destination?>(null)
+  val destination: StateFlow<Destination?> = _destination.asStateFlow()
 
   fun onCreate() {
     viewModelScope.launch {
@@ -52,7 +53,7 @@ class PostViewModel(
       )
       when (result) {
         PostStatusUseCaseResult.Success -> {
-          _goBack.value = Unit
+          _destination.value = PopBackDestination
         }
 
         is PostStatusUseCaseResult.Failure -> {
@@ -64,6 +65,10 @@ class PostViewModel(
   }
 
   fun onClickNavIcon() {
-    _goBack.value = Unit
+    _destination.value = PopBackDestination
+  }
+
+  fun onCompleteNavigation() {
+    _destination.value = null
   }
 }

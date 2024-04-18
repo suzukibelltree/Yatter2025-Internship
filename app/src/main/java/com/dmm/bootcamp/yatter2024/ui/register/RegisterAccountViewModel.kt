@@ -1,13 +1,15 @@
 package com.dmm.bootcamp.yatter2024.ui.register
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dmm.bootcamp.yatter2024.common.navigation.Destination
+import com.dmm.bootcamp.yatter2024.ui.login.LoginDestination
+import com.dmm.bootcamp.yatter2024.ui.timeline.PublicTimelineDestination
 import com.dmm.bootcamp.yatter2024.usecase.register.RegisterAccountUseCase
 import com.dmm.bootcamp.yatter2024.usecase.register.RegisterAccountUseCaseResult
-import com.dmm.bootcamp.yatter2024.util.SingleLiveEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -18,11 +20,8 @@ class RegisterAccountViewModel(
     MutableStateFlow(RegisterAccountUiState.empty())
   val uiState: StateFlow<RegisterAccountUiState> = _uiState
 
-  private val _navigateToAllTimeLine: SingleLiveEvent<Unit> = SingleLiveEvent()
-   val navigateToAllTimeLine: LiveData<Unit> = _navigateToAllTimeLine
-
-  private val _navigateToLogin: SingleLiveEvent<Unit> = SingleLiveEvent()
-  val navigateToLogin: LiveData<Unit> = _navigateToLogin
+  private val _destination = MutableStateFlow<Destination?>(null)
+  val destination: StateFlow<Destination?> = _destination.asStateFlow()
 
   fun onClickRegister() {
     viewModelScope.launch {
@@ -35,7 +34,9 @@ class RegisterAccountViewModel(
           registerAccountUseCase.execute(snapBindingModel.userName, snapBindingModel.password)
       ) {
         is RegisterAccountUseCaseResult.Success -> {
-          _navigateToAllTimeLine.value = Unit
+          _destination.value = PublicTimelineDestination {
+            launchSingleTop = true
+          }
         }
 
         is RegisterAccountUseCaseResult.Failure -> {
@@ -48,7 +49,7 @@ class RegisterAccountViewModel(
   }
 
   fun onClickLogin() {
-    _navigateToLogin.value = Unit
+    _destination.value = LoginDestination()
   }
 
   fun onChangedUserName(userName: String) {
@@ -59,5 +60,9 @@ class RegisterAccountViewModel(
   fun onChangedPassword(password: String) {
     val snapBindingModel = uiState.value.bindingModel
     _uiState.update { it.copy(bindingModel = snapBindingModel.copy(password = password)) }
+  }
+
+  fun onCompleteNavigation() {
+    _destination.value = null
   }
 }

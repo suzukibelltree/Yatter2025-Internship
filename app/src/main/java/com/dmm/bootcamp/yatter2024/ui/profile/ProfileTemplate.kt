@@ -33,7 +33,7 @@ import com.dmm.bootcamp.yatter2024.ui.bindingmodel.AccountBindingModel
 import com.dmm.bootcamp.yatter2024.ui.bindingmodel.StatusBindingModel
 import com.dmm.bootcamp.yatter2024.ui.component.FullScreenLoadingIndicator
 import com.dmm.bootcamp.yatter2024.ui.component.StatusRow
-import com.dmm.bootcamp.yatter2024.ui.theme.yatter2024Theme
+import com.dmm.bootcamp.yatter2024.ui.theme.Yatter2024Theme
 
 @Composable
 fun ProfileTemplate(
@@ -134,7 +134,7 @@ fun ProfileTemplate(
 @Preview
 @Composable
 fun ProfileTemplatePreview() {
-  yatter2024Theme {
+  Yatter2024Theme {
     Surface {
       ProfileTemplate(
         accountBindingModel = AccountBindingModel(

@@ -1,8 +1,9 @@
 package com.dmm.bootcamp.yatter2024.ui.profile
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dmm.bootcamp.yatter2024.common.navigation.Destination
+import com.dmm.bootcamp.yatter2024.common.navigation.PopBackDestination
 import com.dmm.bootcamp.yatter2024.domain.model.Me
 import com.dmm.bootcamp.yatter2024.domain.model.Username
 import com.dmm.bootcamp.yatter2024.domain.repository.AccountRepository
@@ -10,9 +11,9 @@ import com.dmm.bootcamp.yatter2024.domain.repository.StatusRepository
 import com.dmm.bootcamp.yatter2024.domain.service.GetMeService
 import com.dmm.bootcamp.yatter2024.ui.bindingmodel.converter.AccountBindingModelConverter
 import com.dmm.bootcamp.yatter2024.ui.bindingmodel.converter.StatusConverter
-import com.dmm.bootcamp.yatter2024.util.SingleLiveEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -25,8 +26,8 @@ class ProfileViewModel(
   private val _uiState: MutableStateFlow<ProfileUiState> = MutableStateFlow(ProfileUiState.empty())
   val uiState: StateFlow<ProfileUiState> = _uiState
 
-  private val _goBack: SingleLiveEvent<Unit> = SingleLiveEvent()
-  val goBack: LiveData<Unit> = _goBack
+  private val _destination = MutableStateFlow<Destination?>(null)
+  val destination: StateFlow<Destination?> = _destination.asStateFlow()
 
   init {
     viewModelScope.launch {
@@ -74,6 +75,10 @@ class ProfileViewModel(
   }
 
   fun onClickNavIcon() {
-    _goBack.value = Unit
+    _destination.value = PopBackDestination
+  }
+
+  fun onCompleteNavigation() {
+    _destination.value = null
   }
 }
