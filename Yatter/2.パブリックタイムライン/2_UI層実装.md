@@ -1081,7 +1081,7 @@ internal val viewModelModule = module {
 ```
 コードが赤く表示される可能性がありますので、そのコードにカーソルを当て `option + Enter`を押して`import class 'PublicTimelineViewModel'`を選択して必要なimport文を追加しましょう。
 
-![import_public_timeline_viewmodel](../image/1/import_public_timline_viewmodel.png)
+![import_public_timeline_viewmodel](../image/2/import_public_timline_viewmodel.png)
 
 エラーが表示されなくなったら準備は完了です。  
 Android StudioのRunボタンを押下してアプリを実行し動作を確認しましょう。  
