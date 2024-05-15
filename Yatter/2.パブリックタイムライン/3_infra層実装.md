@@ -74,7 +74,7 @@ GET /timelines/public
 ちなみに、今回はシリアライザライブラリとして[Moshi](https://github.com/square/moshi)を使用します。
 
 早速、`StatusJson`クラス・`AccountJson`クラス・`MediaAttachmentJson`クラスを実装してみましょう。  
-`com.dmm.bootcamp.yatter2023.infra.api.json`パッケージを作り、そこにそれぞれのクラスを追加していきます。  
+`com.dmm.bootcamp.yatter2024.infra.api.json`パッケージを作り、そこにそれぞれのクラスを追加していきます。  
 まずは、サンプルとして`AccountJson`を実装してみます。`Account`のJsonはこうなってます。
 
 ```
@@ -94,7 +94,7 @@ GET /timelines/public
 このJsonをそのままクラスで表現します。
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.infra.api.json
+package com.dmm.bootcamp.yatter2024.infra.api.json
 
 data class AccountJson(
   val id: String,
@@ -121,7 +121,7 @@ Androidをはじめとするモバイルアプリ開発において、アプリ�
 このままのクラス実装でも動作するのですが、一般的にAndroidの開発で推奨されているコーディング規約には変数の命名は`camelCase`であるため`display_name`や`create_at`という命名は規約違反となっています。そのため、下記のように`camelCase`に修正します。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.infra.api.json
+package com.dmm.bootcamp.yatter2024.infra.api.json
 
 data class AccountJson(
   val id: String,
@@ -140,7 +140,7 @@ data class AccountJson(
 この対応関係を揃えるための機能を`Moshi`が用意しているので、それに習うと`AccountJson`クラスは下記のようになります。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.infra.api.json
+package com.dmm.bootcamp.yatter2024.infra.api.json
 
 data class AccountJson(
   @Json(name = "id") val id: String,
@@ -160,7 +160,7 @@ data class AccountJson(
 動作も変わらないため、好みやチームの方針に合わせる形で問題ありません。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.infra.api.json
+package com.dmm.bootcamp.yatter2024.infra.api.json
 
 data class AccountJson(
   val id: String,
@@ -196,7 +196,7 @@ data class StatusJson(
 これらの実装例は一例になりますので変数名等が多少違っていても問題ありません。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.infra.api.json
+package com.dmm.bootcamp.yatter2024.infra.api.json
 
 import com.squareup.moshi.Json
 
@@ -210,7 +210,7 @@ data class StatusJson(
 ```
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.infra.api.json
+package com.dmm.bootcamp.yatter2024.infra.api.json
 
 import com.squareup.moshi.Json
 
@@ -226,10 +226,10 @@ data class MediaJson(
 ---
 
 必要なJsonクラスが定義できたところで、APIの実装を行います。  
-`com.dmm.bootcamp.yatter2023/infra/api`に`YatterApi`のinterfaceを定義します。  
+`com.dmm.bootcamp.yatter2024/infra/api`に`YatterApi`のinterfaceを定義します。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.infra.api
+package com.dmm.bootcamp.yatter2024.infra.api
 
 interface YatterApi
 ```
@@ -394,13 +394,13 @@ Androidアプリのインターネット接続を許可するためには、`And
 
 
 ## Repositoryの実装
-`com.dmm.bootcamp.yatter2023.infra.domain.repository`というパッケージを作成します。  
+`com.dmm.bootcamp.yatter2024.infra.domain.repository`というパッケージを作成します。  
 作成したパッケージに属するように、`StatusRepositoryImpl`クラスを作成し、`StatusRepository`の実装を行います。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.infra.domain.repository
+package com.dmm.bootcamp.yatter2024.infra.domain.repository
 
-import com.dmm.bootcamp.yatter2023.domain.repository.StatusRepository
+import com.dmm.bootcamp.yatter2024.domain.repository.StatusRepository
 
 class StatusRepositoryImpl : StatusRepository
 ```
@@ -473,10 +473,10 @@ package通りに配置していってください。
 
 ### AccountImpl
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.infra.domain
+package com.dmm.bootcamp.yatter2024.infra.domain
 
-import com.dmm.bootcamp.yatter2023.domain.Account
-import com.dmm.bootcamp.yatter2023.domain.Username
+import com.dmm.bootcamp.yatter2024.domain.Account
+import com.dmm.bootcamp.yatter2024.domain.Username
 import java.net.URL
 
 class AccountImpl(
@@ -510,13 +510,13 @@ class AccountImpl(
 
 ### AccountConverter
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.infra.domain.converter
+package com.dmm.bootcamp.yatter2024.infra.domain.converter
 
-import com.dmm.bootcamp.yatter2023.BuildConfig
-import com.dmm.bootcamp.yatter2023.domain.Account
-import com.dmm.bootcamp.yatter2023.domain.Username
-import com.dmm.bootcamp.yatter2023.infra.api.json.AccountJson
-import com.dmm.bootcamp.yatter2023.infra.domain.AccountImpl
+import com.dmm.bootcamp.yatter2024.BuildConfig
+import com.dmm.bootcamp.yatter2024.domain.Account
+import com.dmm.bootcamp.yatter2024.domain.Username
+import com.dmm.bootcamp.yatter2024.infra.api.json.AccountJson
+import com.dmm.bootcamp.yatter2024.infra.domain.AccountImpl
 import java.net.URL
 
 object AccountConverter {
@@ -539,11 +539,11 @@ object AccountConverter {
 
 ### StatusConverter
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.infra.domain.converter
+package com.dmm.bootcamp.yatter2024.infra.domain.converter
 
-import com.dmm.bootcamp.yatter2023.domain.Status
-import com.dmm.bootcamp.yatter2023.domain.StatusId
-import com.dmm.bootcamp.yatter2023.infra.api.json.StatusJson
+import com.dmm.bootcamp.yatter2024.domain.Status
+import com.dmm.bootcamp.yatter2024.domain.StatusId
+import com.dmm.bootcamp.yatter2024.infra.api.json.StatusJson
 
 object StatusConverter {
   fun convertToDomainModel(jsonList: List<StatusJson>): List<Status> =

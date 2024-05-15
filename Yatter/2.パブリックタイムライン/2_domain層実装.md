@@ -121,7 +121,7 @@ AccountドメインはStatusドメインと違い、[abstract](https://kotlinlan
 ---
 
 ドメインモデルを作成したらRepositoryの定義をします。  
-`StatusRepository`ファイルを`com.dmm.bootcamp.yatter2023.domain.repositroy`パッケージに作成します。  
+`StatusRepository`ファイルを`com.dmm.bootcamp.yatter2024.domain.repositroy`パッケージに作成します。  
 Domain層では、Repositoryのinterface定義のみをするので、interfaceとして`domain/repository`配下に`StatusRepository`を作成します。  
 
 ```Kotlin

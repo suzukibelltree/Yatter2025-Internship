@@ -17,10 +17,10 @@ ApplicationクラスはAndroidアプリが起動するときに一番初めに�
 DI設定はアプリが生存している間、残しておきたい設定になるためApplicationクラスでDIの設定をすることが一般的です。  
 DIを利用しないなど、Applicationクラスが不要の場合は作成しなくて問題ありません。  
 
-`YatterApplication.kt`というクラスを`com.dmm.bootcamp.yatter2023`パッケージに作成します。  
+`YatterApplication.kt`というクラスを`com.dmm.bootcamp.yatter2024`パッケージに作成します。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023
+package com.dmm.bootcamp.yatter2024
 
 import android.app.Application
 
@@ -68,7 +68,7 @@ Contextは利用用途も多いですが、扱いを間違えると意図しな�
 続いてはmoduleの設定を行います。  
 Yatterでは、各レイヤーごとにmoduleを作成して管理しやすいようにします。  
 
-`com.dmm.bootcamp.yatter2023.di`パッケージに次のファイルを作成します。  
+`com.dmm.bootcamp.yatter2024.di`パッケージに次のファイルを作成します。  
 - DomainImplModule
 - InfraModule
 - ViewModelModule
@@ -79,7 +79,7 @@ Yatterでは、各レイヤーごとにmoduleを作成して管理しやすい�
 `DomainImplModule`ファイルを開き、次の記述をします。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.di
+package com.dmm.bootcamp.yatter2024.di
 
 val domainImplModule = module {
 }
