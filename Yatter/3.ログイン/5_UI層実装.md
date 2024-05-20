@@ -239,9 +239,7 @@ fun onClickLogin() {
     ) {
       is LoginUseCaseResult.Success -> {
         // 3
-        // _destination.value = PublicTimelineDestination {
-        //   launchSingleTop = true
-        // }
+        // パブリックタイムライン画面に遷移する処理の追加
     }
 
       is LoginUseCaseResult.Failure -> {
