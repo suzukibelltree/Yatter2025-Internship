@@ -962,14 +962,12 @@ fun PublicTimelinePage(
   viewModel: PublicTimelineViewModel = getViewModel(),
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-  
+
   PublicTimelineTemplate(
-    PublicTimelineTemplate(
-      statusList = uiState.statusList,
-      isLoading = uiState.isLoading,
-      isRefreshing = uiState.isRefreshing,
-      onRefresh = ,
-    )
+    statusList = uiState.statusList,
+    isLoading = uiState.isLoading,
+    isRefreshing = uiState.isRefreshing,
+    onRefresh = ,
   )
 }
 ```
@@ -986,14 +984,12 @@ fun PublicTimelinePage(
   viewModel: PublicTimelineViewModel = getViewModel(),
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-  
+
   PublicTimelineTemplate(
-    PublicTimelineTemplate(
-      statusList = uiState.statusList,
-      isLoading = uiState.isLoading,
-      isRefreshing = uiState.isRefreshing,
-      onRefresh = viewModel::onRefresh,
-    )
+    statusList = uiState.statusList,
+    isLoading = uiState.isLoading,
+    isRefreshing = uiState.isRefreshing,
+    onRefresh = viewModel::onRefresh,
   )
 }
 ```
@@ -1014,12 +1010,10 @@ fun PublicTimelinePage(
   }
 
   PublicTimelineTemplate(
-    PublicTimelineTemplate(
-      statusList = uiState.statusList,
-      isLoading = uiState.isLoading,
-      isRefreshing = uiState.isRefreshing,
-      onRefresh = viewModel::onRefresh,
-    )
+    statusList = uiState.statusList,
+    isLoading = uiState.isLoading,
+    isRefreshing = uiState.isRefreshing,
+    onRefresh = viewModel::onRefresh,
   )
 }
 ```
