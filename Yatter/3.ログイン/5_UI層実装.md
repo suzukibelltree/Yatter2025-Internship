@@ -254,7 +254,7 @@ fun onClickLogin() {
 ```
 
 `onClickLogin`までの実装ができたら、続いては`onClickRegister`です。  
-`_destination` に登録画面のDestinationを渡しますが、実装がまだなので後回しです。
+`_destination`に登録画面のDestinationを渡しますが、実装がまだなので後回しです。
 
 ```Kotlin
 fun onClickRegister() {

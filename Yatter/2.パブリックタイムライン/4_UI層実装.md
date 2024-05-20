@@ -200,8 +200,8 @@ internal class PublicTimelineViewModel(
 
 メソッド内では以下の手順を実装します。  
 
-1. `StatusRepository`からStatus一覧を取得
-2. `PublicTimeline`内の`statusList`を更新
+1.`StatusRepository`からStatus一覧を取得
+2.`PublicTimeline`内の`statusList`を更新
 
 ```Kotlin
 internal class PublicTimelineViewModel(...) {
@@ -745,7 +745,7 @@ Column(
 }
 ```
 
-ただ、この方法の場合はパフォーマンス面で大きな懸念があります。  `Lazy~`を利用しないリスト表示では、リスト全体の描画が一度に全て行われ、その全てがシステム側で保持されます。そのため、リストの要素数が1万件あった場合に1万件全ての描画・保有コストがかかるため動作が著しく重たくなります。  
+ただ、この方法の場合はパフォーマンス面で大きな懸念があります。 `Lazy~`を利用しないリスト表示では、リスト全体の描画が一度に全て行われ、その全てがシステム側で保持されます。そのため、リストの要素数が1万件あった場合に1万件全ての描画・保有コストがかかるため動作が著しく重たくなります。  
 それに対して`Lazy~`なコンポーザブルを利用した場合には、画面に表示される分のみを描画・保持されます。その状態でスクロールすると新しく表示される要素が描画され、画面外になった要素は破棄されるため保持する内容が必要最小限に抑えられるためパフォーマンス面の問題が解決されます。スクロールするたびに発生する新規描画・破棄のパフォーマンス面のコストは気にならないほどなので問題ありません。  
 
 これらのことからリスト表示するときは、次のような使い分けをすると良いです。  
@@ -795,7 +795,7 @@ internal fun PublicTimelineTemplate(...) {
 ```
 
 また、今回利用する`PullRefreshIndicator`はまだStableでは無いため、そのままではAndroid Studio上でエラー表示になっていると思います。  
-実験的に追加されているAPIを利用するためにも、`@OptIn(ExperimentalMaterialApi::class)`を` PublicTimelineTemplate`の上部に追加して利用できるようにしましょう。  
+実験的に追加されているAPIを利用するためにも、`@OptIn(ExperimentalMaterialApi::class)`を`PublicTimelineTemplate`の上部に追加して利用できるようにしましょう。  
 
 ```Kotlin
 @OptIn(ExperimentalMaterialApi::class)
@@ -994,9 +994,9 @@ fun PublicTimelinePage(
 }
 ```
 
-次に、 `onResume` のライフサイクルイベントでViewModelの `onResume` を呼び出すようにします。
+次に、`onResume`のライフサイクルイベントでViewModelの`onResume`を呼び出すようにします。
 
-`LifecycleEventEffect` を使うことによって、指定したライフサイクルのイベントごとに処理を実行させることができます。
+`LifecycleEventEffect`を使うことによって、指定したライフサイクルのイベントごとに処理を実行させることができます。
 
 ```kotlin
 @Composable
