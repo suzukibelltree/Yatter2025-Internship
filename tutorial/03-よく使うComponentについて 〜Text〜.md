@@ -10,7 +10,7 @@ JetpackComposeでUIを構築するには、コンポーネントを組み合わ�
 ```kotlin
 @Composable
 fun GreetingText() {
-    Text("Welcome to Summer Intern 2023")
+    Text("Welcome to Android World in DMM")
 }
 ```
 
@@ -34,7 +34,7 @@ fun GreetingText() {
 # strings.xml
 
 <resources>
-    <string name="greeting">Welcome to Summer Intern 2023</string>
+    <string name="greeting">Welcome to Android World in DMM</string>
 </resources>
 
 ```
@@ -54,7 +54,7 @@ fun GreetingText() {
 @Composable
 fun GreetingText() {
     Text(
-        "Welcome to Summer Intern 2023",
+        "Welcome to Android World in DMM",
         color = Color.Red
     )
 }
@@ -67,19 +67,19 @@ fun GreetingText() {
 
 ```kotlin
 @Composable
-fun InternTitleText() {
+fun GreetingTitleText() {
     Column{
         Text(
-            "Summer Intern 2023(8sp)",
+            "Welcome Android World(8sp)",
             fontSize = 8.sp
         )
-        Text("Summer Intern 2023(default)")
+        Text("Welcome Android World(default)")
         Text(
-            "Summer Intern 2023(16sp)",
+            "Welcome Android World(16sp)",
             fontSize = 16.sp
         )
         Text(
-            "Summer Intern 2023(24sp)",
+            "Welcome Android World(24sp)",
             fontSize = 24.sp
         )
     }
@@ -99,7 +99,7 @@ fun InternTitleText() {
 ```kotlin
 @Composable
 fun SimpleFilledTextFieldSample() {
-    var text by remember { mutableStateOf("Welcome Summer") }
+    var text by remember { mutableStateOf("Welcome Android") }
 
     TextField(
         value = text,
