@@ -12,9 +12,9 @@ JetpackComposeでUIを構築するには、コンポーネントを組み合わ�
 ```kotlin
 @Composable
 fun LayoutSample() {
-    Text("Welcome to, ", color = Color.Red)
-    Text("Summer Intern ", color = Color.Blue)
-    Text("in 2023", color = Color.Green)
+    Text("Welcome to ", color = Color.Red)
+    Text("Android World ", color = Color.Blue)
+    Text(text = "in DMM", color = Color.Green)
 }
 ```
 <img src="image/component_sample/layout_sample.png">
@@ -30,9 +30,9 @@ fun LayoutSample() {
 @Composable
 fun LayoutSample() {
     Row {
-        Text("Welcome to")
-        Text("Summer Intern")
-        Text("in 2023")
+        Text("Welcome to ")
+        Text("Android World ")
+        Text("in DMM")
     }
 }
 ```
@@ -50,9 +50,9 @@ fun LayoutSample() {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text("Welcome to,",)
-        Text("Summer Intern")
-        Text("in 2023")
+        Text("Welcome to ")
+        Text("Android World ")
+        Text("in DMM")
     }
 }
 ```
@@ -67,9 +67,9 @@ fun LayoutSample() {
 @Composable
 fun LayoutSample() {
     Column {
-        Text("Welcome to, ")
-        Text("Summer Intern ")
-        Text("in 2023")
+        Text("Welcome to ")
+        Text("Android World ")
+        Text("in DMM")
     }
 }
 ```
@@ -88,9 +88,9 @@ fun LayoutSample() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Welcome to,")
-        Text("Summer Intern")
-        Text("in 2023")
+        Text("Welcome to ")
+        Text("Android World ")
+        Text("in DMM")
     }
 }
 ```
