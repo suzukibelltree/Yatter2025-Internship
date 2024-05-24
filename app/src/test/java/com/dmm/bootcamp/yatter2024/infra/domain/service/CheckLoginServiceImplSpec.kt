@@ -1,39 +1,48 @@
 package com.dmm.bootcamp.yatter2024.infra.domain.service
 
-import com.dmm.bootcamp.yatter2024.infra.pref.MePreferences
+import com.dmm.bootcamp.yatter2024.infra.pref.TokenPreferences
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
 class CheckLoginServiceImplSpec {
-  private val mePreferences = mockk<MePreferences>()
-  private val subject = CheckLoginServiceImpl(mePreferences)
+  private val tokenPreferences = mockk<TokenPreferences>()
+  private val subject = CheckLoginServiceImpl(tokenPreferences)
 
   @Test
   fun getTrueWhenSavedUsername() = runTest {
-    val username = "username"
+    val accessToken = "accessToken"
 
     coEvery {
-      mePreferences.getUsername()
-    } returns username
+      tokenPreferences.getAccessToken()
+    } returns accessToken
 
     val result: Boolean = subject.execute()
 
     assertThat(result).isTrue()
+
+    verify {
+      tokenPreferences.getAccessToken()
+    }
   }
 
   @Test
   fun getFalseWhenUnsavedUsername() = runTest {
-    val username = ""
+    val accessToken = ""
 
     coEvery {
-      mePreferences.getUsername()
-    } returns username
+      tokenPreferences.getAccessToken()
+    } returns accessToken
 
     val result: Boolean = subject.execute()
 
     assertThat(result).isFalse()
+
+    verify {
+      tokenPreferences.getAccessToken()
+    }
   }
 }

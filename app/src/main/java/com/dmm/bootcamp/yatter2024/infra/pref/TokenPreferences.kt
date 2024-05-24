@@ -2,7 +2,7 @@ package com.dmm.bootcamp.yatter2024.infra.pref
 
 import android.content.Context
 
-class TokenPreferences(private val context: Context) {
+class TokenPreferences(context: Context) {
   companion object {
     private const val PREF_NAME = "token"
     private const val KEY_ACCESS_TOKEN = "access_token"
