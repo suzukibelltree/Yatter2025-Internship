@@ -622,7 +622,7 @@ verify { // 実行するメソッドがsuspendであれば、coVerify
 
 ここで記載したmockkの使い方は基本的なことのみですので、さらに詳しい実装方法は[公式ページ](https://mockk.io/)をご確認ください。  
 
-`StatusRepository`は`YatterApi`を引数に取るため、`TatterApi`をモック化してテスト対象をインスタンス化します。  
+`StatusRepository`は`YatterApi`を引数に取るため、`YatterApi`をモック化してテスト対象をインスタンス化します。  
 
 ```Kotlin
 class StatusRepositoryImplSpec {
