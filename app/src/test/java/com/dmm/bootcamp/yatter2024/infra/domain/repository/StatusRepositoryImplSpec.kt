@@ -44,7 +44,7 @@ class StatusRepositoryImplSpec {
         ),
         content = "content",
         createAt = "2023-06-02T12:44:35.030Z",
-//        attachmentMediaList = listOf(),
+        attachmentMediaList = emptyList(),
       )
     )
 
@@ -62,7 +62,7 @@ class StatusRepositoryImplSpec {
           followerCount = 200
         ),
         content = "content",
-        attachmentMediaList = listOf()
+        attachmentMediaList = emptyList()
       )
     )
 
@@ -98,8 +98,8 @@ class StatusRepositoryImplSpec {
         createAt = ""
       ),
       content = content,
-      createAt = ""
-
+      createAt = "",
+      attachmentMediaList = emptyList(),
     )
 
     coEvery {
@@ -125,7 +125,7 @@ class StatusRepositoryImplSpec {
         username,
         PostStatusJson(
           status = content,
-          mediaIds = emptyList()
+          mediaList = emptyList()
         )
       )
     }
