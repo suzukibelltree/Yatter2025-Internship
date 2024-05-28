@@ -68,15 +68,15 @@ class PostViewModel(...) : ViewModel() {
 }
 ```
 
-ViewModel内のUiStateとパブリックタイムライン画面に戻るための`SingleLiveEvent`も定義しておきます。  
+ViewModel内のUiStateと画面遷移のための`StateFlow`も定義しておきます。  
 
 ```Kotlin
 class PostViewModel(...) : ViewModel() {
   private val _uiState: MutableStateFlow<PostUiState> = MutableStateFlow(PostUiState.empty())
-  val uiState: StateFlow<PostUiState> = _uiState
+  val uiState: StateFlow<PostUiState> = _uiState.asStateFlow()
 
-  private val _goBack: SingleLiveEvent<Unit> = SingleLiveEvent()
-  val goBack: LiveData<Unit> = _goBack
+  private val _destination = MutableStateFlow<Destination?>(null)
+  val destination: StateFlow<Destination?> = _destination.asStateFlow()
 }
 ```
 
@@ -117,16 +117,14 @@ fun onChangedStatusText(statusText: String) {
 fun onClickPost() {
   viewModelScope.launch {
     _uiState.update { it.copy(isLoading = true) }
-
     val result = postStatusUseCase.execute(
       content = uiState.value.bindingModel.statusText,
       attachmentList = listOf()
     )
     when (result) {
       PostStatusUseCaseResult.Success -> {
-        _goBack.value = Unit
+        _destination.value = PopBackDestination
       }
-
       is PostStatusUseCaseResult.Failure -> {
         // エラー表示
       }
@@ -137,20 +135,19 @@ fun onClickPost() {
 ```
 
 最後に、戻る用のボタン押下時の`onClickNavIcon`です。  
-このメソッドでは単純に、`goBack`に値を流すだけです。  
+このメソッドでは単純に、`_destination`に値を流すだけです。  
 
 ```Kotlin
 fun onClickNavIcon() {
-  _goBack.value = Unit
+  _destination.value = PopBackDestination
 }
 ```
 
 ## UI構築
 UI構築を行います。  
-今までと同様にActivity・Page・Templateを作成します。  
+今までと同様にPage・Templateを作成します。  
 パッケージは`ui/post`にします。  
 
-- PostActivity
 - PostPage
 - PostTemplate
 
@@ -168,7 +165,7 @@ fun PostTemplate() {
 @Preview
 @Composable
 fun PostTemplatePreview() {
-  Yatter2023Theme {
+  Yatter2024Theme {
     Surface() {
       PostTemplate()
     }
@@ -344,16 +341,32 @@ Templateの実装が完了したら、Pageの実装に入ります。
 
 ```Kotlin
 @Composable
-fun PostPage(viewModel: PostViewModel) {
+fun PostPage(
+  viewModel: PostViewModel = getViewModel(),
+) {
 }
 ```
 
-`PostPage`の定義ができたら、ViewModelからUiStateを取り出し、`PageTemplate`に適した引数を渡します。  
+`PostPage`の定義ができたら、ViewModelとTemplateの繋ぎこみをします。
+`onCreate`でViewModelの`onCreate`メソッドを呼び出すようにします。
+ViewModelの`destination`を取得し、値が更新されたら画面遷移するようにします。
+ViewModelから`uiState`を取り出し、`PageTemplate`に適した引数を渡します。
 
-```Kotlin
+```kotlin
 @Composable
-fun PostPage(viewModel: PostViewModel) {
+fun PostPage(
+  viewModel: PostViewModel = getViewModel(),
+) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+  val destination by viewModel.destination.collectAsStateWithLifecycle()
+  val navController = LocalNavController.current
+  LaunchedEffect(destination) {
+    destination?.navigate(navController)
+    viewModel.onCompleteNavigation()
+  }
+  LifecycleEventEffect(event = Lifecycle.Event.ON_CREATE) {
+    viewModel.onCreate()
+  }
   PostTemplate(
     postBindingModel = uiState.bindingModel,
     isLoading = uiState.isLoading,
@@ -363,63 +376,6 @@ fun PostPage(viewModel: PostViewModel) {
     onClickNavIcon = viewModel::onClickNavIcon,
   )
 }
-```
-
-### Activityの実装
-Composeの実装ができたらActivityの実装に移ります。  
-`PostActivity`ファイルに`PostActivity`クラスを定義し、`newIntent`メソッドの実装とViewModelのインスタンス化も行います。  
-
-```Kotlin
-class PostActivity: AppCompatActivity() {
-  companion object {
-    fun newIntent(context: Context): Intent = Intent(
-      context,
-      PostActivity::class.java,
-    )
-  }
-
-  private val viewModel: PostViewModel by viewModel()
-}
-```
-
-`onCreate`メソッドをオーバーライドし、`PostPage`コンポーザブルの呼び出しと`PostViewModel#onCreate`の呼び出し、`PostViewModel#goBack`の購読を行います。  
-`goBack`の購読時は`finish`メソッドを呼び出すことで`PostActivity`を終了し前に開いていた画面を表示するようにします。  
-
-```Kotlin
-class PostActivity: AppCompatActivity() {
-  ...
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-
-    setContent {
-      Yatter2023Theme {
-        Surface {
-          PostPage(viewModel = viewModel)
-        }
-      }
-    }
-
-    viewModel.onCreate()
-
-    viewModel.goBack.observe(this) {
-      finish()
-    }
-  }
-}
-```
-
-`PostActivity`の実装ができたら`AndroidManifest.xml`へのActivityの定義も忘れずに行いましょう。  
-
-```XML
-<application ...>
-  <activity .../>
-
-  <activity
-      android:name=".ui.post.PostActivity"
-      android:exported="false" />
-</application>
-
 ```
 
 これでツイート機能画面のUI層実装は完了です。  
