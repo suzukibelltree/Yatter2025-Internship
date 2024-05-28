@@ -1,7 +1,7 @@
 # ログイン機能のusecase層実装
 ログイン機能のusecase層実装を行います。  
 
-![login_class_usecase](../image/3/login_class_usecase.png)
+![login_class_usecase](../../image/3/login_class_usecase.png)
 
 ## UseCaseの説明
 UseCaseは副作用を伴うような業務手順をロジックとしてコードに落とし込みます。  

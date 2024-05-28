@@ -4,10 +4,11 @@
 今回infra層で実装する内容は次の2つです。  
 - MePreferencesの実装
 - LoginServiceImplの実装
+- CheckLoginServiceImplの実装
 
 クラス図では次にあたります。  
 
-![login_class_infra](../image/3/login_class_infra.png)
+![login_class_infra](../../image/3/login_class_infra.png)
 
 ## MePreferencesの実装
 
@@ -132,8 +133,67 @@ class LoginServiceImplSpec {
 ```
 </details>
 
+つづいて、`CheckLoginServiceImpl`クラスの実装です。  
+次の様に実装します。
+
+```Kotlin
+// infra/domain/service/CheckLoginServiceImpl.kt
+
+internal class CheckLoginServiceImpl(
+  private val mePreferences: MePreferencese,
+) : CheckLoginService {
+  override suspend fun execute(): Boolean {
+    return mePreferences.getUsername() != ""
+  }
+}
+```
+
+CheckLoginServiceImplの単体テストも書いてみましょう。
+今回のテストでは次の観点の確認ができると良さそうです。  
+
+- MePreferencesに値が保存されていなければfalse
+- MePreferencesに値が保存されていればtrue
+
+<details>
+<summary>CheckLoginServiceImplのテスト実装例</summary>
+
+```Kotlin
+class CheckLoginServiceImplSpec {
+  private val mePreferences = mockk<MePreferences>()
+  private val subject = CheckLoginServiceImpl(mePreferences)
+
+  @Test
+  fun getTrueWhenSavedUsername() = runTest {
+    val username = "username"
+
+    coEvery {
+      mePreferences.getUsername()
+    } returns username
+
+    val result: Boolean = subject.execute()
+
+    assertThat(result).isTrue()
+  }
+
+  @Test
+  fun getFalseWhenUnsavedUsername() = runTest {
+    val username = ""
+
+    coEvery {
+      mePreferences.getUsername()
+    } returns username
+
+    val result: Boolean = subject.execute()
+
+    assertThat(result).isFalse()
+  }
+}
+```
+
+</details>
+
 ---
 
-ここまでで`MePreferences`と`LoginService`とが属するinfra層の実装は完了しました。  
+ここまでで`MePreferences`と`LoginService`、`CheckLoginService`とが属するinfra層の実装は完了しました。  
 
 続いてusecase層の実装に移ります。  

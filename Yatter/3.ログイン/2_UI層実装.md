@@ -18,7 +18,7 @@
 ログイン画面で表示する内容としては、ユーザーによって入力されるユーザー名とパスワードの値で、Stringとして保持します。  
 
 ```Kotlin
-internal data class LoginBindingModel(
+data class LoginBindingModel(
   val username: String,
   val password: String,
 )
@@ -31,7 +31,7 @@ BindingModelと同様に、`ui/login`パッケージ内に`LoginUiState`を用�
 パブリックタイムライン画面の時と同様に、`bindingModel`と`isLoading`を用意します。  
 
 ```Kotlin
-internal data class LoginUiState(
+data class LoginUiState(
   val loginBindingModel: LoginBindingModel,
   val isLoading: Boolean,
 )
@@ -42,7 +42,7 @@ internal data class LoginUiState(
 もちろんUseCase内でも弾いているためUI層で対策しなくても良い内容ですが、ユーザーが利用しやすいように実施します。  
 
 ```Kotlin
-internal data class LoginUiState(
+data class LoginUiState(
   ...
   val validUsername: Boolean,
   val validPassword: Boolean,
@@ -57,7 +57,7 @@ internal data class LoginUiState(
 最後に`LoginUiState`でも初期化用の`empty`メソッドを実装して、`UiState`は完了です。  
 
 ```Kotlin
-internal data class LoginUiState(...) {
+data class LoginUiState(...) {
   companion object {
     fun empty(): LoginUiState = LoginUiState(
       loginBindingModel = LoginBindingModel(
@@ -74,11 +74,11 @@ internal data class LoginUiState(...) {
 
 ## ViewModelの実装
 ViewModelの実装に移ります。  
-`Ui/login`パッケージに`LoginViewModel`クラスを作成しましょう。  
-ログイン処理に必要な`LoginUseCase`も引数に追加しておきます。  
+`Ui/login`パッケージに`LoginViewModel`クラスを作成しているのでそこに処理を追記していきます。  
+ログイン処理では`LoginUseCase`を使用します。
 
 ```Kotlin
-internal class LoginViewModel(
+class LoginViewModel(
   private val loginUseCase: LoginUseCase,
 ) {
 }
@@ -87,7 +87,7 @@ internal class LoginViewModel(
 まずは、`UiState`を`StateFlow`としてViewModel内で保持します。  
 
 ```Kotlin
-internal class LoginViewModel(...) : ViewModel() {
+class LoginViewModel(...) : ViewModel() {
   private val _uiState: MutableStateFlow<LoginUiState> = MutableStateFlow(LoginUiState.empty())
   val uiState: StateFlow<LoginUiState> = _uiState
 }
@@ -113,7 +113,7 @@ UiStateの保持ができたら、イベントメソッドの定義を行いま�
 まずは、メソッドの定義からです。  
 
 ```Kotlin
-internal class LoginViewModel(...) : ViewModel() {
+class LoginViewModel(...) : ViewModel() {
 
   fun onChangedUsername(username: String) {}
 
@@ -261,126 +261,6 @@ fun onClickRegister() {
   // _destination.value = RegisterAccountDestination()
 }
 ```
-
-ViewModelの実装が完了したらこちらもテストを書いてみましょう。  
-`PublicTimelineViewModel`の単体テストを参考にして書いてみてください。  
-
-テストする項目は次のようになります。  
-- ユーザー名を変更したときにUiStateに反映されるか
-- パスワードを変更したときにUiStateに反映されるか
-- 入力したユーザー名とパスワードが有効な値になっているか
-- ログインボタンを押してログイン成功した場合
-- ログインボタンを押してログイン失敗した場合
-- 登録ボタンを押したとき
-
-ヒントとして、LiveDataを単体テストで扱う場合は次のルールを追加します。  
-
-```Kotlin
-@get:Rule
-val rule: TestRule = InstantTaskExecutorRule()
-```
-
-<details>
-<summary>LoginViewModelのテスト例</summary>
-
-```Kotlin
-class LoginViewModelSpec {
-  private val loginUseCase = mockk<LoginUseCase>()
-  private val subject = LoginViewModel(loginUseCase)
-
-  @get:Rule
-  val mainDispatcherRule = MainDispatcherRule()
-
-  @get:Rule
-  val rule: TestRule = InstantTaskExecutorRule()
-
-  @Test
-  fun changeUsername() = runTest {
-    val newUsername = "newUsername"
-
-    subject.onChangedUsername(newUsername)
-
-    assertThat(subject.uiState.value.loginBindingModel.username).isEqualTo(newUsername)
-    assertThat(subject.uiState.value.validUsername).isTrue()
-  }
-
-  @Test
-  fun changePasswordValid() = runTest {
-    val newPassword = "newPassword1$"
-
-    subject.onChangedPassword(newPassword)
-
-    assertThat(subject.uiState.value.loginBindingModel.password).isEqualTo(newPassword)
-    assertThat(subject.uiState.value.validPassword).isTrue()
-  }
-
-  @Test
-  fun changePasswordInvalid() = runTest {
-    val newPassword = "newPassword"
-
-    subject.onChangedPassword(newPassword)
-
-    assertThat(subject.uiState.value.loginBindingModel.password).isEqualTo(newPassword)
-    assertThat(subject.uiState.value.validPassword).isFalse()
-  }
-
-  @Test
-  fun clickLoginAndNavigatePublicTimeline() = runTest {
-    val username = "username"
-    val password = "Password1$"
-
-    subject.onChangedUsername(username)
-    subject.onChangedPassword(password)
-
-    coEvery {
-      loginUseCase.execute(any(), any())
-    } returns LoginUseCaseResult.Success
-
-    subject.onClickLogin()
-
-    coVerify {
-      loginUseCase.execute(Username(username), Password(password))
-    }
-
-    assertThat(subject.navigateToPublicTimeline.value).isNotNull()
-    assertThat(subject.navigateToRegister.value).isNull()
-  }
-
-  @Test
-  fun clickLoginAndFailure() = runTest {
-    val username = "username"
-    val password = "Password1$"
-
-    subject.onChangedUsername(username)
-    subject.onChangedPassword(password)
-
-    coEvery {
-      loginUseCase.execute(any(), any())
-    } returns LoginUseCaseResult.Failure.OtherError(Exception())
-
-    subject.onClickLogin()
-
-    coVerify {
-      loginUseCase.execute(Username(username), Password(password))
-    }
-
-    assertThat(subject.navigateToPublicTimeline.value).isNull()
-    assertThat(subject.navigateToRegister.value).isNull()
-  }
-
-  @Test
-  fun clickRegisterAndNavigate() = runTest {
-    subject.onClickRegister()
-
-    assertThat(subject.navigateToRegister.value).isNotNull()
-    assertThat(subject.navigateToPublicTimeline.value).isNull()
-  }
-}
-```
-
-</details>
-
----
 
 ## UI実装
 続いてUI側の実装です。  
@@ -637,7 +517,7 @@ https://developer.android.com/codelabs/basic-android-kotlin-compose-function-typ
 
 ```Kotlin
 @Composable
-internal fun LoginPage(
+fun LoginPage(
   viewModel: LoginViewModel = getViewModel(),
 ) {
   val uiState: LoginUiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -672,3 +552,22 @@ override fun onCreate(savedInstanceState: Bundle?) {
 ```
 
 ここまで実装できたらログイン画面のUI実装は完了です。  
+
+# DI設定
+パブリックタイムライン画面でも実施したようにログイン画面でもDIの設定を行います。
+`di`ディレクトリ内にある`ViewModelModule`というファイルを開きます。  
+その中にコメントアウトされている`LoginViewModel`の設定を確認します。  
+行の先頭にある`//`を削除してコメントアウトを外し以下のようなコードにしましょう。  
+
+```Kotlin
+internal val viewModelModule = module {
+  viewModel { MainViewModel(get()) }
+  viewModel { PublicTimelineViewModel(get()) }
+//  viewModel { PostViewModel(get(), get()) }
+//  viewModel { RegisterAccountViewModel(get()) }
+  viewModel { LoginViewModel(get()) } // こちらの//を削除
+}
+```
+
+エラーが表示されたらパブリックタイムラインの時と同様に、`option + Enter`で解消しましょう。  
+エラーが無くなったらRunボタンでアプリが起動することを確認します。  

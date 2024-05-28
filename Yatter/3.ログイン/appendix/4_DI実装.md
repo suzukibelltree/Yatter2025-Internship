@@ -35,6 +35,7 @@ UseCase用のDIモジュールの用意ができたところでログイン画�
 val domainImplModule = module {
   ...
   factory<LoginService> { LoginServiceImpl(get()) }
+  factory<CheckLoginService> { CheckLoginServiceImpl(get()) }
   ...
 }
 
@@ -59,9 +60,12 @@ val domainImplModule = module {
 val viewModelModule = module {
   ...
   viewModel { LoginViewModel(get()) }
+  viewModel { MainViewModel(get()) }
   ...
 }
+
 ```
+
 
 これでDI層の実装も完了です。  
 

@@ -1,14 +1,6 @@
 # ツイート画面のUI層実装
 ツイート画面のUI層実装を行います。
 
-クラス図では次に該当します。  
-
-// クラス図
-
-次のような見た目になることを目指して実装します。  
-
-![post_template_preview](../image/4/post_template_preview.png)
-
 ## BindingModelの実装
 まずはBindingModelの実装からです。  
 `ui/post`パッケージに`PostBindingModel`ファイルを作成し、定義します。  
@@ -24,7 +16,7 @@ data class PostBindingModel(
 
 ## UiStateの実装
 続いて、UiStateの実装です。  
-UiStateでは`PostBindingModel`と`isLoading`、そしてツイートの投稿ができるかどうかの`canPost`を実装します。  
+UiStateではツイートの投稿内容`PostBindingModel`と読み込み中かを表す`isLoading`、そしてツイートの投稿ができるかどうかの`canPost`を実装します。  
 `canPost`は`PostBindingModel#statusText`が空かどうかで判断するようにします。
 
 ```Kotlin
@@ -59,7 +51,7 @@ class PostViewModel(
 ) : ViewModel() {}
 ```
 
-まずは、必要なメソッドを定義します。  
+次に、必要なメソッドを定義します。  
 今回は画面の初期起動時にユーザー情報取得する`onCreate`とStatusの内容を書き換えた時に呼び出される`onChangedStatusText`、そして投稿ボタンを押下した時の`onClickPost`を用意します。  
 さらにツイート画面ではパブリックタイムライン画面に戻るために表示するボタン押下時の`onClickNavIcon`も定義します。  
 
@@ -144,7 +136,7 @@ fun onClickPost() {
 }
 ```
 
-最後に、戻るようのボタン押下時の`onClickNavIcon`です。  
+最後に、戻る用のボタン押下時の`onClickNavIcon`です。  
 このメソッドでは単純に、`goBack`に値を流すだけです。  
 
 ```Kotlin
@@ -152,131 +144,6 @@ fun onClickNavIcon() {
   _goBack.value = Unit
 }
 ```
-
-### ViewModelのテスト実施
-`PostViewModel`のテストを実装します。  
-今回のテストは次の観点を確認します。  
-
-- onCreate時にユーザー情報が取得できていること
-- テキスト入力するとUiStateが更新されること
-- 投稿ボタン押下で投稿完了すること
-- 投稿ボタン押下でエラー発生時に何も発生しないこと
-- ナビゲーションの戻るボタン押下時に戻る用の値が流れていること
-
-実際にテストを書いてみて、テストコード例も載せていますので見比べながら動作を確認しましょう。
-
-<details>
-<summary>PostViewModelのテストコード例</summary>
-
-```Kotlin
-class PostViewModelSpec {
-  private val getMeService = mockk<GetMeService>()
-  private val postStatusUseCase = mockk<PostStatusUseCase>()
-  private val subject = PostViewModel(
-    postStatusUseCase,
-    getMeService,
-  )
-
-  @get:Rule
-  val mainDispatcherRule = MainDispatcherRule()
-
-  @get:Rule
-  val rule: TestRule = InstantTaskExecutorRule()
-
-  @Test
-  fun getMeWhenOnCreate() = runTest {
-    val avatarUrl = URL("https://www.dmm.com")
-    val me = MeImpl(
-      id = AccountId(value = "me account"),
-      username = Username(value = ""),
-      displayName = null,
-      note = null,
-      avatar = avatarUrl,
-      header = URL("https://www.google.com"),
-      followingCount = 0,
-      followerCount = 0
-    )
-    coEvery {
-      getMeService.execute()
-    } returns me
-
-    subject.onCreate()
-
-    assertThat(subject.uiState.value.bindingModel.avatarUrl).isEqualTo(avatarUrl.toString())
-  }
-
-
-  @Test
-  fun changeStatusAndCanPost() = runTest {
-    val newStatusText = "new"
-
-    subject.onChangedStatusText(newStatusText)
-
-    assertThat(subject.uiState.value.bindingModel.statusText).isEqualTo(newStatusText)
-    assertThat(subject.uiState.value.canPost).isTrue()
-  }
-
-  @Test
-  fun changeStatusAndCannotPost() = runTest {
-    val oldStatusText = "old"
-    val newStatusText = ""
-
-    subject.onChangedStatusText(oldStatusText)
-    assertThat(subject.uiState.value.bindingModel.statusText).isEqualTo(oldStatusText)
-    assertThat(subject.uiState.value.canPost).isTrue()
-
-    subject.onChangedStatusText(newStatusText)
-
-    assertThat(subject.uiState.value.bindingModel.statusText).isEqualTo(newStatusText)
-    assertThat(subject.uiState.value.canPost).isFalse()
-  }
-
-  @Test
-  fun postSuccess() = runTest {
-    val status = "status"
-    subject.onChangedStatusText(status)
-
-    coEvery {
-      postStatusUseCase.execute(any(), any())
-    } returns PostStatusUseCaseResult.Success
-
-    subject.onClickPost()
-
-    coVerify {
-      postStatusUseCase.execute(status, emptyList())
-    }
-
-    assertThat(subject.goBack.value).isNotNull()
-  }
-
-  @Test
-  fun postFailure() = runTest {
-    val status = "status"
-    subject.onChangedStatusText(status)
-
-    coEvery {
-      postStatusUseCase.execute(any(), any())
-    } returns PostStatusUseCaseResult.Failure.OtherError(Exception())
-
-    subject.onClickPost()
-
-    coVerify {
-      postStatusUseCase.execute(status, emptyList())
-    }
-
-    assertThat(subject.goBack.value).isNull()
-  }
-
-  @Test
-  fun clickBack() = runTest {
-    subject.onClickNavIcon()
-
-    assertThat(subject.goBack.value).isNotNull()
-  }
-}
-```
-
-</details>
 
 ## UI構築
 UI構築を行います。  
@@ -290,7 +157,7 @@ UI構築を行います。
 ### Composeの実装
 #### Templateの実装
 Templateの実装から始めます。  
-`PostTemplate`ファイルに`PostTemplate`コンポーザブルに作成し、プレビューコンポーザブルも定義します。  
+`PostTemplate`ファイルに`PostTemplate`コンポーザブルを作成し、プレビューコンポーザブルも定義します。  
 
 ```Kotlin
 @Composable
@@ -377,7 +244,7 @@ fun PostTemplate(...) {
 }
 ```
 
-`navgationIcon`が他の画面と比べて増えていると思います。  
+`navigationIcon`が他の画面と比べて増えていると思います。  
 この引数にコンポーザブルを渡すことによってTopAppBarのタイトル左横に表示することができます。  
 
 今回は、`IconButton`というアイコン(画像)をボタンとして扱うことのできるコンポーザブルを呼び出し、アイコンに`Icons.Default.ArrowBack`を指定して戻るボタンを実装しています。  
@@ -556,3 +423,22 @@ class PostActivity: AppCompatActivity() {
 ```
 
 これでツイート機能画面のUI層実装は完了です。  
+
+# DI設定
+ツイート画面でもDIの設定を行いましょう。  
+`di`ディレクトリ内にある`ViewModelModule`というファイルを開きます。  
+その中にコメントアウトされている`PostViewModel`の設定を確認します。  
+行の先頭にある`//`を削除してコメントアウトを外し以下のようなコードにしましょう。  
+
+```Kotlin
+internal val viewModelModule = module {
+  viewModel { MainViewModel(get()) }
+  viewModel { PublicTimelineViewModel(get()) }
+  viewModel { PostViewModel(get(), get()) } // こちらの//を削除
+//  viewModel { RegisterAccountViewModel(get()) }
+  viewModel { LoginViewModel(get()) }
+}
+```
+
+必要なimportを行ったらRunボタンでアプリを起動してみましょう。  
+起動することを確認できたら次のドキュメントに進みます。  

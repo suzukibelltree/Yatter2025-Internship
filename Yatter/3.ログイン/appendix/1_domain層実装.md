@@ -6,7 +6,7 @@
 - domain/service/LoginService
 
 クラス図では次の箇所にあたります。  
-![login_class_domain](../image/3/login_class_domain.png)
+![login_class_domain](../../image/3/login_class_domain.png)
 
 Passwordドメインモデルでは、パスワード文字列を保持しバリデーションチェックを行います。  
 
@@ -114,6 +114,20 @@ interface LoginService {
     username: Username,
     password: Password,
   )
+}
+```
+
+## CheckLoginService定義
+クラス図にはありませんが、
+ログイン済みかどうかを判定するために`CheckLoginService`を新規作成し、`MainViewModel`でログイン状況を確認して遷移する画面を制御します。  
+
+`Repository`の時と同様にdomain層ではinterface定義のみ行います。  
+
+```Kotlin
+// domain/service/CheckLoginService.kt
+
+interface CheckLoginService {
+  suspend fun execute(): Boolean
 }
 ```
 

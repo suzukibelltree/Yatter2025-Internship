@@ -3,7 +3,7 @@
 
 クラス図の次の部分に当たります。  
 
-![public_timeline_domain](../image/2/public_timeline_class_domain.png)
+![public_timeline_domain](../../image/2/public_timeline_class_domain.png)
 
 ## ドメイン層の説明
 設計方針にもあるように、domain層では言語化された事業ドメインをそのままコードに落とし込むことに専念します。  
@@ -14,7 +14,7 @@ domain層には、次のクラスを定義します。
 - Domain Service
 - Repository
 
-それぞれの詳細は[設計方針](https://git.dmm.com/pages/cto/android-blueprints/architecture.html)でも解説されていますのでそちらをご確認ください。  
+それぞれの詳細はアーキテクチャドキュメント(tutorial>アーキテクチャについて>arthitecture)でも解説されていますのでそちらをご確認ください。  
 
 ここでは、軽い特徴のみに絞って説明します。  
 

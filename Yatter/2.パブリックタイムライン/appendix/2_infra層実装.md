@@ -6,7 +6,7 @@ infra層では純粋な技術的関心ごとを実装します。
 domain層で定義したRepositoryやDomainServiceをはじめとするinterfaceの実装もinfra層で具体的な技術を使って実装します。  
 
 クラス図では次に該当します。  
-![public_timeline_infra](../image/2/public_timeline_class_infra.png)
+![public_timeline_infra](../../image/2/public_timeline_class_infra.png)
 
 ## API接続実装
 まずは、APIと接続する部分を実装します。  
@@ -27,7 +27,9 @@ Javaで説明されていますが、次の内容を抑えられれば良いで�
 
 また、次の資料でもRetrofitの使い方を解説していますので合わせてご一読ください。  
 
-https://git.dmm.com/dmm-bootcamp/android-doc-2023/blob/main/basic/12-Retrofit%E3%82%92%E7%94%A8%E3%81%84%E3%81%9F%E9%80%9A%E4%BF%A1%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6.md
+```
+appendix > 12-Retrofitを用いた通信について
+```
 
 ---
 
@@ -339,7 +341,7 @@ buildTypes {
 buildTypesには`debug`と`release`が用意されており、そこに`API_URL`を定義しています。現状では`debug`も`release`も同じ`http://10.0.2.2:8080/`を指定していますが、本番環境用のURLができたら変更しましょう。  
 書き換えた後は一度プロジェクトを`Gradle Sync`とビルドをします。そうするすることによって`Build Type`に指定した設定値が`BuildConfig`という生成クラスに生成され、コードから利用することができます。  
 
-![sync_and_build](../image/2/sync_and_build.png)
+![sync_and_build](../../image/2/sync_and_build.png)
 
 `Gradle Sync`に関して少し補足をします。  
 Androidアプリ開発では`build.gradle`のようなgradleのファイルに利用するライブラリやバージョン、build Typeといったプロジェクト全体の設定を記述して利用するケースが多いです。  
@@ -359,7 +361,7 @@ class YatterApiFactory {
 これにより、debugビルドをするとdebug用のAPI_URLが利用され、releaseビルドを行えばrelease用のAPI_URLを利用することができます。  
 Android Studioではこの`Build Type`を`Build Variants`ページからどの`Build Type`を利用するか指定することができます。  
 
-![build_variant](../image/2/build_variant.png)
+![build_variant](../../image/2/build_variant.png)
 
 これで`YatterApiFactory`の完成です。  
 
@@ -578,7 +580,7 @@ YatterでもJUnitを使ってテストを書きます。
 
 Androidアプリ開発での単体テストは、`app/src/test/java`ディレクトリ内にテスト対象のクラスと同じパッケージ内に定義します。  
 
-![](../image/2/test_dir.png)
+![](../../image/2/test_dir.png)
 
 今回は`StatusRepositoryImpl`のテストを書くため、`infra/domain/repository`パッケージをtestディレクトリ内にも作成し、作成したパッケージに`StatusRepositoryImplSpec`というクラスも作成します。  
 

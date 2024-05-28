@@ -161,6 +161,6 @@ modules(
 
 Android Studio上部にある`Run app`ボタンからアプリのビルド・実行をして動作を確認してみましょう。  
 
-![run_app](../image/2/run_app.png)
+![run_app](../../image/2/run_app.png)
 
 パブリックタイムラインが表示され、Statusの一覧が表示されれば実装は完了です。  

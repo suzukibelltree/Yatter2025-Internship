@@ -7,61 +7,7 @@ UI層は実際にユーザーが接する部分を実装します。
 クラス図では次に該当します。  
 ![public_timeline_UI](../image/2/public_timeline_class_ui.png)
 
-またパブリックタイムライン画面のUI層のファイルは`ui/timeline`パッケージ内に作成するようにしましょう。  
-
-UI層にはActivityやFragment、ViewModelといった要素がよく登場します。  
-
-### Activity
-Activityとは、ユーザーが写真を撮る・メールを送信する・地図を表示するなどの焦点を絞った単一タスクを実行できるアプリ内の単一画面を表します。  
-通常、Activityはスマホのフルスクリーンウィンドウとしてユーザーに表示されます。  
-任意のアプリを使っている時に表示されている画面は基本的にはActivityの上に色々な要素が表示されているという認識で問題ありません。
-アプリを操作して画面が遷移されるときはActivityが切り替わっているイメージです。  
-
-### Fragment
-Fragmentとは、アプリのUIのさまざまな部分で再利用できる独自のUIとライフサイクルを持ったコンポーネントです。  
-Activityでユーザーに対してUIを表示するといったことと同様なことが行うことができ、Activityより生成コストが低くFragmentの上にFragmentを載せるなど親子関係を持てることもあり、画面遷移にFragmentが利用されることも最近では多いです。  
-
-ActivityとFragmentに関しては次の資料も併せて一読ください。  
-
-- Activity: 
-https://git.dmm.com/dmm-bootcamp/android-doc-2023/blob/main/basic/2-Activity%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6.md
-- Fragment: https://git.dmm.com/dmm-bootcamp/android-doc-2023/blob/main/basic/11-Fragment%E3%81%AE%E7%94%BB%E9%9D%A2%E9%81%B7%E7%A7%BB%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6.md
-
-### ViewModel
-ViewModelはライフサイクルを意識した方法でUIに関するデータの保存や管理を行うクラスです。  
-
-ViewModelの登場以前は、ActivityやFragmentでユーザーの入力情報やAPIなどから取得したデータを保持・管理していました。  
-ですがActivityやFragmentはAndroidフレームワークによって制御されているため、開発者の意図しないタイミングで破棄されたり再生成されたりといったことがありました。  
-システムによって破棄・再生成が行われるとユーザーが入力していたデータが消えてしまったりデータを取得し直したりする必要がありました。  
-
-この破棄・再生成というのはアプリを切り替えた時やホーム画面に戻った時、スマホテーマなどの構成変更があった時など一般的なユーザー行動によって簡単に発生する内容のため、開発者は破棄されるタイミングで一時的にデータをアプリ用のストレージに格納して、再生成されたタイミングで格納データを取得するということが必要でした。  
-
-ViewModelが登場したことによりこの問題の多くが解決されました。  
-ViewModelはActivityやFragmentが破棄された後も生存しているため、ViewModelがデータを管理することで入力中のデータや表示されているデータが破棄されることは無くなりました。  
-
-ViewModelについての詳細は次の資料もご一読ください。  
-
-https://git.dmm.com/dmm-bootcamp/android-doc-2023/blob/main/basic/8-ViewModel%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6.md
-
-### AndroidのUI開発方法
-Androidアプリ開発においてUIを構築する方法は主に`Android View`と`Jetpack Compose`の2つになります。  
-
-Android Viewは元来利用されてきたUI構築方法で、UIを構成するために必要な情報をXMLファイルに記述し、JavaやKotlinといったアプリコードから呼び出すことによって画面の表示・制御が行われています。  
-Androidアプリ開発で最も基礎的なUI構築方法になります。  
-
-Jetpack Composeは数年前に発表され、現在のAndroidアプリ開発においてデファクトスタンダードとなり始めている開発方法です。  
-Jetpack Composeとは宣言的なUI構築方法になっており、UI開発を簡素化・効率化することができます。  
-宣言的な状態管理により不具合の混入も未然に防ぐことができます。  
-フロントエンド開発でのReact、iOSアプリ開発でのSwiftUIと似たような書き方でUIの実装を行います。  
-
-今回の研修ではJetpack Composeを利用してUIを構築します。  
-Jetpack ComposeでのUI構築方法はシンプルで分かりやすい場合が多く、Android ViewでのUI構築では複雑になりやすかった部分が簡潔になっています。  
-
-DMMとしても新規アプリをJetpack Composeで開発しており、既存アプリもJetpack Composeに置き換えはじめています。  
-
-Jetpack Composeの詳細に関しては次のリンク先で解説していますのでまずはご一読ください。  
-
-https://git.dmm.com/dmm-bootcamp/android-doc-2023/blob/main/basic/13-JetpackCompose%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6.md
+パブリックタイムライン画面のUI層のファイルは`ui/timeline`パッケージ内に作成するようにしましょう。  
 
 ## UI実装
 ### BindingModelの作成
@@ -72,23 +18,55 @@ BindingModelは、画面を表示する上で必要な情報をまとめた`data
 
 `StatusJson`ではJsonを表現したデータモデル、`Status`というドメインモデル、`StatusBindingModel`というuiに表示するためのデータモデルというように、責務によって使用するモデルを変換するようにしています。  
 
-タイムライン1行分の見た目に必要な値を`StatusBindingModel`に定義していきます。  
+タイムライン1行分の見た目に必要な値を`MediaBindingModel`と`StatusBindingModel`に定義していきます。  
 BindingModelは`ui/timeline/bindingmodel`パッケージにファイルを作成していきましょう。  
 
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel
+
+data class MediaBindingModel(
+  val id: String,
+  val type: String,
+  val url: String,
+  val description: String
+)
+```
+
+```Kotlin
+package com.dmm.bootcamp.yatter2023.ui.timeline.bindingmodel
 
 data class StatusBindingModel(
   val id: String,
   val displayName: String,
   val username: String,
   val avatar: String?,
-  val content: String
+  val content: String,
+  val attachmentMediaList: List<MediaBindingModel>
 )
 ```
 
-`Status`から`StatusBindingModel`に変換するための`StatusConverter`も実装しましょう。  
+`Media`から`MediaBindingModel`に変換するための`MediaConverter`と、`Status`から`StatusBindingModel`に変換するための`StatusConverter`も実装しましょう。  
 `ui/bindingmodel/converter`パッケージにファイルを作成していきます。  
+
+```Kotlin
+package com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel.converter
+
+import com.dmm.bootcamp.yatter2024.domain.model.Media
+import com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel.MediaBindingModel
+
+object MediaConverter {
+    fun convertToDomainModel(mediaList: List<Media>): List<MediaBindingModel> =
+        mediaList.map { convertToDomainModel(it) }
+
+    fun convertToDomainModel(media: Media): MediaBindingModel =
+        MediaBindingModel(
+            id = media.id.value,
+            type = media.type,
+            url = media.url,
+            description = media.description
+        )
+}
+```
 
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel.converter
@@ -114,14 +92,21 @@ object StatusConverter {
 BindingModelを定義したら続いてはUiStateを定義します。  
 
 BindingModelは表示する値を保持する役割を持っており、UiStateはUI全体の状態を管理します。  
-UiStateで保持する値は、画面に表示されるデータ（BindingModel）・画面のローディング状態を表すフラグ・エラー状態などその画面で起こりうるUIの状態全般です。  
+UiStateで保持する値は、
+- 画面に表示されるデータ（BindingModel)  
+- 画面のローディング状態を表すフラグ  
+- エラー状態  
+
+などその画面で起こりうるUIの状態全般です。  
 
 そのため、パブリックタイムライン画面では次のようなUiStateが定義できます。  
-画面に表示されるデータ・ローディングフラグ・リフレッシュフラグを持ちます。  
+- 画面に表示されるデータ  
+- ローディングフラグ  
+- リフレッシュフラグ  
 
 `PublicTimelineUiState`は`ui/timeline`パッケージ内に作成しましょう。
 ```Kotlin
-internal data class PublicTimelineUiState(
+data class PublicTimelineUiState(
   val statusList: List<StatusBindingModel>,
   val isLoading: Boolean,
   val isRefreshing: Boolean,
@@ -132,7 +117,7 @@ internal data class PublicTimelineUiState(
 `companion object`で定義することで`PublicTimelineUiState`クラスをインスタンスかしなくともメソッドを呼び出すことができるようになっています。  
 
 ```Kotlin
-internal data class PublicTimelineUiState(
+data class PublicTimelineUiState(
   ...
 ) {
   companion object {
@@ -155,7 +140,7 @@ internal data class PublicTimelineUiState(
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.ui.timeline
 
-internal class PublicTimelineViewModel : ViewModel() {
+class PublicTimelineViewModel : ViewModel() {
   // TODO
 }
 ```
@@ -190,7 +175,7 @@ UI構築に利用する値の準備が済み、実装に入っていきます。
 まずはStatusの一覧を取得するために`StatusRepository`を依存関係に追加します。  
 
 ```Kotlin
-internal class PublicTimelineViewModel(
+class PublicTimelineViewModel(
   private val statusRepository: StatusRepository,
 ) : ViewModel() { ... }
 ```
@@ -204,7 +189,7 @@ internal class PublicTimelineViewModel(
 2.`PublicTimeline`内の`statusList`を更新
 
 ```Kotlin
-internal class PublicTimelineViewModel(...) {
+class PublicTimelineViewModel(...) {
   private suspend fun fetchPublicTimeline() {
     val statusList = statusRepository.findAllPublic() // 1
     _uiState.update {
@@ -241,7 +226,7 @@ ViewModelのメソッド名を処理の内容に合わせたものではなく�
 4. UiStateのローディング状態を解除する
 
 ```Kotlin
-internal class PublicTimelineViewModel(...) {
+class PublicTimelineViewModel(...) {
   fun onResume() {
     viewModelScope.launch { // 1
       _uiState.update { it.copy(isLoading = true) } // 2
@@ -273,7 +258,7 @@ https://developer.android.com/topic/libraries/architecture/coroutines?hl=ja#view
 4. UiStateのリフレッシュ状態を解除する
 
 ```Kotlin
-internal class PublicTimelineViewModel(...) {
+class PublicTimelineViewModel(...) {
   fun onRefresh() {
     viewModelScope.launch { // 1
       _uiState.update { it.copy(isRefreshing = true) } // 2
@@ -285,123 +270,6 @@ internal class PublicTimelineViewModel(...) {
 ```
 
 これでViewModelに必要な処理を実装できました。  
-
-#### ViewModelの単体テスト
-
-ViewModelにもテストを書きます。  
-特にViewModelでは、ユーザーが起こしたアクションに対して処理をして結果をUIに反映するというアプリにおいて重要な役割を担うことが多いため単体テストもしっかり書きます。  
-
-まずは、テストファイルをinfra層実装時と同様に作成します。  
-同時にテスト対象クラスのインスタンス化も行います。  
-
-```Kotlin
-class PublicTimelineViewModelSpec {
-  private val statusRepository = mockk<StatusRepository>()
-  private val subject = PublicTimelineViewModel(statusRepository)
-}
-```
-
-続いて、ViewModelテスト時用の設定を行います。  
-事前に定義してある、`MainDispatcherRule`を用いてViewModelの単体テストを実行できるようにします。  
-
-このルールが必要な背景としては、ViewModelで利用している`viewModelScope`にあります。  
-`viewModelScope`はViewModelのライフサイクルに合わせてメインディスパッチャーで処理を実行します。(ディスパッチャーは処理を実行するスレッドの環境くらいの理解で大丈夫です)  
-このメインディスパッチャーは実際のアプリケーションでは存在する環境ですが、AndroidのUnitTest環境では存在しません。  
-そのため、`viewModelScope`を利用した処理のテストが実施できなくなるため、テスト用の環境に切り替えるためのルールを用いてテストを実施します。  
-
-ルールの定義は次のように行います。  
-
-```Kotlin
-class PublicTimelineViewModelSpec {
-  ...
-
-  @get:Rule
-  val mainDispatcherRule = MainDispatcherRule()
-}
-```
-
-このように定義するだけで切り替えが実施されます。  
-
-あとはinfra層で書いたテストと同じように書きます。  
-
-- メソッドのモック化
-- テスト対象の実行
-- モックしたメソッドの実行確認
-- 実行結果の確認
-
-```Kotlin
-@Test
-fun getPublicTimelineFromRepository() = runTest {
-  val statusList = listOf(
-    Status(
-      id = StatusId(value = "id"),
-      account = AccountImpl(
-        username = Username("username"),
-        displayName = "display name",
-        note = "note",
-        avatar = null,
-        header = null,
-        followingCount = 100,
-        followerCount = 200
-      ),
-      content = "content",
-      attachmentMediaList = listOf()
-    )
-  )
-
-  val expect = StatusConverter.convertToBindingModel(statusList)
-
-  coEvery {
-    statusRepository.findAllPublic()
-  } returns statusList
-
-  subject.onResume()
-
-  coVerify {
-    statusRepository.findAllPublic()
-  }
-
-  assertThat(subject.uiState.value.statusList).isEqualTo(expect)
-}
-```
-
-`onRefresh`のテストも追加します。  
-
-```Kotlin
-@Test
-fun onRefreshPublicTimeline() = runTest {
-  val statusList = listOf(
-    Status(
-      id = StatusId(value = "id"),
-      account = AccountImpl(
-        username = Username("username"),
-        displayName = "display name",
-        note = "note",
-        avatar = null,
-        header = null,
-        followingCount = 100,
-        followerCount = 200
-      ),
-      content = "content",
-      attachmentMediaList = listOf()
-    )
-  )
-
-  val expect = StatusConverter.convertToBindingModel(statusList)
-
-  coEvery {
-    statusRepository.findAllPublic()
-  } returns statusList
-
-  subject.onRefresh()
-
-  coVerify {
-    statusRepository.findAllPublic()
-  }
-
-  assertThat(subject.uiState.value.statusList).isEqualTo(expect)
-}
-```
 
 ### UI実装に必要なクラス・ファイルを追加
 ViewModelの準備ができたところでUI実装を本格的に始めていきます。  
@@ -473,7 +341,15 @@ private fun StatusRowPreview() {
           displayName = "mito",
           username = "mitohato14",
           avatar = "https://avatars.githubusercontent.com/u/19385268?v=4",
-          content = "preview content"
+          content = "preview content",
+          attachmentMediaList = listOf(
+            MediaBindingModel(
+              id = "id",
+              type = "image",
+              url = "https://avatars.githubusercontent.com/u/39693306?v=4",
+              description = "icon"
+            )
+          )
         )
       )
     }
@@ -648,7 +524,7 @@ DMMでのJetpack Composeの実装をする上で`Page`と`Template`という概�
 
 ```Kotlin
 @Composable
-internal fun PublicTimelineTemplate(
+fun PublicTimelineTemplate(
   statusList: List<StatusBindingModel>,
   isLoading: Boolean,
   isRefreshing: Boolean,
@@ -662,7 +538,7 @@ internal fun PublicTimelineTemplate(
 ```Kotlin
 @Preview
 @Composable
-fun PublicTimelineTemplatePreview() {
+private fun PublicTimelineTemplatePreview() {
   Yatter2024Theme {
     Surface {
       PublicTimelineTemplate(
@@ -708,7 +584,7 @@ LazyColumn {
 
 ```Kotlin
 @Composable
-internal fun PublicTimelineTemplate(...) {
+fun PublicTimelineTemplate(...) {
   LazyColumn {
     items(statusList) { item ->
       StatusRow(statusBindingModel = item)
@@ -769,7 +645,7 @@ https://developer.android.com/jetpack/compose/lists?hl=ja
 また、この`Box`コンポーザブルが画面全体を覆えるように`fillMaxSize()`の指定、`Box`コンポーザブル内の要素が画面中央に配置されるように`contentAlignment`の指定をします。  
 
 ```Kotlin
-internal fun PublicTimelineTemplate(...) {
+fun PublicTimelineTemplate(...) {
   Box(
     modifier = Modifier
       .fillMaxSize(),
@@ -786,7 +662,7 @@ PullToRefreshには`PullRefreshIndicator`コンポーザブルを利用します
 こうすることにより、PullToRefreshが実行されたときに、`onRefresh`の処理を発火することができます。  
 
 ```Kotlin
-internal fun PublicTimelineTemplate(...) {
+fun PublicTimelineTemplate(...) {
   val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefresh)
   Box(...) {
     LazyColumn(...)
@@ -800,7 +676,7 @@ internal fun PublicTimelineTemplate(...) {
 ```Kotlin
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-internal fun PublicTimelineTemplate(...)
+fun PublicTimelineTemplate(...)
 ```
 
 状態オブジェクトが定義できたら、`PullRefreshIndicator`を配置します。  
@@ -885,7 +761,7 @@ Yatterアプリにおいても、画面上部の`TopAppbar`、画面右下の`Fl
 
 ```Kotlin
 @Composable
-internal fun PublicTimelineTemplate(...) {
+fun PublicTimelineTemplate(...) {
   Scaffold() {
     Box(
       modifier = Modifier
@@ -901,7 +777,7 @@ internal fun PublicTimelineTemplate(...) {
 
 ```Kotlin
 @Composable
-internal fun PublicTimelineTemplate(...) {
+fun PublicTimelineTemplate(...) {
   Scaffold(
     topBar = {
       TopAppBar(
@@ -957,6 +833,8 @@ val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 UiStateの監視準備ができたところで`Page`コンポーザブルから`Template`コンポーザブルを呼び出し、渡せる値は引数に渡します。  
 
 ```Kotlin
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 @Composable
 fun PublicTimelinePage(
   viewModel: PublicTimelineViewModel = getViewModel(),
@@ -979,6 +857,8 @@ fun PublicTimelinePage(
 今回は特に`ViewModel`内のメソッドのため、`viewModel::onRefresh`と記載します。  
 
 ```Kotlin
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 @Composable
 fun PublicTimelinePage(
   viewModel: PublicTimelineViewModel = getViewModel(),
