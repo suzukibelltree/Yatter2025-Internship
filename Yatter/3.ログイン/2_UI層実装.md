@@ -101,6 +101,7 @@ UiStateの保持ができたら、イベントメソッドの定義を行いま�
 - onChangedPassword(password: String) 
 - onClickLogin()
 - onClickRegister()
+- onCompleteNavigation()
 
 `onChanged~`メソッドはテキストボックスにユーザーが文字を入力したときに、UiState内の値を入力された文字に更新するために用意されています。  
 パスワードのバリデーションチェックもこのタイミングで行います。  
@@ -118,9 +119,11 @@ class LoginViewModel(...) : ViewModel() {
 
   fun onChangedPassword(password: String) {}
 
-  fun onClickLogin()
+  fun onClickLogin() {}
 
-  fun onClickRegister()
+  fun onClickRegister() {}
+
+  fun onCompleteNavigation() {}
 }
 ```
 
@@ -185,29 +188,29 @@ fun onChangedPassword(password: String) {
 
 まずは、ログイン処理成功時の画面遷移の準備をします。  
 画面遷移処理はViewModel内では実施できないため、UI側に画面遷移することを通達する手段が必要になります。  
-このような時に`LiveData`を拡張した`SingleLiveEvent`が利用されることが多いため、Yatterにおいても同様にします。  
 
-`SingleLiveEvent`は公式で用意されているものではありませんが、一般的に利用されているクラスです。  
-
-`LiveData`の詳細は次もご覧ください。  
-https://developer.android.com/topic/libraries/architecture/livedata?hl=ja
-
-UiStateをStateFlowとして、ViewModelで保持していたように`SingleLiveEvent`もbacking fieldとして定義して、ViewModel内では`SingleLiveEvent`、外部からは`LiveData`として見えるように定義します。  
+UiStateと同じように、`StateFlow`で定義します。`Destination`については後述します。
 
 ```Kotlin
-private val _navigateToPublicTimeline: SingleLiveEvent<Unit> = SingleLiveEvent()
-val navigateToPublicTimeline: LiveData<Unit> = _navigateToPublicTimeline
+private val _destination = MutableStateFlow<Destination?>(null)
+val destination: StateFlow<Destination?> = _destination.asStateFlow()
 ```
 
-この値は次のようにすることで、外部に画面遷移する必要があることを伝播します。  
+この値は次のようにすることで、外部に画面遷移する必要があることを伝播します。
+`PublicTimelineDestination`はまだ未実装のため、一旦ここの実装は後回しにします。
 
 ```Kotlin
 // ViewModel内
-_navigateToPublicTimeline.value = Unit
+_destination.value = PublicTimelineDestination()
 
-// Activity側
-viewModel.navigateToPublicTimeline.observe(this) {
-  // 画面遷移処理
+// Page側
+val destination by viewModel.destination.collectAsStateWithLifecycle()
+val navController = LocalNavController.current
+LaunchedEffect(destination)  {
+  destination?.let {
+    it.navigate(navController)
+    viewModel.onCompleteNavigation()
+  }
 }
 ```
 
@@ -235,7 +238,8 @@ fun onClickLogin() {
         ) // 2
     ) {
       is LoginUseCaseResult.Success -> {
-        _navigateToPublicTimeline.value = Unit // 3
+        // 3
+        // パブリックタイムライン画面に遷移する処理の追加
     }
 
       is LoginUseCaseResult.Failure -> {
@@ -250,16 +254,11 @@ fun onClickLogin() {
 ```
 
 `onClickLogin`までの実装ができたら、続いては`onClickRegister`です。  
-登録画面をまだ実装はしていないため、`onClickLogin`時のような画面遷移用の`SingleLiveEvent`の定義・SingleLiveEventの発火までです。  
+`_destination`に登録画面のDestinationを渡しますが、実装がまだなので後回しです。
 
 ```Kotlin
-private val _navigateToRegister: SingleLiveEvent<Unit> = SingleLiveEvent()
-val navigateToRegister: LiveData<Unit> = _navigateToRegister
-
-...
-
 fun onClickRegister() {
-  _navigateToRegister.value = Unit
+  // _destination.value = RegisterAccountDestination()
 }
 ```
 
@@ -268,63 +267,8 @@ fun onClickRegister() {
 基本的にはパブリックタイムライン画面を実装した時と同様なクラス・ファイルが必要になります。  
 次のファイルを`ui/login`に作成しましょう。  
 
-- LoginActivity
 - LoginPage
-- LoginTemplate
-
-### Activityの実装
-まずは`LoginActivity`の実装から入ります。  
-パブリックタイムライン画面を実装した時と同様にテンプレの記述を行います。  
-AndroidStudioにはTemplate機能があるため、毎回記述するのが大変な人は活用しても良いでしょう。  
-
-```Kotlin
-class LoginActivity : ComponentActivity() {
-  companion object {
-    fun newIntent(context: Context): Intent = Intent(
-      context,
-      LoginActivity::class.java,
-    )
-  }
-}
-```
-
-続いてViewModelのインスタンスを取得します。  
-```Kotlin
-private val viewModel: LoginViewModel by viewModel()
-```
-
-`onCreate`メソッド内で、ViewModel側で定義していた画面遷移用の値を監視して画面遷移するように実装します。  
-ログイン画面でログインしてパブリックタイムライン画面に遷移したときは戻るボタン等でログイン画面に戻って欲しくないため、`finish()`で`LoginActivity`を閉じておきます。  
-
-```Kotlin
-override fun onCreate(savedInstanceState: Bundle?) {
-  super.onCreate(savedInstanceState)
-
-  viewModel.navigateToPublicTimeline.observe(this) {
-    startActivity(PublicTimelineActivity.newIntent(this))
-    finish()
-  }
-
-  viewModel.navigateToRegister.observe(this) {
-    //TODO: 会員登録画面への遷移
-  }
-}
-```
-
-`LoginActivity`の用意ができたら`AndroidManifest.xml`へのActivityの定義も忘れずに行いましょう。  
-
-```XML
-<application ...>
-  <activity .../>
-
-  <activity
-      android:name=".ui.login.LoginActivity"
-      android:exported="false" />
-</application>
-
-```
-
-これでログイン処理が完了するととパブリックタイムライン画面に遷移することができるようになりました。  
+- LoginTemplate 
 
 ### Composeの実装
 Activityの用意ができたらJetpack ComposeでのUI構築に入ります。  
@@ -339,7 +283,7 @@ fun LoginTemplate() {
 @Preview
 @Composable
 fun LoginTemplatePreview() {
-  Yatter2023Theme {
+  Yatter2024Theme {
     Surface() {
       LoginTemplate()
     }
@@ -380,7 +324,7 @@ fun LoginTemplate(
 @Preview
 @Composable
 fun LoginTemplatePreview() {
-  Yatter2023Theme {
+  Yatter2024Theme {
     Surface {
       LoginTemplate(
         userName = "username",
@@ -573,9 +517,10 @@ https://developer.android.com/codelabs/basic-android-kotlin-compose-function-typ
 
 ```Kotlin
 @Composable
-fun LoginPage(viewModel: LoginViewModel) {
+fun LoginPage(
+  viewModel: LoginViewModel = getViewModel(),
+) {
   val uiState: LoginUiState by viewModel.uiState.collectAsStateWithLifecycle()
-
   LoginTemplate(
     userName = uiState.loginBindingModel.username,
     onChangedUserName = viewModel::onChangedUsername,
@@ -589,16 +534,16 @@ fun LoginPage(viewModel: LoginViewModel) {
 }
 ```
 
-最後に、Activityから呼び出します。  
+最後に、`MainActivity`から呼び出します。  
 
 ```Kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
   super.onCreate(savedInstanceState)
 
   setContent {
-    Yatter2023Theme {
+    Yatter2024Theme {
       Surface {
-        LoginPage(viewModel = viewModel)
+        LoginPage()
       }
     }
   }

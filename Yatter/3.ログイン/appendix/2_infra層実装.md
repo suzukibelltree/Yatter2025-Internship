@@ -78,7 +78,7 @@ class MePreferences(...) {
 domain層実装時に定義した`LoginService`インターフェースを継承してメソッドをオーバーライドします。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.infra.domain.service
+package com.dmm.bootcamp.yatter2024.infra.domain.service
 
 class LoginServiceImpl(
   private val mePreferences: MePreferences

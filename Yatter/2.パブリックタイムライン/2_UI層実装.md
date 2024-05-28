@@ -22,7 +22,7 @@ BindingModelは、画面を表示する上で必要な情報をまとめた`data
 BindingModelは`ui/timeline/bindingmodel`パッケージにファイルを作成していきましょう。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.ui.timeline.bindingmodel
+package com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel
 
 data class MediaBindingModel(
   val id: String,
@@ -49,10 +49,10 @@ data class StatusBindingModel(
 `ui/bindingmodel/converter`パッケージにファイルを作成していきます。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.ui.timeline.bindingmodel.converter
+package com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel.converter
 
-import com.dmm.bootcamp.yatter2023.domain.model.Media
-import com.dmm.bootcamp.yatter2023.ui.timeline.bindingmodel.MediaBindingModel
+import com.dmm.bootcamp.yatter2024.domain.model.Media
+import com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel.MediaBindingModel
 
 object MediaConverter {
     fun convertToDomainModel(mediaList: List<Media>): List<MediaBindingModel> =
@@ -69,10 +69,10 @@ object MediaConverter {
 ```
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.ui.timeline.bindingmodel.converter
+package com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel.converter
 
-import com.dmm.bootcamp.yatter2023.domain.Status
-import com.dmm.bootcamp.yatter2023.ui.timeline.bindingmodel.StatusBindingModel
+import com.dmm.bootcamp.yatter2024.domain.Status
+import com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel.StatusBindingModel
 
 object StatusConverter {
   fun convertToBindingModel(statusList: List<Status>): List<StatusBindingModel> =
@@ -135,10 +135,10 @@ data class PublicTimelineUiState(
 ### ViewModelの実装
 続いては、ViewModelで表示するための実装を行います。  
 
-まずは、ViewModelクラスを`com.dmm.bootcamp.yatter2023.ui.timeline`に定義します。  
+まずは、ViewModelクラスを`com.dmm.bootcamp.yatter2024.ui.timeline`に定義します。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.ui.timeline
+package com.dmm.bootcamp.yatter2024.ui.timeline
 
 class PublicTimelineViewModel : ViewModel() {
   // TODO
@@ -185,8 +185,8 @@ class PublicTimelineViewModel(
 
 メソッド内では以下の手順を実装します。  
 
-1. `StatusRepository`からStatus一覧を取得
-2. `PublicTimeline`内の`statusList`を更新
+1.`StatusRepository`からStatus一覧を取得
+2.`PublicTimeline`内の`statusList`を更新
 
 ```Kotlin
 class PublicTimelineViewModel(...) {
@@ -275,8 +275,6 @@ class PublicTimelineViewModel(...) {
 ViewModelの準備ができたところでUI実装を本格的に始めていきます。  
 
 まずは以下のファイルを作成しましょう。
-- ui/timeline/PublicTimelineActivity
-  - パブリックタイムラインのActivityを実装
 - ui/timeline/PublicTimelinePage
   - パブリックタイムラインのPageを実装
 - ui/timeline/PublicTimelineTemplate
@@ -284,101 +282,6 @@ ViewModelの準備ができたところでUI実装を本格的に始めていき
 - ui/timeline/StatusRow
 
 PageとTemplateに関しては後述します。  
-
-### PublicTimelineActivityの実装
-パブリックタイムライン画面のベースとなる`PublicTimelineActivity`の実装を行います。  
-`ui/timeline`にファイルを作成して、次の内容を写経しましょう。  
-
-```Kotlin
-package com.dmm.bootcamp.yatter2023.ui.timeline
-
-import ...
-
-class PublicTimelineActivity : AppCompatActivity() {
-  companion object {
-    fun newIntent(context: Context): Intent = Intent(
-      context,
-      PublicTimelineActivity::class.java,
-    )
-  }
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-  }
-
-  override fun onResume() {
-    super.onResume()
-  }
-}
-```
-
-Activityを実装する際には`newIntent`のようなActivityクラスをインスタンス化するメソッドを用意することが多いです。  
-理由としては、Activityの画面遷移をする際に値を渡す方法に起因します。  
-
-まず、Activityの画面遷移をするときに次のコードが必要です。  
-
-```Kotlin
-val intent = Intent(context, ${遷移したいActivityのクラス情報})
-startActivity(intent)
-```
-
-画面遷移時にデータを渡したいときは次のようなコードを追加します。  
-
-```Kotlin
-val intent = Intent(context, ${遷移したいActivityのクラス情報})
-val data = // 渡したいデータ
-intent.putExtra("data", data)
-startActivity(intent)
-```
-
-そして渡されたデータは次のようなコードで受け取ります。  
-
-```Kotlin
-val data = intent?.getStringExtra("data")
-```
-
-このようにデータを渡したい側で`putExtra`を呼び出し渡したい値をセットし、受け取り側で`get~Extra`で取得します。  
-この方法では2つの問題点があります。  
-
-1. どの値を渡す必要があるか遷移先の実装を確認する必要があり、渡し忘れが発生しやすい
-2. 文字列をキーとしてやり取りするため、渡す側と受け取り側でキーを間違える可能性がある
-
-この問題を解決するために、`newIntent`メソッドを用意します。  
-1の問題に対しては、`newIntent`の引数に欲しいデータを追加することでActivityに遷移するために必要な値強制することができるため、渡し間違えや忘れることがありません。  
-2の問題に対しては、値を渡すことと受け取ることを1つのクラスで完結することができるため、キー用の定数を用意して間違えることを防ぐことができます。  
-
-`newIntent`メソッドを用意した場合の画面遷移は次のような実装になります。  
-```Kotlin
-startActivity(${遷移したいActivityのクラス}.newIntent(this))
-```
----
-
-`PublitTimelineActivity`内で先ほど実装したViewModelをインスタンス化します。  
-インスタンス化するときはimportする内容に気をつけてください。  
-
-```Kotlin
-import org.koin.androidx.viewmodel.ext.android.viewModel
-
-class PublicTimelineActivity : AppCompatActivity() {
-  companion object {...}
-  ...
-  private val viewModel: PublicTimelineViewModel by viewModel()
-  ...
-}
-```
-
-次の章で紹介するDIの設定がされていないため、このままでは動作しませんが現状はこのままで問題ありません。  
-
-まずは、`onResume`内で`ViewModel#onResume`を呼び出します。  
-
-```Kotlin
-  override fun onResume() {
-    super.onResume()
-    viewModel.onResume()
-  }
-```
-
-呼び出すことにより、`onResume`が呼び出されるとき（画面を表示するたび）に`ViewModel#onResume`を呼び出しデータを更新することができます。  
 
 ### UI実装
 Jetpack Composeを利用したUI実装を行います。  
@@ -424,13 +327,13 @@ Previewの利用は、`@Preview`アノテーションを使って次のような
 IDE右上に`Code`/`Split`/`Design`並んでいる箇所で`Split`を選択するとコードを書きながらプレビューを確認できるためおすすめです。  
 `StatusRow`引数の`StatusBindingModel`はプレビュー用のため、適当な値で問題ありません。  
 
-`Yatter2023Theme`や`Surface`に関しては後述しますのでひとまずそのまま写経してください。  
+`Yatter2024Theme`や`Surface`に関しては後述しますのでひとまずそのまま写経してください。  
 
 ```Kotlin
 @Preview
 @Composable
 private fun StatusRowPreview() {
-  Yatter2023Theme {
+  Yatter2024Theme {
     Surface {
       StatusRow(
         statusBindingModel = StatusBindingModel(
@@ -636,7 +539,7 @@ fun PublicTimelineTemplate(
 @Preview
 @Composable
 private fun PublicTimelineTemplatePreview() {
-  Yatter2023Theme {
+  Yatter2024Theme {
     Surface {
       PublicTimelineTemplate(
         statusList = listOf(
@@ -718,7 +621,7 @@ Column(
 }
 ```
 
-ただ、この方法の場合はパフォーマンス面で大きな懸念があります。  `Lazy~`を利用しないリスト表示では、リスト全体の描画が一度に全て行われ、その全てがシステム側で保持されます。そのため、リストの要素数が1万件あった場合に1万件全ての描画・保有コストがかかるため動作が著しく重たくなります。  
+ただ、この方法の場合はパフォーマンス面で大きな懸念があります。 `Lazy~`を利用しないリスト表示では、リスト全体の描画が一度に全て行われ、その全てがシステム側で保持されます。そのため、リストの要素数が1万件あった場合に1万件全ての描画・保有コストがかかるため動作が著しく重たくなります。  
 それに対して`Lazy~`なコンポーザブルを利用した場合には、画面に表示される分のみを描画・保持されます。その状態でスクロールすると新しく表示される要素が描画され、画面外になった要素は破棄されるため保持する内容が必要最小限に抑えられるためパフォーマンス面の問題が解決されます。スクロールするたびに発生する新規描画・破棄のパフォーマンス面のコストは気にならないほどなので問題ありません。  
 
 これらのことからリスト表示するときは、次のような使い分けをすると良いです。  
@@ -768,7 +671,7 @@ fun PublicTimelineTemplate(...) {
 ```
 
 また、今回利用する`PullRefreshIndicator`はまだStableでは無いため、そのままではAndroid Studio上でエラー表示になっていると思います。  
-実験的に追加されているAPIを利用するためにも、`@OptIn(ExperimentalMaterialApi::class)`を` PublicTimelineTemplate`の上部に追加して利用できるようにしましょう。  
+実験的に追加されているAPIを利用するためにも、`@OptIn(ExperimentalMaterialApi::class)`を`PublicTimelineTemplate`の上部に追加して利用できるようにしましょう。  
 
 ```Kotlin
 @OptIn(ExperimentalMaterialApi::class)
@@ -912,7 +815,9 @@ fun PublicTimelinePage() {
 
 ```Kotlin
 @Composable
-fun PublicTimelinePage(viewModel: PublicTimelineViewModel) {
+fun PublicTimelinePage(
+  viewModel: PublicTimelineViewModel = getViewModel(),
+) {
 }
 ```
 
@@ -931,15 +836,17 @@ UiStateの監視準備ができたところで`Page`コンポーザブルから`
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
-fun PublicTimelinePage(viewModel: PublicTimelineViewModel) {
+fun PublicTimelinePage(
+  viewModel: PublicTimelineViewModel = getViewModel(),
+) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-  
+
   PublicTimelineTemplate(
-      statusList = uiState.statusList,
-      isLoading = uiState.isLoading,
-      isRefreshing = uiState.isRefreshing,
-      onRefresh = ,
-    )
+    statusList = uiState.statusList,
+    isLoading = uiState.isLoading,
+    isRefreshing = uiState.isRefreshing,
+    onRefresh = ,
+  )
 }
 ```
 
@@ -953,25 +860,51 @@ fun PublicTimelinePage(viewModel: PublicTimelineViewModel) {
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
-fun PublicTimelinePage(viewModel: PublicTimelineViewModel) {
+fun PublicTimelinePage(
+  viewModel: PublicTimelineViewModel = getViewModel(),
+) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-  
+
   PublicTimelineTemplate(
-      statusList = uiState.statusList,
-      isLoading = uiState.isLoading,
-      isRefreshing = uiState.isRefreshing,
-      onRefresh = viewModel::onRefresh,
-    )
+    statusList = uiState.statusList,
+    isLoading = uiState.isLoading,
+    isRefreshing = uiState.isRefreshing,
+    onRefresh = viewModel::onRefresh,
+  )
 }
 ```
 
-これでPageコンポーザブルとTemplateコンポーザブルの繋ぎこみが完了しました。  
+次に、`onResume`のライフサイクルイベントでViewModelの`onResume`を呼び出すようにします。
+
+`LifecycleEventEffect`を使うことによって、指定したライフサイクルのイベントごとに処理を実行させることができます。
+
+```kotlin
+@Composable
+fun PublicTimelinePage(
+  viewModel: PublicTimelineViewModel = getViewModel(),
+) {
+  val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+  
+  LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {
+    viewModel.onResume()
+  }
+
+  PublicTimelineTemplate(
+    statusList = uiState.statusList,
+    isLoading = uiState.isLoading,
+    isRefreshing = uiState.isRefreshing,
+    onRefresh = viewModel::onRefresh,
+  )
+}
+```
+
+これでViewModel, Pageコンポーザブル, Templateコンポーザブルの繋ぎこみが完了しました。  
 
 ---
 
 最後にActivityとPageコンポーザブルとの繋ぎこみを行います。  
 
-`PublicTimelineActivity`ファイルを開き、`onCreate`メソッドを探します。  
+`MainActivity`ファイルを開き、`onCreate`メソッドを探します。  
 
 `onCreate`メソッドは画面が生成されるときに呼び出されるライフサイクルメソッドで、UIの実装や呼び出しもこのタイミングで行います。  
 
@@ -983,110 +916,28 @@ override fun onCreate(savedInstanceState: Bundle?) {
   super.onCreate(savedInstanceState)
 
   setContent {
-    Yatter2023Theme {
+    Yatter2024Theme {
       Surface {
-        PublicTimelinePage(viewModel = viewModel)
+        PublicTimelinePage()
       }
     }
   }
 }
 ```
 
-`Yatter2023Theme`と`Surface`が再度出てきました。  
+`Yatter2024Theme`と`Surface`が再度出てきました。  
 
 この2つのメソッドはアプリ全体で利用する色や文字スタイル、UIコンポーネントの形状といったものを管理してアプリ全体を一つのテーマで統一するために用いられるものです。  
 
 この2つを利用しないと、1つのアプリなのに画面によって使われている色や見た目が違っていたり、統一するためにボイラーコードを多く書く必要が出てきます。  
 それらを完結にするために利用されます。  
 
-`Yatter2023Theme`でアプリ全体のテーマ（色や文字スタイル、UIコンポーネントの形状を含みます）を管理するコンポーザブルで、デフォルトの場合`${プロジェクト名}Theme`といった命名でプロジェクト作成時に自動生成されています。  
+`Yatter2024Theme`でアプリ全体のテーマ（色や文字スタイル、UIコンポーネントの形状を含みます）を管理するコンポーザブルで、デフォルトの場合`${プロジェクト名}Theme`といった命名でプロジェクト作成時に自動生成されています。  
 `Theme.kt`というファイルでテーマが定義されていますので、アプリ全体の色を変えたい時などに変更してみてください。  
 
 `Surface`コンポーザブルでは、ダークテーマ対応をはじめとする背景色に対して適切なコンテンツカラーを利用できるようにサポートするコンポーザブルです。  
 例えば白背景の上には黒文字といったコントラスト比を意識した画面は`Surface`を利用しなくとも実装できます。ですが、デバイスのダークテーマに合わせて背景色を黒をベースにした色に変わったときに文字色が黒文字のままで見えにくい・見えない画面になってしまいます。  
 そこで`Surface`コンポーザブルを利用することで黒背景に対しては白文字など、背景色が変更されてもコントラスト比を保ったまま表示ができるようにしています。  
-
----
-
-Activityの実装が完了したらプロジェクト内の`AndroidManifest.xml`というファイルを開きます。  
-マニフェストファイルでは、アプリに関する重要な情報をAndroidビルドツール・Android OS・Google Playに対して説明するものです。  
-
-マニフェストファイルには以下の要素が記載されています。  
-- アプリが利用するパーミッション
-- アプリに存在するActivity
-- アプリ起動時にどのActivityを一番最初に呼び出すか
-- アプリのアイコン
-- アプリ名
-- アプリ全体のテーマ
-
-今回、PublicTimelineActivityを新規に作成したため、マニフェストファイルに追記します。  
-
-```XML
-<?xml version="1.0" encoding="utf-8"?>
-<manifest ...>
-    <application ...>
-        <activity
-            android:name=".MainActivity"
-            ...>
-        </activity>
-
-<!--    追加    -->
-        <activity
-            android:name=".ui.timeline.PublicTimelineActivity"
-            android:exported="false" />
-
-    </application>
-</manifest>
-```
-
-こうすることにより`PublicTimelineActivity`という名前のActivityが存在することを定義します。  
-もしこの定義がない状態で`PublicTimelineActivity`を起動しようとすると実行時エラーでクラッシュします。  
-
-`PublicTimelineActivity`の定義ができたら実際に`PublicTimelineActivity`をアプリ起動時に表示できるように`MainActivity`にコードを追記します。  
-
-画面遷移するためのコードは前述したように、`startActivity(${遷移したいActivityのクラス}.newIntent(this))`を呼び出します。  
-また、今回は一度パブリックタイムライン画面に遷移した後に`MainActivity`に戻ることはないので、`finish()`メソッドを呼び出してActivityを終了させておきます。  
-
-```Kotlin
-class MainActivity : AppCompatActivity() {
-  ...
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContent {...}
-    
-    // 追加
-    startActivity(PublicTimelineActivity.newIntent(this))
-    finish()
-  }
-}
-
-```
-
-ここまでの実装でパブリックタイムラインのUI実装全体が完了しました。  
-現状のままではアプリを起動してもアプリがクラッシュして見ることができないと思います。  
-設定がまだできていない部分がありますので最後にその対応をしましょう。  
-
-## DI設定
-`di`ディレクトリ内にある`ViewModelModule`というファイルを開きます。  
-その中にコメントアウトされている`PublicTimelineViewModel`の設定を確認します。  
-行の先頭にある`//`を削除してコメントアウトを外し以下のようなコードにしましょう。  
-
-```Kotlin
-internal val viewModelModule = module {
-  viewModel { MainViewModel(get()) }
-  viewModel { PublicTimelineViewModel(get()) } // こちらの//を削除
-//  viewModel { PostViewModel(get(), get()) }
-  ...
-}
-```
-コードが赤く表示される可能性がありますので、そのコードにカーソルを当て `option + Enter`を押して`import class 'PublicTimelineViewModel'`を選択して必要なimport文を追加しましょう。
-
-![import_public_timeline_viewmodel](../image/2/import_public_timline_viewmodel.png)
-
-エラーが表示されなくなったら準備は完了です。  
-Android StudioのRunボタンを押下してアプリを実行し動作を確認しましょう。  
-
-今回はDIについて省略しましたが、気になる方は`appendix/3_DI実装`をご覧ください。  
 
 ## Appendix
 今回、UI構築を行う際にタイトルや`contentDescription`を文字列で直書きしています。  
