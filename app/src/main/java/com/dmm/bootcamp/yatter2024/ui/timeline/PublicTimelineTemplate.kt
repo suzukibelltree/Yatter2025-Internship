@@ -10,14 +10,12 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -64,12 +62,12 @@ internal fun PublicTimelineTemplate(
         )
       }
     },
-  ) {
+  ) { paddingValues ->
     val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefresh)
     Box(
       modifier = Modifier
         .fillMaxSize()
-        .padding(it)
+        .padding(paddingValues)
         .pullRefresh(pullRefreshState),
       contentAlignment = Alignment.Center,
     ) {
@@ -83,9 +81,9 @@ internal fun PublicTimelineTemplate(
       }
 
       PullRefreshIndicator(
-        isRefreshing,
-        pullRefreshState,
-        Modifier.align(Alignment.TopCenter)
+        refreshing = isRefreshing,
+        state = pullRefreshState,
+        modifier = Modifier.align(Alignment.TopCenter)
       )
 
       if (isLoading) {
@@ -97,19 +95,27 @@ internal fun PublicTimelineTemplate(
 
 @Preview
 @Composable
-fun PublicTimelineTemplatePreview() {
+private fun PublicTimelineTemplatePreview() {
   Yatter2024Theme {
     Surface {
       PublicTimelineTemplate(
         statusList = listOf(
           StatusBindingModel(
-            id = "id",
-            displayName = "display name",
-            username = "username",
+            id = "id1",
+            displayName = "display name1",
+            username = "username1",
             avatar = null,
-            content = "preview content",
+            content = "preview content1",
             attachmentMediaList = listOf()
-          )
+          ),
+          StatusBindingModel(
+            id = "id2",
+            displayName = "display name2",
+            username = "username2",
+            avatar = null,
+            content = "preview content2",
+            attachmentMediaList = listOf()
+          ),
         ),
         isLoading = true,
         onClickPost = {},
