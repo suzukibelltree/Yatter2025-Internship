@@ -3,6 +3,8 @@ package com.dmm.bootcamp.yatter2024
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.dmm.bootcamp.yatter2024.common.MainDispatcherRule
 import com.dmm.bootcamp.yatter2024.domain.service.CheckLoginService
+import com.dmm.bootcamp.yatter2024.ui.login.LoginDestination
+import com.dmm.bootcamp.yatter2024.ui.timeline.PublicTimelineDestination
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -29,8 +31,7 @@ class MainViewModelSpec {
 
     subject.onCreate()
 
-    assertThat(subject.navigateToPublicTimeline.value).isNotNull()
-    assertThat(subject.navigateToLogin.value).isNull()
+    assertThat(subject.startDestination.value).isInstanceOf(PublicTimelineDestination::class.java)
   }
 
   @Test
@@ -41,7 +42,6 @@ class MainViewModelSpec {
 
     subject.onCreate()
 
-    assertThat(subject.navigateToLogin.value).isNotNull()
-    assertThat(subject.navigateToPublicTimeline.value).isNull()
+    assertThat(subject.startDestination.value).isInstanceOf(LoginDestination::class.java)
   }
 }

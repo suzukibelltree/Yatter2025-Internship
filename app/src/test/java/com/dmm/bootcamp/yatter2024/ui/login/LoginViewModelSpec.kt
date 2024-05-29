@@ -4,6 +4,8 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.dmm.bootcamp.yatter2024.common.MainDispatcherRule
 import com.dmm.bootcamp.yatter2024.domain.model.Password
 import com.dmm.bootcamp.yatter2024.domain.model.Username
+import com.dmm.bootcamp.yatter2024.ui.register.RegisterAccountDestination
+import com.dmm.bootcamp.yatter2024.ui.timeline.PublicTimelineDestination
 import com.dmm.bootcamp.yatter2024.usecase.login.LoginUseCase
 import com.dmm.bootcamp.yatter2024.usecase.login.LoginUseCaseResult
 import com.google.common.truth.Truth.assertThat
@@ -73,8 +75,7 @@ class LoginViewModelSpec {
       loginUseCase.execute(Username(username), Password(password))
     }
 
-    assertThat(subject.navigateToPublicTimeline.value).isNotNull()
-    assertThat(subject.navigateToRegister.value).isNull()
+    assertThat(subject.destination.value).isInstanceOf(PublicTimelineDestination::class.java)
   }
 
   @Test
@@ -95,15 +96,13 @@ class LoginViewModelSpec {
       loginUseCase.execute(Username(username), Password(password))
     }
 
-    assertThat(subject.navigateToPublicTimeline.value).isNull()
-    assertThat(subject.navigateToRegister.value).isNull()
+    assertThat(subject.destination.value).isNull()
   }
 
   @Test
   fun clickRegisterAndNavigate() = runTest {
     subject.onClickRegister()
 
-    assertThat(subject.navigateToRegister.value).isNotNull()
-    assertThat(subject.navigateToPublicTimeline.value).isNull()
+    assertThat(subject.destination.value).isInstanceOf(RegisterAccountDestination::class.java)
   }
 }
