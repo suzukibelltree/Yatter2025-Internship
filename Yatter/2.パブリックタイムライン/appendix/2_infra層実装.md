@@ -1,5 +1,5 @@
 # パブリックタイムライン画面のinfra層実装
-パブリックタイムライン画面のinfra層実装を行います。 
+パブリックタイムライン画面のinfra層の実装を行います。 
 
 ## infra層の説明
 infra層では純粋な技術的関心ごとを実装します。  
@@ -11,7 +11,7 @@ domain層で定義したRepositoryやDomainServiceをはじめとするinterface
 ## API接続実装
 まずは、APIと接続する部分を実装します。  
 今回は`Retrofit`というライブラリを利用します。  
-ライブラリを使わずにAPI通信を実装する方法もありますが、Retrofitを利用することがデファクトスタンダードになっています。  
+ライブラリを使わずにAPI通信を実装する方法もありますが、Retrofitなどのライブラリを利用することがデファクトスタンダードになっています。  
 他にも`Ktor`を利用する場合もあります。  
 
 実装する前にドキュメントを一読してみましょう。  
@@ -31,7 +31,7 @@ Javaで説明されていますが、次の内容を抑えられれば良いで�
 appendix > 12-Retrofitを用いた通信について
 ```
 
----
+### Json定義
 
 Retrofitのドキュメントを一読したら実装に入ります。  
 パブリックタイムライン画面で利用するAPIは次のAPIのみです。  
@@ -72,8 +72,8 @@ GET /timelines/public
 
 `Status`(ツイート)の配列で`Status`はいろんなパラメータと、そのほかに`Account`の情報と`MediaAttachment`の配列を持っています。  
 こういったレスポンスをそのまま文字列として扱うには不便なので、アプリ開発では一般的にJsonなどのレスポンスをクラス（型）で表現します。  
-クラスで表現し、（デ）シリアライザを使用することで、Jsonの文字列とクラスの変換をできるようにします。  
-ちなみに、今回はシリアライザライブラリとして[Moshi](https://github.com/square/moshi)を使用します。
+クラスで表現し、シリアライザやデシリアライザを使用することで、Jsonの文字列とクラスの変換をできるようにします。  
+ちなみに、今回は[Moshi](https://github.com/square/moshi)というライブラリを使用します。
 
 早速、`StatusJson`クラス・`AccountJson`クラス・`MediaAttachmentJson`クラスを実装してみましょう。  
 `com.dmm.bootcamp.yatter2024.infra.api.json`パッケージを作り、そこにそれぞれのクラスを追加していきます。  
@@ -93,7 +93,8 @@ GET /timelines/public
 }
 ```
 
-このJsonをそのままクラスで表現します。
+このJsonをそのままクラスで表現します。  
+Moshiライブラリを使うため、Jsonのキーと名前が一致する
 
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.infra.api.json
@@ -111,12 +112,11 @@ data class AccountJson(
 )
 ```
 
-`AccountJson`クラスのメンバ変数の型が全て`String`になっています。  
-Jsonではidをintegerで取り扱っていますが、Androidアプリ側でJsonをクラスに変換する際にStringとして扱うようにしています。  
-`id`を`String`で扱う理由としては、もし今後idをintで扱いきれないほどユーザーが増えた時などの都合によってStringやUUIDといったinteger以外に変更したくなった時にもアプリ側の変更無しに対応できるようにするためにStringで扱うようにしています。  
+Jsonでは`id`をintegerで取り扱っていますが、Androidアプリ側でJsonをクラスに変換する際にStringとして扱うようにしています。  
+アプリ側で`id`を`String`で扱う理由としては、もし今後idをintで扱いきれないほどユーザーが増えた時などでStringやUUIDといったinteger以外に変更したくなった時にもアプリ側の変更無しに対応できるようにするためです。  
 
 Androidをはじめとするモバイルアプリ開発において、アプリに変更を入れて実際のユーザーに届くまでにストア申請が必ず入ります。  
-ストア申請は早ければ数時間程度でリリースできるようになりますが、状況によっては数日、長ければ1週間以上かかる場合もありさらに審査結果によっては再修正も必要になり、バックエンドやWebフロントに比べて本番環境へのデプロイに時間がかかります。  
+ストア申請は早ければ数時間程度でリリースできるようになりますが、状況によっては数日、長ければ1週間以上かかる場合もありさらに審査結果によっては再修正も必要になるため、バックエンドやWebフロントに比べて本番環境へのデプロイに時間がかかります。  
 そのため、修正が入ってもアプリの修正・リリースをしなくとも機能するように意識して実装することが多くあります。  
 今回のidをintではなくStringで最初から扱うのもそういった理由からきています。  
 
@@ -139,11 +139,12 @@ data class AccountJson(
 ```
 
 ただしこれでは動きません。実際のJsonでは`display_name`や`created_at`というキーであるのに対して、クラスでは`displayName`、`createAt`という違う文字列になっているので、シリアライザが対応関係を解決することができません。  
-この対応関係を揃えるための機能を`Moshi`が用意しているので、それに習うと`AccountJson`クラスは下記のようになります。  
+この対応関係を揃えるための機能を`Moshi`が用意しているため、`AccountJson`クラスは下記のように修正します。  
 
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.infra.api.json
 
+@JsonClass(generateAdapter = true) // @Json(name = )を利用するクラスに必要
 data class AccountJson(
   @Json(name = "id") val id: String,
   @Json(name = "username") val username: String,
@@ -164,6 +165,7 @@ data class AccountJson(
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.infra.api.json
 
+@JsonClass(generateAdapter = true)
 data class AccountJson(
   val id: String,
   val username: String,
@@ -178,9 +180,10 @@ data class AccountJson(
 ```
 
 これで`AccountJson`の実装は完了です。  
-`AccountJson`ではありませんでしたが、Jsonのネストを次のように表現することも可能です。  
+`AccountJson`ではありませんでしたが、ネストしたJsonArrayは次のように表現します。  
 
 ```Kotlin
+@JsonClass(generateAdapter = true)
 data class StatusJson(
   ...
   val account: AccountJson,
@@ -202,6 +205,7 @@ package com.dmm.bootcamp.yatter2024.infra.api.json
 
 import com.squareup.moshi.Json
 
+@JsonClass(generateAdapter = true)
 data class StatusJson(
   val id: String,
   val account: AccountJson,
@@ -225,7 +229,7 @@ data class MediaJson(
 ```
 </details>
 
----
+### API実装
 
 必要なJsonクラスが定義できたところで、APIの実装を行います。  
 `com.dmm.bootcamp.yatter2024/infra/api`に`YatterApi`のinterfaceを定義します。  
@@ -236,11 +240,11 @@ package com.dmm.bootcamp.yatter2024.infra.api
 interface YatterApi
 ```
 
-この`YatterApi`に、1つのAPIに対して1つのメソッドを定義することで`Retrofit`が内部で通信を行い、`converter`を通してレスポンスを指定した型に変換してくれます。  
+この`YatterApi`に、1つのAPIに対して1つのメソッドを定義することで`Retrofit`が生成するコードで通信を行い、APIのレスポンスを指定したJsonクラスに変換してくれます。  
 
 `GET /timelines/public`のAPIに対するメソッドとして`getPublicTimeline`を定義します。  
-返り値の方はStatus一覧のレスポンスになるため`List`とします。  
-さらにAPIの実行は非同期処理になるため`suspend`も付けます。  
+返り値の方はStatus一覧のレスポンスになるため`List<StatusJson>`とします。  
+さらにAPIの実行は非同期処理になるため`suspend`も付け、メソッドが非同期処理を行えるようにします。  
 
 ```Kotlin
 interface YatterApi {
@@ -248,7 +252,7 @@ interface YatterApi {
 }
 ```
 
-次にリクエストする際に必要な値を確認します。  
+次はリクエストに必要な値を確認します。  
 API Docを見るとリクエストに必要な値は次のようになっています。  
 
 |パラメータ名|option/required|Param Type|Type|説明|
@@ -288,7 +292,7 @@ interface YatterApi {
 
 これでYatter APIの実装は完了です。  
 
----
+### API Factoryの実装
 
 続いて、Yatter APIのインスタンスを作成するFactoryクラスを実装します。  
 `YatterApiFactory.kt`ファイルを`YatterApi`と同じパッケージ内に作成しましょう。  
@@ -321,8 +325,8 @@ class YatterApiFactory {
 今、baseUrlに`http://10.0.2.2:8080/`を指定しています。AndroidのエミュレータからPCのlocalhostに接続する場合はこのURLを指定します。  
 https://developer.android.com/studio/run/emulator-networking
 
-ローカルで開発している分にはこの指定で問題ありませんが、本番環境やSTG環境といった開発環境ごとにこのURLを変更する運用は大変です。  
-Androidアプリ開発には`Build Type`という機能があり、このtypeごとに設定値を作ることができます。まずは実践です。  
+ローカルで開発している分にはこの指定で問題ありませんが、本番環境やSTG環境といった開発環境ごとにこの方法でURLを変更する運用は大変です。  
+Androidアプリ開発には`Build Type`という機能があり、このtypeごとに値を設定することができます。  
 `app/build.gradle`を開いて、buildTypesを以下のように書き換えます。  
 
 ```Groovy
@@ -435,7 +439,7 @@ class StatusRepositoryImpl : StatusRepository {
 ```
 
 このメソッドの中で、まずは`findAllPublic`の実装のみを行います。  
-他の`TODO`となっているところはそのままでも問題なくビルドは成功します。ですが実行時にはランタイムエラーがでクラッシュしますので必要になったタイミングで実装書ましょう。  
+他の`TODO`となっているところはそのままでも問題なくビルドは成功します。ですが実行時にはランタイムエラーがでクラッシュしますので必要になったタイミングで実装しましょう。  
 
 まずは、クラスのコンストラクタでAPI通信を行うための`YatterApi`を受け取ります。  
 
@@ -468,7 +472,7 @@ https://developer.android.com/kotlin/coroutines/coroutines-adv
 ---
 
 続いて、変換部分を作っていきましょう。  
-`Status`ドメインモデルが、`Account`をメンバとして持っているために、`Account`のコンバーターを、さらには現状Accountは `abstract class`なのでその実装クラスも必要になります。  
+`Status`ドメインモデルが`Account`をメンバとして持っているために`Account`のコンバーターを、さらには現状Accountは `abstract class`なのでその実装クラスも必要になります。  
 
 それぞれ次のようになります。  
 package通りに配置していってください。
@@ -552,9 +556,10 @@ object StatusConverter {
     jsonList.map { convertToDomainModel(it) }
 
   fun convertToDomainModel(json: StatusJson): Status = Status(
-    id = StatusId(json.id.toString()),
+    id = StatusId(json.id),
     account = AccountConverter.convertToDomainModel(json.account),
     content = json.content ?: "",
+    attachmentMediaList = MediaConverter.convertToDomainModel(json.attachmentMediaList),
   )
 }
 ```
@@ -580,12 +585,12 @@ YatterでもJUnitを使ってテストを書きます。
 
 Androidアプリ開発での単体テストは、`app/src/test/java`ディレクトリ内にテスト対象のクラスと同じパッケージ内に定義します。  
 
-![](../../image/2/test_dir.png)
+![test_dir](../../image/2/test_dir.png)
 
 今回は`StatusRepositoryImpl`のテストを書くため、`infra/domain/repository`パッケージをtestディレクトリ内にも作成し、作成したパッケージに`StatusRepositoryImplSpec`というクラスも作成します。  
 
 Yatterアプリ開発ではテストクラスの命名規則として`${テスト対象クラス名}Spec`という名前にします。  
-`Spec`は仕様という意味のある`specification`の略で、テストは使用であるという意味合いを持たせています。  
+`Spec`は仕様という意味のある`specification`の略で、テストは仕様であるという意味合いを持たせています。  
 
 ```Kotlin
 class StatusRepositoryImplSpec {}
@@ -601,7 +606,7 @@ class StatusRepositoryImplSpec {}
 val mockClass = mockk<MockClass>()
 ```
 
-モック化したクラスは次のような記述をしてテストを記述していきます。  
+モック化したクラスは次のような記述をしてテストを書きます。  
 
 ```Kotlin
 // モッククラスのメソッド実行時の返り値をモック
@@ -653,18 +658,19 @@ val jsonList = listOf(
   StatusJson(
     id = "id",
     account = AccountJson(
+      id = "id",
       username = "username",
       displayName = "display name",
       note = "note",
-      avatar = "avatar",
-      header = "header",
+      avatar = "https://www.google.com",
+      header = "https://www.google.com",
       followingCount = 100,
       followersCount = 200,
       createAt = "2023-06-02T12:44:35.030Z"
     ),
     content = "content",
     createAt = "2023-06-02T12:44:35.030Z",
-    attachmentMediaList = listOf(),
+    attachmentMediaList = emptyList(),
   )
 )
 
@@ -672,16 +678,17 @@ val expect = listOf(
   Status(
     id = StatusId(value = "id"),
     account = AccountImpl(
+      id = AccountId("id"),
       username = Username("username"),
       displayName = "display name",
       note = "note",
-      avatar = "avatar",
-      header = "header",
+      avatar = URL("https://www.google.com"),
+      header = URL("https://www.google.com"),
       followingCount = 100,
       followerCount = 200
     ),
     content = "content",
-    attachmentMediaList = listOf()
+    attachmentMediaList = emptyList()
   )
 )
 
@@ -691,7 +698,7 @@ coEvery {
 ```
 
 値の準備ができたら、実際に対象のメソッドを呼び出し、結果が取得できていることを確認します。  
-ここで利用してる`assertThat`は`Truth`ライブラリのものを利用していますので、`com.google.common.truth.Truth.assertThat`をimportされていることを確認してください。  
+ここで利用してる`assertThat`は`Truth`ライブラリのものを利用していますので、`com.google.common.truth.Truth.assertThat`がimportされていることを確認してください。  
 
 ```Kotlin
 val result: List<Status> = subject.findAllPublic()
@@ -717,7 +724,7 @@ assertThat(result).isEqualTo(expect)
 テストが通過していればinfra層の実装とテストが終了です。  
 もし何かしらのエラーやテスト失敗が出ていればエラー内容を確認して対応してみましょう。  
 
-テストを実行すると次のファイルに結果が出力されます。  
+テストを実行すると次のファイルにテスト結果ログが出力されます。  
 
 ```
 app/build/reports/tests/testReleaseUnitTest/index.html
