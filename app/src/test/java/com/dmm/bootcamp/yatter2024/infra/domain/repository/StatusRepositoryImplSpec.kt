@@ -1,6 +1,7 @@
 package com.dmm.bootcamp.yatter2024.infra.domain.repository
 
 import android.accounts.AuthenticatorException
+import com.dmm.bootcamp.yatter2024.auth.TokenProvider
 import com.dmm.bootcamp.yatter2024.domain.model.AccountId
 import com.dmm.bootcamp.yatter2024.domain.model.Status
 import com.dmm.bootcamp.yatter2024.domain.model.StatusId
@@ -11,7 +12,6 @@ import com.dmm.bootcamp.yatter2024.infra.api.json.PostStatusJson
 import com.dmm.bootcamp.yatter2024.infra.api.json.StatusJson
 import com.dmm.bootcamp.yatter2024.infra.domain.converter.StatusConverter
 import com.dmm.bootcamp.yatter2024.infra.domain.model.AccountImpl
-import com.dmm.bootcamp.yatter2024.infra.pref.MePreferences
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -23,8 +23,8 @@ import java.net.URL
 
 class StatusRepositoryImplSpec {
   private val yatterApi = mockk<YatterApi>()
-  private val mePreferences = mockk<MePreferences>()
-  private val subject = StatusRepositoryImpl(yatterApi, mePreferences)
+  private val tokenProvider = mockk<TokenProvider>()
+  private val subject = StatusRepositoryImpl(yatterApi, tokenProvider)
 
   @Test
   fun getPublicTimelineFromApi() = runTest {
@@ -44,7 +44,7 @@ class StatusRepositoryImplSpec {
         ),
         content = "content",
         createAt = "2023-06-02T12:44:35.030Z",
-//        attachmentMediaList = listOf(),
+        attachmentMediaList = listOf(),
       )
     )
 
@@ -98,12 +98,12 @@ class StatusRepositoryImplSpec {
         createAt = ""
       ),
       content = content,
-      createAt = ""
-
+      createAt = "",
+      attachmentMediaList = listOf(),
     )
 
     coEvery {
-      mePreferences.getUsername()
+      tokenProvider.provide()
     } returns username
 
     coEvery {
@@ -120,12 +120,12 @@ class StatusRepositoryImplSpec {
     assertThat(result).isEqualTo(expect)
 
     coVerifyAll {
-      mePreferences.getUsername()
+      tokenProvider.provide()
       yatterApi.postStatus(
         username,
         PostStatusJson(
           status = content,
-          mediaIds = emptyList()
+          mediaList = emptyList()
         )
       )
     }
@@ -133,12 +133,11 @@ class StatusRepositoryImplSpec {
 
   @Test
   fun postStatusWhenNotLoggedIn() = runTest {
-    val username = null
     val content = "content"
 
     coEvery {
-      mePreferences.getUsername()
-    } returns username
+      tokenProvider.provide()
+    } throws AuthenticatorException()
 
 
     var error: Throwable? = null
@@ -158,7 +157,7 @@ class StatusRepositoryImplSpec {
     assertThat(error).isInstanceOf(AuthenticatorException::class.java)
 
     coVerify {
-      mePreferences.getUsername()
+      tokenProvider.provide()
     }
   }
 }
