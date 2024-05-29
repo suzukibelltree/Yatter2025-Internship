@@ -1,5 +1,5 @@
 # パブリックタイムラインのテスト実装
-パブリックタイムラインで使用しているモジュールのテストを書いてみましょう。  
+パブリックタイムラインで使用しているクラスのテストを書いてみましょう。  
 
 ## ViewModelの単体テスト
 
@@ -51,11 +51,12 @@ fun getPublicTimelineFromRepository() = runTest {
     Status(
       id = StatusId(value = "id"),
       account = AccountImpl(
+        id= AccountId("id"),
         username = Username("username"),
         displayName = "display name",
         note = "note",
-        avatar = null,
-        header = null,
+        avatar = URL("https://www.google.com"),
+        header = URL("https://www.google.com"),
         followingCount = 100,
         followerCount = 200
       ),
@@ -89,11 +90,12 @@ fun onRefreshPublicTimeline() = runTest {
     Status(
       id = StatusId(value = "id"),
       account = AccountImpl(
+        id= AccountId("id"),
         username = Username("username"),
         displayName = "display name",
         note = "note",
-        avatar = null,
-        header = null,
+        avatar = URL("https://www.google.com"),
+        header = URL("https://www.google.com"),
         followingCount = 100,
         followerCount = 200
       ),
