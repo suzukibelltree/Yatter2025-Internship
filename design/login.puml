@@ -8,7 +8,7 @@ package domain {
 
   class Username {
     + value: String
-    + validate()
+    + validate(): Boolean
   }
 
   package service {
