@@ -1,7 +1,6 @@
 @startuml
 
 package ui {
-class PublicTimelineActivity {}
 class PublicTimelineViewModel {
   - _uiState: MutableStateFlow<PublicTimelineUiState>
   + uiState: StateFlow<PublicTimelineUiState>
@@ -90,8 +89,6 @@ interface YatterApi {
 
 StatusRepositoryImpl -- YatterApi
 StatusRepositoryImpl --|> StatusRepository
-
-PublicTimelineActivity -- PublicTimelineViewModel
 
 PublicTimelineViewModel -- StatusRepository
 PublicTimelineViewModel -- PublicTimelineUiState

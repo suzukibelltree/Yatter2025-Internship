@@ -62,7 +62,9 @@ internal class LoginViewModel(
       ) {
         is LoginUseCaseResult.Success -> {
           _destination.value = PublicTimelineDestination {
-            launchSingleTop = true
+            popUpTo(LoginDestination().route) {
+              inclusive = true
+            }
           }
         }
 

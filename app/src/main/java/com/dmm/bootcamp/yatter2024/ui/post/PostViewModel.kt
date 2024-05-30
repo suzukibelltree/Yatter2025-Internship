@@ -18,7 +18,7 @@ class PostViewModel(
   private val getMeService: GetMeService,
 ) : ViewModel() {
   private val _uiState: MutableStateFlow<PostUiState> = MutableStateFlow(PostUiState.empty())
-  val uiState: StateFlow<PostUiState> = _uiState
+  val uiState: StateFlow<PostUiState> = _uiState.asStateFlow()
 
   private val _destination = MutableStateFlow<Destination?>(null)
   val destination: StateFlow<Destination?> = _destination.asStateFlow()
@@ -32,7 +32,7 @@ class PostViewModel(
       val snapshotBindingModel = uiState.value.bindingModel
       _uiState.update {
         it.copy(
-          bindingModel = snapshotBindingModel.copy(avatarUrl = me?.avatar.toString()),
+          bindingModel = snapshotBindingModel.copy(avatarUrl = me?.avatar?.toString()),
           isLoading = false,
         )
       }

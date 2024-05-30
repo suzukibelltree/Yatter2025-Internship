@@ -58,16 +58,13 @@ package ui.post {
     - getMeService: GetMeService
 
     + uiState: StateFlow<PostUiState>
-    + goBack: LiveData<Unit>
+    + destination: StateFlow<Destination?>
 
     + onCreate()
     + onChangedStatusText(statusText: String)
     + onClickPost()
     + onClickNavIcon()
-  }
-
-  class PostActivity {
-    - postViewModel: PostViewModel
+    + onCompleteNavigation()
   }
 
   class PostUiState {
@@ -96,7 +93,6 @@ PostStatusUseCaseImpl --|> PostStatusUseCase
 PostStatusUseCase -- PostStatusUseCaseResult
 PostStatusUseCaseImpl -- StatusRepository
 
-PostActivity -- PostViewModel
 PostViewModel -- PostUiState
 PostUiState -- PostBindingModel
 
