@@ -44,7 +44,7 @@ class StatusRepositoryImplSpec {
         ),
         content = "content",
         createAt = "2023-06-02T12:44:35.030Z",
-        attachmentMediaList = listOf(),
+        attachmentMediaList = emptyList(),
       )
     )
 
@@ -62,7 +62,7 @@ class StatusRepositoryImplSpec {
           followerCount = 200
         ),
         content = "content",
-        attachmentMediaList = listOf()
+        attachmentMediaList = emptyList()
       )
     )
 
@@ -81,30 +81,30 @@ class StatusRepositoryImplSpec {
 
   @Test
   fun postStatusWhenLoggedIn() = runTest {
-    val username = "username"
+    val token = "token"
     val content = "content"
 
     val statusJson = StatusJson(
       id = "id",
       account = AccountJson(
         id = "id",
-        username = username,
+        username = token,
         displayName = "",
         note = null,
-        avatar = "",
-        header = "",
+        avatar = "https://www.google.com",
+        header = "https://www.google.com",
         followingCount = 0,
         followersCount = 0,
         createAt = ""
       ),
       content = content,
       createAt = "",
-      attachmentMediaList = listOf(),
+      attachmentMediaList = emptyList(),
     )
 
     coEvery {
       tokenProvider.provide()
-    } returns username
+    } returns token
 
     coEvery {
       yatterApi.postStatus(any(), any())
@@ -122,7 +122,7 @@ class StatusRepositoryImplSpec {
     coVerifyAll {
       tokenProvider.provide()
       yatterApi.postStatus(
-        username,
+        token,
         PostStatusJson(
           status = content,
           mediaList = emptyList()

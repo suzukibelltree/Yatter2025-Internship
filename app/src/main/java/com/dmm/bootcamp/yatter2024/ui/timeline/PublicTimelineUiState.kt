@@ -14,7 +14,4 @@ data class PublicTimelineUiState(
       isRefreshing = false,
     )
   }
-  override fun equals(other: Any?): Boolean {
-    return super.equals(other) && this.toString() == other.toString()
-  }
 }
