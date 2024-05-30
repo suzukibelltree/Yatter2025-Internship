@@ -91,8 +91,8 @@ class StatusRepositoryImplSpec {
         username = token,
         displayName = "",
         note = null,
-        avatar = "",
-        header = "",
+        avatar = "https://www.google.com",
+        header = "https://www.google.com",
         followingCount = 0,
         followersCount = 0,
         createAt = ""
@@ -137,7 +137,7 @@ class StatusRepositoryImplSpec {
 
     coEvery {
       tokenProvider.provide()
-    } throws Exception()
+    } throws AuthenticatorException()
 
 
     var error: Throwable? = null
