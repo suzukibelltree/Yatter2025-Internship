@@ -53,7 +53,7 @@ class PostViewModel(
 
 次に、必要なメソッドを定義します。  
 今回は画面の初期起動時にユーザー情報取得する`onCreate`とStatusの内容を書き換えた時に呼び出される`onChangedStatusText`、そして投稿ボタンを押下した時の`onClickPost`を用意します。  
-さらにツイート画面ではパブリックタイムライン画面に戻るために表示するボタン押下時の`onClickNavIcon`も定義します。  
+さらにツイート画面ではパブリックタイムライン画面に戻るために表示するボタン押下時の`onClickNavIcon`と画面遷移が終わったあとにDestinationを初期化する`onCompleteNavigation`も定義します。  
 
 
 ```Kotlin
@@ -65,6 +65,8 @@ class PostViewModel(...) : ViewModel() {
   fun onClickPost() {}
 
   fun onClickNavIcon() {}
+
+  fun onCompleteNavigation() {}
 }
 ```
 
@@ -94,7 +96,7 @@ fun onCreate() {
     val snapshotBindingModel = uiState.value.bindingModel
     _uiState.update {
       it.copy(
-        bindingModel = snapshotBindingModel.copy(avatarUrl = me?.avatar.toString()),
+        bindingModel = snapshotBindingModel.copy(avatarUrl = me?.avatar?.toString()),
         isLoading = false,
       )
     }
@@ -134,12 +136,21 @@ fun onClickPost() {
 }
 ```
 
-最後に、戻る用のボタン押下時の`onClickNavIcon`です。  
+戻る用のボタン押下時の`onClickNavIcon`です。  
 このメソッドでは単純に、`_destination`に値を流すだけです。  
 
 ```Kotlin
 fun onClickNavIcon() {
   _destination.value = PopBackDestination
+}
+```
+
+最後に、画面遷移が終わったあとに呼び出す`onCompleteNavigation`です。
+`_destination`にnullをセットします。
+
+```kotlin
+fun onCompleteNavigation() {
+  _destination.value = null
 }
 ```
 
@@ -164,7 +175,7 @@ fun PostTemplate() {
 
 @Preview
 @Composable
-fun PostTemplatePreview() {
+private fun PostTemplatePreview() {
   Yatter2024Theme {
     Surface() {
       PostTemplate()
