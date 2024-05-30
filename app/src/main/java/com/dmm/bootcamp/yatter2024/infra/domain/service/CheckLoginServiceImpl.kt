@@ -1,12 +1,12 @@
 package com.dmm.bootcamp.yatter2024.infra.domain.service
 
 import com.dmm.bootcamp.yatter2024.domain.service.CheckLoginService
-import com.dmm.bootcamp.yatter2024.infra.pref.MePreferences
+import com.dmm.bootcamp.yatter2024.infra.pref.TokenPreferences
 
 class CheckLoginServiceImpl(
-  private val mePreferences: MePreferences
+  private val tokenPreferences: TokenPreferences,
 ) : CheckLoginService {
   override suspend fun execute(): Boolean {
-    return mePreferences.getUsername() != ""
+    return tokenPreferences.getAccessToken().isNullOrEmpty().not()
   }
 }

@@ -5,7 +5,6 @@ import com.dmm.bootcamp.yatter2024.domain.model.Username
 import com.dmm.bootcamp.yatter2024.infra.api.YatterApi
 import com.dmm.bootcamp.yatter2024.infra.api.json.LoginRequestBodyJson
 import com.dmm.bootcamp.yatter2024.infra.api.json.LoginResponseJson
-import com.dmm.bootcamp.yatter2024.infra.pref.MePreferences
 import com.dmm.bootcamp.yatter2024.infra.pref.TokenPreferences
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -17,25 +16,38 @@ import org.junit.Test
 class LoginServiceImplSpec {
   private val yatterApi = mockk<YatterApi>()
   private val tokenPreferences = mockk<TokenPreferences>()
-  private val subject = LoginServiceImpl(yatterApi, tokenPreferences)
+  private val subject = LoginServiceImpl(
+    yatterApi = yatterApi,
+    tokenPreferences = tokenPreferences,
+  )
 
   @Test
-  fun saveUsername() = runTest {
+  fun loginSuccess() = runTest {
     val username = Username("username")
     val password = Password("Password1%")
 
-    coEvery {
-      yatterApi.login(any())
-    } returns LoginResponseJson(username.value)
+    val accessToken = "token"
     justRun {
       tokenPreferences.putAccessToken(any())
     }
 
+    coEvery {
+      yatterApi.login(any())
+    } returns LoginResponseJson(accessToken)
+
     subject.execute(username, password)
 
     coVerify {
-      yatterApi.login(LoginRequestBodyJson(username.value, password.value))
-      tokenPreferences.putAccessToken(username.value)
+      yatterApi.login(
+        LoginRequestBodyJson(
+          username.value,
+          password.value,
+        )
+      )
+    }
+
+    coVerify {
+      tokenPreferences.putAccessToken(accessToken)
     }
   }
 }

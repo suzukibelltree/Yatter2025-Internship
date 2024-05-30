@@ -16,13 +16,12 @@ class LoginServiceImpl(
     username: Username,
     password: Password,
   ) {
-    val response = yatterApi.login(
-      LoginRequestBodyJson(
-        username.value,
-        password.value,
-      )
+    val requestJson = LoginRequestBodyJson(
+      username.value,
+      password.value,
     )
+    val response = yatterApi.login(requestJson)
 
-    tokenPreferences.putAccessToken(response.username)
+    tokenPreferences.putAccessToken(response.accessToken)
   }
 }

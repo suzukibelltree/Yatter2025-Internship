@@ -20,11 +20,11 @@ package domain {
 
 package infra {
   package pref {
-    class MePreferences {
+    class TokenPreferences {
       - context: Context
       - sharedPreferences: SharedPreferences
-      + getUsername(): String
-      + putUsername(username: String?)
+      + getAccessToken(): String
+      + putAccessToken(token: String?)
       + clear()
     }
   }
@@ -32,8 +32,14 @@ package infra {
   package domain {
     package service {
       class LoginServiceImpl {
-        - mePreferences: MePreferences
+        - tokenPreferences: TokenPreferences
       }
+    }
+  }
+
+  package api {
+    interface YatterApi {
+      + login(requestBody: LoginRequestBodyJson): LoginResponseJson
     }
   }
 }
@@ -80,7 +86,8 @@ package ui {
   }
 }
 
-LoginServiceImpl -- MePreferences
+LoginServiceImpl -- TokenPreferences
+LoginServiceImpl -- YatterApi
 LoginServiceImpl --|> LoginService
 
 LoginActivity -- LoginViewModel
