@@ -18,7 +18,7 @@ internal class PublicTimelineViewModel(
 ) : ViewModel() {
   private val _uiState: MutableStateFlow<PublicTimelineUiState> =
     MutableStateFlow(PublicTimelineUiState.empty())
-  val uiState: StateFlow<PublicTimelineUiState> = _uiState
+  val uiState: StateFlow<PublicTimelineUiState> = _uiState.asStateFlow()
 
   private val _destination = MutableStateFlow<Destination?>(null)
   val destination: StateFlow<Destination?> = _destination.asStateFlow()
