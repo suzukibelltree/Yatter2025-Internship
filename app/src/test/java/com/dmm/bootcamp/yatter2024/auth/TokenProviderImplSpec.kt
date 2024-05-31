@@ -5,6 +5,7 @@ import com.dmm.bootcamp.yatter2024.domain.model.AccountId
 import com.dmm.bootcamp.yatter2024.domain.model.Username
 import com.dmm.bootcamp.yatter2024.domain.service.GetMeService
 import com.dmm.bootcamp.yatter2024.infra.domain.model.MeImpl
+import com.dmm.bootcamp.yatter2024.infra.pref.TokenPreferences
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -14,33 +15,23 @@ import org.junit.Test
 import java.net.URL
 
 class TokenProviderImplSpec {
-  private val getMeService = mockk<GetMeService>()
-  private val subject = TokenProviderImpl(getMeService)
+  private val tokenPreferences = mockk<TokenPreferences>()
+  private val subject = TokenProviderImpl(tokenPreferences)
 
   @Test
   fun getTokenSuccess() = runTest {
     val username = "username"
-    val me = MeImpl(
-      id = AccountId(value = "id"),
-      username = Username(value = username),
-      displayName = null,
-      note = null,
-      avatar = URL("https:www.google.com"),
-      header = URL("https:www.google.com"),
-      followingCount = 0,
-      followerCount = 0
-    )
 
     val expect = "username $username"
 
     coEvery {
-      getMeService.execute()
-    } returns me
+      tokenPreferences.getAccessToken()
+    } returns username
 
     val result = subject.provide()
 
     coVerify {
-      getMeService.execute()
+      tokenPreferences.getAccessToken()
     }
 
     assertThat(result).isEqualTo(expect)
@@ -49,7 +40,7 @@ class TokenProviderImplSpec {
   @Test
   fun getTokenFailure() = runTest {
     coEvery {
-      getMeService.execute()
+      tokenPreferences.getAccessToken()
     } returns null
 
     var error: Throwable? = null
@@ -62,7 +53,7 @@ class TokenProviderImplSpec {
     }
 
     coVerify {
-      getMeService.execute()
+      tokenPreferences.getAccessToken()
     }
 
     assertThat(result).isNull()

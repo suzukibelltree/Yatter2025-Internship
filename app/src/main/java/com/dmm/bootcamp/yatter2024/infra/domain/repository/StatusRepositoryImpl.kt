@@ -1,6 +1,5 @@
 package com.dmm.bootcamp.yatter2024.infra.domain.repository
 
-import android.accounts.AuthenticatorException
 import com.dmm.bootcamp.yatter2024.domain.model.Me
 import com.dmm.bootcamp.yatter2024.domain.model.Status
 import com.dmm.bootcamp.yatter2024.domain.model.StatusId
@@ -9,7 +8,6 @@ import com.dmm.bootcamp.yatter2024.auth.TokenProvider
 import com.dmm.bootcamp.yatter2024.infra.api.YatterApi
 import com.dmm.bootcamp.yatter2024.infra.api.json.PostStatusJson
 import com.dmm.bootcamp.yatter2024.infra.domain.converter.StatusConverter
-import com.dmm.bootcamp.yatter2024.infra.pref.MePreferences
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import java.io.File
