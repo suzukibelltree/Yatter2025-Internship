@@ -4,17 +4,17 @@ plugins {
 }
 
 android {
-  namespace= "com.dmm.bootcamp.yatter2024"
-  compileSdk =34
+  namespace = "com.dmm.bootcamp.yatter2024"
+  compileSdk = 34
 
   defaultConfig {
-    applicationId =  "com.dmm.bootcamp.yatter2024"
+    applicationId = "com.dmm.bootcamp.yatter2024"
     minSdk = 24
     targetSdk = 34
     versionCode = 1
-    versionName ="1.0"
+    versionName = "1.0"
 
-    testInstrumentationRunner= "androidx.test.runner.AndroidJUnitRunner"
+    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables {
       useSupportLibrary = true
     }
@@ -27,7 +27,7 @@ android {
     release {
       isMinifyEnabled = false
       proguardFiles(
-        getDefaultProguardFile ("proguard-android-optimize.txt"),
+        getDefaultProguardFile("proguard-android-optimize.txt"),
         "proguard-rules.pro",
       )
       buildConfigField("String", "API_URL", "\"http://10.0.2.2:8080\"")
