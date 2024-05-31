@@ -79,11 +79,12 @@ interface LoginUseCase {
 それでは、`LoginUseCaseImpl`の実装に移ります。  
 
 まずは、`LoginUseCase`を継承して、必要なメソッドをオーバーライドします。  
-引数に`LoginService`を受け取り、利用できるようにします。  
+引数に`LoginService`と`MePreferences`を受け取り、利用できるようにします。  
 
 ```Kotlin
 internal class LoginUseCaseImpl(
   private val loginService: LoginService,
+  private val mePreferences: MePreferences,
 ) : LoginUseCase {
 
   override suspend fun execute(
@@ -116,12 +117,14 @@ override suspend fun execute(...): LoginUseCaseResult {
 }
 ```
 
-最後にinfra層で実装した`LoginService`を呼び出してログイン処理を行います。  
+最後にinfra層で実装した`LoginService`を呼び出してログイン処理を行います。
+ログインに成功したら、`MePreferences`に`username`を保存します。
 
 ```Kotlin
 override suspend fun execute(...): LoginUseCaseResult {
   ...
   loginService.execute(username, password)
+  mePreferences.putUserName(username.value)
 }
 ```
 
@@ -157,6 +160,7 @@ class LoginUseCaseImpl(...) {
 ```Kotlin
 internal class LoginUseCaseImpl(
   private val loginService: LoginService,
+  private val mePreferences: MePreferences,
 ) : LoginUseCase {
   override suspend fun execute(
     username: Username,
@@ -168,7 +172,7 @@ internal class LoginUseCaseImpl(
 
       if (!password.validate()) return LoginUseCaseResult.Failure.InvalidPassword
       loginService.execute(username, password)
-
+      mePreferences.putUserName(username.value)
       return LoginUseCaseResult.Success
     } catch (e: Exception) {
       return LoginUseCaseResult.Failure.OtherError(e)
@@ -192,7 +196,8 @@ UseCaseには成功以外にも失敗ケースも定義していますので、�
 ```Kotlin
 class LoginUseCaseImplSpec {
   private val loginService = mockk<LoginService>()
-  private val subject = LoginUseCaseImpl(loginService)
+  private val mePreferences = mockk<MePreferences>()
+  private val subject = LoginUseCaseImpl(loginService, mePreferences)
 
   @Test
   fun loginSuccess() = runTest {
@@ -202,11 +207,17 @@ class LoginUseCaseImplSpec {
     coJustRun {
       loginService.execute(any(), any())
     }
+    justRun {
+      mePreferences.putUserName(any())
+    }
 
     val result = subject.execute(username, password)
 
     coVerify {
       loginService.execute(username, password)
+    }
+    verify {
+      mePreferences.putUserName(username.value)
     }
 
     assertThat(result).isEqualTo(LoginUseCaseResult.Success)
@@ -220,11 +231,17 @@ class LoginUseCaseImplSpec {
     coJustRun {
       loginService.execute(any(), any())
     }
+    justRun {
+      mePreferences.putUserName(any())
+    }
 
     val result = subject.execute(username, password)
 
     coVerify(inverse = true) {
       loginService.execute(any(), any())
+    }
+    verify(inverse = true) {
+      mePreferences.putUserName(any())
     }
 
     assertThat(result).isEqualTo(LoginUseCaseResult.Failure.EmptyUsername)
@@ -238,11 +255,17 @@ class LoginUseCaseImplSpec {
     coJustRun {
       loginService.execute(any(), any())
     }
+    justRun {
+      mePreferences.putUserName(any())
+    }
 
     val result = subject.execute(username, password)
 
     coVerify(inverse = true) {
       loginService.execute(any(), any())
+    }
+    verify(inverse = true) {
+      mePreferences.putUserName(any())
     }
 
     assertThat(result).isEqualTo(LoginUseCaseResult.Failure.EmptyPassword)
@@ -256,11 +279,17 @@ class LoginUseCaseImplSpec {
     coJustRun {
       loginService.execute(any(), any())
     }
+    justRun {
+      mePreferences.putUserName(any())
+    }
 
     val result = subject.execute(username, password)
 
     coVerify(inverse = true) {
       loginService.execute(any(), any())
+    }
+    verify(inverse = true) {
+      mePreferences.putUserName(any())
     }
 
     assertThat(result).isEqualTo(LoginUseCaseResult.Failure.InvalidPassword)
@@ -275,16 +304,21 @@ class LoginUseCaseImplSpec {
     coEvery {
       loginService.execute(any(), any())
     } throws error
+    justRun {
+      mePreferences.putUserName(any())
+    }
 
     val result = subject.execute(username, password)
 
     coVerify {
       loginService.execute(any(), any())
     }
+    verify(inverse = true) {
+      mePreferences.putUserName(any())
+    }
 
     assertThat(result).isEqualTo(LoginUseCaseResult.Failure.OtherError(error))
   }
-
 }
 ```
 

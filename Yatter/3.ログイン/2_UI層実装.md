@@ -80,7 +80,7 @@ ViewModelの実装に移ります。
 ```Kotlin
 class LoginViewModel(
   private val loginUseCase: LoginUseCase,
-) {
+) : ViewModel() {
 }
 ```
 
@@ -89,7 +89,7 @@ class LoginViewModel(
 ```Kotlin
 class LoginViewModel(...) : ViewModel() {
   private val _uiState: MutableStateFlow<LoginUiState> = MutableStateFlow(LoginUiState.empty())
-  val uiState: StateFlow<LoginUiState> = _uiState
+  val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 }
 ```
 
@@ -189,7 +189,7 @@ fun onChangedPassword(password: String) {
 まずは、ログイン処理成功時の画面遷移の準備をします。  
 画面遷移処理はViewModel内では実施できないため、UI側に画面遷移することを通達する手段が必要になります。  
 
-UiStateと同じように、`StateFlow`で定義します。`Destination`については後述します。
+UiStateと同じように、`StateFlow`で定義します。`Destination`については[3_導線実装](./3_導線実装.md)で後述します。
 
 ```Kotlin
 private val _destination = MutableStateFlow<Destination?>(null)
@@ -271,7 +271,7 @@ fun onClickRegister() {
 - LoginTemplate 
 
 ### Composeの実装
-Activityの用意ができたらJetpack ComposeでのUI構築に入ります。  
+ファイルの用意ができたらJetpack ComposeでのUI構築に入ります。  
 
 `LoginTemplate`コンポーザブルを`LoginTemplate`ファイルに作成し、プレビューコンポーザブルまで用意します。  
 
@@ -282,7 +282,7 @@ fun LoginTemplate() {
 
 @Preview
 @Composable
-fun LoginTemplatePreview() {
+private fun LoginTemplatePreview() {
   Yatter2024Theme {
     Surface() {
       LoginTemplate()
@@ -561,7 +561,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 ```Kotlin
 internal val viewModelModule = module {
-  viewModel { MainViewModel(get()) }
+//  viewModel { MainViewModel(get()) }
   viewModel { PublicTimelineViewModel(get()) }
 //  viewModel { PostViewModel(get(), get()) }
 //  viewModel { RegisterAccountViewModel(get()) }

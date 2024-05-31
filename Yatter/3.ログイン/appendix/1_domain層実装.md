@@ -124,7 +124,7 @@ interface LoginService {
 `Repository`の時と同様にdomain層ではinterface定義のみ行います。  
 
 ```Kotlin
-// domain/service/CheckLoginService.kt
+package com.dmm.bootcamp.yatter2024.domain.service
 
 interface CheckLoginService {
   suspend fun execute(): Boolean

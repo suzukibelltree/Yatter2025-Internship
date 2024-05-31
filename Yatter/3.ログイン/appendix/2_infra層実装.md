@@ -50,7 +50,7 @@ class TokenPreferences(context: Context) {
 
 SharedPreferencesに値を書き込み・取り出し・削除するためのメソッドを実装します。  
 
-値を取り出すときは、`getString`のように`get~`なメソッド呼び出しだけで問題ありませんが、書き込みや削除の場合は最後に`apply()`する必要があるためお気を付けてください。  
+値を取り出すときは、`getString`のように`get~`なメソッド呼び出しを、書き込みや削除の場合は`edit`のブロックの中で`putString`のように`put~`なメソッド呼び出しで保存、`clear`メソッド呼び出しで削除を行います。
 
 ```Kotlin
 class TokenPreferences(...) {
@@ -61,14 +61,17 @@ class TokenPreferences(...) {
   )
 
   fun putAccessToken(token: String?) {
-    sharedPreferences.edit().putString(
-      KEY_ACCESS_TOKEN,
-      token
-    ).apply()
+    sharedPreferences.edit {
+      putString(
+        KEY_ACCESS_TOKEN,
+        token
+      )
+    }
   }
 
-
-  fun clear() = sharedPreferences.edit().clear().apply()
+  fun clear() = sharedPreferences.edit {
+    clear()
+  }
 }
 ```
 

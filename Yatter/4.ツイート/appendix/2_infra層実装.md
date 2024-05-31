@@ -395,7 +395,7 @@ private fun getToken(username: String) = "username $username"
 
 interface定義  
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.auth
+package com.dmm.bootcamp.yatter2024.auth
 
 interface TokenProvider {
   suspend fun provide(): String

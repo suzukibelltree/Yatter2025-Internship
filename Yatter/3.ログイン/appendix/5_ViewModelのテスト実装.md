@@ -149,8 +149,7 @@ class MainViewModelSpec {
 
     subject.onCreate()
 
-    assertThat(subject.navigateToPublicTimeline.value).isNotNull()
-    assertThat(subject.navigateToLogin.value).isNull()
+    assertThat(subject.startDestination.value).isInstanceOf(PublicTimelineDestination::class.java)
   }
 
   @Test
@@ -161,8 +160,7 @@ class MainViewModelSpec {
 
     subject.onCreate()
 
-    assertThat(subject.navigateToLogin.value).isNotNull()
-    assertThat(subject.navigateToPublicTimeline.value).isNull()
+    assertThat(subject.startDestination.value).isInstanceOf(LoginDestination::class.java)
   }
 }
 ```
