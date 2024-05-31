@@ -13,10 +13,10 @@ UI層は実際にユーザーが接する部分を実装します。
 ### BindingModelの作成
 まずは、BindingModelを定義します。  
 BindingModelは、画面を表示する上で必要な情報をまとめた`data class`で実装されることがほとんどです。  
-`Status`などのドメインモデルクラスをそのままUI実装に利用することもできますが、アプリの画面では複数のドメインモデルを組み合わせたりドメインモデルの値を加工して利用したりすることが多いため、表示する値を保持するだけのBindingModelを用意します。  
+`Status`などのドメインモデルクラスをそのままUI実装に利用することもできますが、アプリの画面では複数のドメインモデルを組み合わせたり、ドメインモデルの値を加工して利用したりすることが多いため、表示する値を保持するだけのBindingModelを用意します。  
 今回のパブリックタイムライン画面開発ではドメインモデルを特に加工することなく表示に利用できますが、プロジェクト全体で設計方針を統一するためにもBindingModelを実装します。  
 
-`StatusJson`ではJsonを表現したデータモデル、`Status`というドメインモデル、`StatusBindingModel`というuiに表示するためのデータモデルというように、責務によって使用するモデルを変換するようにしています。  
+`StatusJson`ではJsonを表現したデータモデル、`Status`ではドメインモデル、`StatusBindingModel`ではuiに表示するためのデータモデルというように、責務によって使用するモデルを変換するようにしています。  
 
 タイムライン1行分の見た目に必要な値を`MediaBindingModel`と`StatusBindingModel`に定義していきます。  
 BindingModelは`ui/timeline/bindingmodel`パッケージにファイルを作成していきましょう。  
@@ -55,16 +55,15 @@ import com.dmm.bootcamp.yatter2024.domain.model.Media
 import com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel.MediaBindingModel
 
 object MediaConverter {
-    fun convertToDomainModel(mediaList: List<Media>): List<MediaBindingModel> =
-        mediaList.map { convertToDomainModel(it) }
+  fun convertToBindingModel(mediaList: List<Media>): List<MediaBindingModel> =
+    mediaList.map { convertToBindingModel(it) }
 
-    fun convertToDomainModel(media: Media): MediaBindingModel =
-        MediaBindingModel(
-            id = media.id.value,
-            type = media.type,
-            url = media.url,
-            description = media.description
-        )
+  private fun convertToBindingModel(media: Media): MediaBindingModel = MediaBindingModel(
+    id = media.id.value,
+    type = media.type,
+    url = media.url,
+    description = media.description,
+  )
 }
 ```
 
@@ -89,11 +88,12 @@ object StatusConverter {
 }
 ```
 
+### UiStateの作成
 BindingModelを定義したら続いてはUiStateを定義します。  
 
 BindingModelは表示する値を保持する役割を持っており、UiStateはUI全体の状態を管理します。  
 UiStateで保持する値は、
-- 画面に表示されるデータ（BindingModel)  
+- 画面に表示されるデータ(BindingModel)  
 - 画面のローディング状態を表すフラグ  
 - エラー状態  
 
@@ -104,7 +104,7 @@ UiStateで保持する値は、
 - ローディングフラグ  
 - リフレッシュフラグ  
 
-`PublicTimelineUiState`は`ui/timeline`パッケージ内に作成しましょう。
+`PublicTimelineUiState`を`ui/timeline`パッケージ内に作成します。
 ```Kotlin
 data class PublicTimelineUiState(
   val statusList: List<StatusBindingModel>,
@@ -113,8 +113,8 @@ data class PublicTimelineUiState(
 )
 ```
 
-また詳しくは後述しますがUiStateは初期値が必要なため、emptyメソッドを用意しておきます。  
-`companion object`で定義することで`PublicTimelineUiState`クラスをインスタンスかしなくともメソッドを呼び出すことができるようになっています。  
+詳しくは後述しますがUiStateは初期値が必要なため、emptyメソッドを用意しておきます。  
+`companion object`で定義することで`PublicTimelineUiState`クラスをインスタンス化しなくともメソッドを呼び出すことができるようになっています。  
 
 ```Kotlin
 data class PublicTimelineUiState(
@@ -133,7 +133,7 @@ data class PublicTimelineUiState(
 ここまででUIに表示するデータを表現するクラスの準備ができました。  
 
 ### ViewModelの実装
-続いては、ViewModelで表示するための実装を行います。  
+続いては、UI表示に必要な実装を行うためのViewModelを実装します。  
 
 まずは、ViewModelクラスを`com.dmm.bootcamp.yatter2024.ui.timeline`に定義します。  
 
@@ -145,32 +145,35 @@ class PublicTimelineViewModel : ViewModel() {
 }
 ```
 
-ViewModelからUiStateを公開してUI実装時にアクセスできるようにします。  
+#### UiStateの公開
+
+ViewModelからUiStateを公開してUI実装時、UiStateにアクセスできるようにします。  
 UiStateは`StateFlow`を利用して公開します。  
 `StateFlow`はKotlin Coroutine Flowの一つです。`StateFlow`を利用しUI実装側で購読(収集)することにより最新の値を参照することができます。  
-`Flow`に関しては次の資料もご一読ください。  
+`StateFlow`をはじめとした`Flow`に関しては次の資料もご一読ください。  
 - https://developer.android.com/kotlin/flow?hl=ja
 - https://developer.android.com/kotlin/flow/stateflow-and-sharedflow?hl=ja
 
-ここでは、`StateFlow`と`MutableStateFlow`を利用します。  
-`StateFlow`単体では初期化以降にデータの更新ができないため、更新が可能な`MutableStateFlow`と併せて利用します。  
-`MutableStateFlow`単体でも良さそうですが、`MutableStateFlow`を外部に公開してしまうと外部からもこの値を更新することが可能になってしまうため、外部に公開するものは更新ができない`StateFlow`、内部でロジックや状態に合わせて更新するために`MutableStateFlow`を使うという使い分け方をしています。  
+`StateFlow`と`MutableStateFlow`を利用します。  
+`StateFlow`は保持している値がImmutableになり、初期化以降にデータの更新ができないため、更新が可能な`MutableStateFlow`と併せて利用します。  
+`MutableStateFlow`単体でも動作自体はしますが、`MutableStateFlow`を外部に公開してしまうと、外部からもこの値を更新することが可能になってしまうため、外部に公開するものは更新ができない`StateFlow`、内部でロジックや状態に合わせて更新するために`MutableStateFlow`を使うという使い分け方をしています。  
 
 次のようなコードにより、ViewModel内で更新するための`MutableStateFlow`を外部向けには`StateFlow`として見せることができます。  
 
 ```Kotlin
+class PublicTimelineViewModel : ViewModel() {
   private val _uiState: MutableStateFlow<PublicTimelineUiState> =
     MutableStateFlow(PublicTimelineUiState.empty())
-  val uiState: StateFlow<PublicTimelineUiState> = _uiState
+  val uiState: StateFlow<PublicTimelineUiState> = _uiState.asStateFlow()
+}
 ```
 
 このような定義の仕方を`backing properties`といいます。  
-ViewModel内で処理を行い更新する値があり、その値を外部にも公開したいときによく用いられます。  
+ViewModelなどのクラス内で処理を行い更新する値があり、その値を外部にも公開したいときによく用いられます。  
 
 https://kotlinlang.org/docs/properties.html#backing-properties
 
----
-
+#### 表示データの取得
 UI構築に利用する値の準備が済み、実装に入っていきます。  
 まずはStatusの一覧を取得するために`StatusRepository`を依存関係に追加します。  
 
@@ -201,21 +204,22 @@ class PublicTimelineViewModel(...) {
 }
 ```
 
-`_uiState.update {}`のように`MutableStateFlow#update`することにより、現状の`MutableStateFlow`の値を利用しつつ更新することができます。  
+`_uiState.update {}`のように`MutableStateFlow#update`を実行することにより、現状の`MutableStateFlow`の値を利用しつつ更新することができます。  
 また、`it.copy`のように`data class`の`copy`メソッドを利用することによりdata classの値の一部のみを更新することができます。  
 
-前述したように実装することにより`fetchPublicTimeline`メソッドを呼び出すことにより`uiState`を最新状態に更新することができるようになりました。  
+前述したように実装した`fetchPublicTimeline`メソッドを呼び出すことにより`uiState`を最新のStatus一覧状態に更新することができるようになりました。  
 
 続いては実際にViewModel外から呼び出すためのメソッドを実装します。  
 ViewModelから公開するメソッド名は、UI側のイベントに合わせた名前にします。  
-UI側のイベントに合わせた名前というのは、`on`から始まるような名前で、ボタンが押された時の`onClick~`やライフサイクルイベントに合わせた`onResume`など、スワイプされた時の`onSwipe~`などなどです。
+UI側のイベントに合わせた名前というのは、`on`から始まるような名前で、ボタンが押された時の`onClick~`やライフサイクルイベントに合わせた`onResume`、スワイプされた時の`onSwipe~`などなどです。
 処理を行いたいUI側のイベントと一対一で対応するようなメソッドを用意します。  
 
 ViewModelのメソッド名を処理の内容に合わせたものではなくイベントに合わせた命名にしているのには次の理由があります。  
 
-- ユーザーのアクションに応じてどういった処理を行うべきかをUI側で考えないようにしたい
+- ユーザーのアクションに応じてどういった処理を行うべきかを呼び出し側で考えないようにしたい
 - イベントに応じた処理をViewModelのテストで動作担保したい
 - UI側での処理呼び忘れを防ぐ
+  - 処理が複雑で複数のメソッドを呼び出す必要があるときに忘れない
 
 今回の画面では画面を表示するたびに最新のリストを取得しておきたいため、`onResume`メソッドを用意します。  
 `onResume`メソッド内では以下の処理を行います。  
@@ -238,17 +242,17 @@ class PublicTimelineViewModel(...) {
 ```
 
 `viewModelScode.launch`に関して補足をします。  
-本来、coroutineを起動すると意図的に止めないと動き続けることになります。  
-動き続けた場合にアプリが閉じられた後にcoroutine内の処理が発火してエラーになってしまったりリソースを浪費したりと不都合が多くあります。  
+本来、coroutineを起動すると意図的に止めないと動き続けます。  
+動き続けた場合、アプリが閉じられた後などにcoroutine内の処理が発火してエラーになってしまったりリソースを浪費したりと不都合が多くあります。  
 そのためViewModelが生成・破棄されるタイミングでcoroutineを生成・キャンセルする必要があります。  
-それぞれのViewModelで実装もできますが毎回管理するのは大変なため、呼び出したViewModelが生存しているタイミングのみ動作するcoroutineを起動することができる`viewModelScope`が用意されています。  
+それぞれのViewModelでcoroutineの管理をすることもできますがViewModelごとに対応するのは大変なため、呼び出したViewModelが生存しているタイミングのみ動作するcoroutineを起動することができる`viewModelScope`が用意されています。  
 
 ViewModelで非同期処理を呼び出す時は、`viewModelScope.launch`を行いViewModel用のcoroutineを扱うようにしましょう。  
 
 詳細は次のドキュメントをご覧ください。  
 https://developer.android.com/topic/libraries/architecture/coroutines?hl=ja#viewmodelscope
 
-画面を表示するたびに取得するメソッドは実装できましたので続いては、画面を下の方にスワイプして画面を更新するPullToRefresh時のメソッドを用意します。  
+画面を表示するたびに取得するメソッドは実装できたため、続いては画面を下の方にスワイプして画面を更新する[PullToRefresh](https://developer.android.com/develop/ui/views/touch-and-input/swipe?hl=ja)時のメソッドを用意します。  
 画面リフレッシュしたい時に呼び出されるメソッドになる想定のため名前は`onRefresh`とします。  
 基本的な流れは`onResume`時と同様です。  
 
@@ -296,6 +300,7 @@ fun FirsstComposable() {
 }
 ```
 
+#### StatusRowの実装
 `StatusRow`ファイルを開き、パブリックタイムライン画面で表示するStatus一覧の1行分のUIを実装します。  
 次のような見た目になることを目指します。  
 
@@ -307,7 +312,7 @@ fun FirsstComposable() {
 
 また、コンポーザブルを定義する時にはModifierも引数で受け取るようにしましょう。  
 Modifierに関しては以下ドキュメントをご覧ください。  
-https://developer.android.com/jetpack/compose/modifiers?hl=ja
+https://developer.android.com/develop/ui/compose/modifiers?hl=ja
 
 ```Kotlin
 @Composable
@@ -364,13 +369,14 @@ private fun StatusRowPreview() {
 
 ![compose preview](../image/2/compose_preview.png)
 
-`StatusRow`コンポーザブルの実装を進めていきます。  
+Previewの準備ができたら、`StatusRow`コンポーザブルの実装を進めていきます。  
 
 まずは`Row`コンポーザブルを使ってコンポーザブルを並べます。  
 `Row`コンポーザブルは`{}`内のコンポーザブルを横一列に並べることができます。  
-引数で受け取ったModifierはルートにあたるコンポーザブルに渡すことが一般的なためRowに渡しています。  
+引数で受け取ったModifierはルート(ツリーの一番上)にあたるコンポーザブルに渡すことが一般的なためRowに渡しています。  
 また、引数で受け取っているModifierに対して、`fillMaxWidth()`と`padding(vertical = 4.dp)`を指定しています。  
 この2つを指定することで、このRowは横幅を取れるだけとり、縦方向(vertical)に4dpのpaddingを当てるというデザイン反映ができます。  
+さらに、`horizontalArrangement = Arrangement.spacedBy(8.dp)`を指定して、横一列に並べるコンポーザブル同士の隙間を`8dp`空けることができます。
 
 ```Kotlin
 @Composable
@@ -378,18 +384,19 @@ fun StatusRow(...) {
   Row(
     modifier = modifier
       .fillMaxWidth()
-      .padding(vertical = 4.dp)
+      .padding(vertical = 4.dp),
+    horizontalArrangement = Arrangement.spacedBy(8.dp),
   ) {
   }
 }
 ```
 
-まずはアイコン画像を設置します。  
-画像を表示するためのコンポーザブルとして、`Image`が用意されていますが今回表示するアイコン画像はURLをもとに画像を取得して表示する必要があるため、`Image`コンポーザブルそのままでは利用できません。  
+まずはアバター画像を設置します。  
+画像を表示するためのコンポーザブルとして、`Image`が用意されていますが今回表示するアバター画像はURLをもとに画像を取得して表示する必要があるため、`Image`コンポーザブルそのままでは利用できません。  
 画像データのキャッシュ等を楽に管理するため、今回は[`Coil`](https://coil-kt.github.io/coil/compose/)というライブラリが提供している、`AsyncImage`を利用します。  
 `AsyncImage`にURLを渡すことで自動的に画像データを読み込み表示することができます。  
 
-Rowコンポーザブルは左から右に向けて並べるため、アイコン画像はそのまま配置して問題ありません。  
+Rowコンポーザブルは左から右に向けて並べるため、アバター画像はそのまま配置して問題ありません。  
 
 ```Kotlin
 @Composable
@@ -397,7 +404,8 @@ fun StatusRow(...) {
   Row(
     modifier = modifier
       .fillMaxWidth()
-      .padding(vertical = 4.dp)
+      .padding(vertical = 4.dp),
+    horizontalArrangement = Arrangement.spacedBy(8.dp),
   ) {
     AsyncImage(
       modifier = Modifier.size(48.dp),
@@ -416,7 +424,42 @@ fun StatusRow(...) {
 
 という指定をしています。  
 
+今回はURLから取得した画像をアバター画像として表示しますが、URLから画像取得できなかった場合を考慮して、プレイスホルダーを設定します。  
+プレイスホルダー画像を`AsyncImage`に設定する場合は、`model`引数に直接URLを渡していた箇所を`ImageRequest`に置き換えます。  
+
+```Kotlin
+@Composable
+fun StatusRow(...) {
+  Row(...) {
+    val context = LocalContext.current
+
+    // プレイスホルダー画像の生成
+    val placeholder = ResourcesCompat.getDrawable(
+      context.resources,
+      R.drawable.avatar_placeholder,
+      null,
+    )
+
+    AsyncImage(
+      modifier = Modifier.size(48.dp),
+      // ImageRequestを作成して、画像取得できていない状態のプレイスホルダー設定
+      model = ImageRequest.Builder(context)
+        .data(statusBindingModel.avatar)
+        .placeholder(placeholder)
+        .error(placeholder)
+        .fallback(placeholder)
+        .setHeader("User-Agent", "Mozilla/5.0") // モックサーバーから画像取得する場合のみ追加
+        .build(),
+      contentDescription = stringResource(id = R.string.public_timeline_avatar_content_description),
+      contentScale = ContentScale.Crop,
+    )
+  }
+}
+```
+
 画像の配置ができたら表示名とユーザー名、Statusの内容を縦方向に並べるために`Column`を利用します。  
+ここでも並べるコンポーザブル同士の間に余白をつけたいです。
+`Column`では縦方向になるため、`verticalArrangement`に余白を指定します。  
 
 ```Kotlin
 @Composable
@@ -424,13 +467,18 @@ fun StatusRow(...) {
   Row(...) {
     AsyncImage(...)
 
-    Column {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
     }
   }
 }
 ```
 
 表示名とユーザー名を横に並べるために`Row`を再度用いて、文字を表示するためのコンポーザブルである`Text`コンポーザブルを呼び出します。  
+表示名とユーザー名を横に並べ、ユーザー名のみを文字色が薄めになるようにします。  
+横に並べるだけであれば、先ほども利用した`Row`が利用できそうですが、今回は表示名とユーザー名が画面からはみ出るほど長かった場合に、途中で文字列を切って、「...」で省略するために、1つの`Text`コンポーザブルで表現します。
+
+1つの`Text`コンポーザブルで見た目の違う文字列を表現するには、[`buildAnnotatedString`](https://developer.android.com/develop/ui/compose/text/style-text?authuser=1#multiple-styles)を利用します。  
+見た目を変えたい文字列部分を`withStyle`を利用して装飾することで見た目を調整します。
 
 ```Kotlin
 @Composable
@@ -438,43 +486,34 @@ fun StatusRow(...) {
   Row(...) {
     AsyncImage(...)
 
-    Column {
-      Row {
-        Text(text = statusBindingModel.displayName)
-        Text(text = "@${statusBindingModel.username}")  
-      }
+    Column(...) {
+      Text(
+        text = buildAnnotatedString {
+          // appendで文字列セット
+          append(statusBindingModel.displayName)
+          withStyle(
+            style = SpanStyle(
+              // 文字色を薄くするために、ContentAlpha.mediumを指定
+              color = MaterialTheme.colors.onBackground.copy(alpha = ContentAlpha.medium),
+            )
+          ) {
+            append(" @${statusBindingModel.username}")
+          }
+        },
+        maxLines = 1, // 文字列が複数行にならないように指定
+        overflow = TextOverflow.Ellipsis, // はみ出した分を「...」で表現
+        fontWeight = FontWeight.Bold, // 文字を太字に
+      )
     }
   }
 }
 ```
 
-実装例でもあるようにユーザー名は表示名に比べて少し薄くしてみましょう。  
-いくつか実現する方法はありますが、今回は[`ConpositionLocalProvider`](https://developer.android.com/jetpack/compose/compositionlocal?hl=ja)を利用します。  
-
-`CompositionLocalProvider`を利用することによってアプリ全体のテーマを変更したときに文字のalpha値もすぐに反映されるようになります。  
-
-```Kotlin
-@Composable
-fun StatusRow(...) {
-  Row(...) {
-    AsyncImage(...)
-
-    Column {
-      Row {
-        Text(text = statusBindingModel.displayName)
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-          Text(
-            text = "@${statusBindingModel.username}"
-          )
-        }  
-      }
-    }
-  }
-}
-```
-
-最後にStatusのコンテンツを表示するための`Text`コンポーザブルと`AsyncImage`コンポーザブルを表示します。  
-`attachmentMediaList`を`forEach`することで、何もアタッチされていなければ何も表示されず、1件以上あれば件数分表示されるようになります。  
+最後にStatusのコンテンツ(テキストと画像)を表示するための`Text`コンポーザブルと`AsyncImage`コンポーザブルを表示します。  
+`content`は単純なテキストになるため、`Text`コンポーザブルでそのまま表示します。  
+`attachmentMediaList`は複数の画像が入っている場合があるため、リストに含まれる画像全てを横一列に並べ、`AsyncImage`で画像を表示します。  
+画像の数がいくつになっても横一列に全て並べるために今回は`LazyRow`を利用します。  
+横一列にコンポーザブルを並べるという点は`Row`と同様ですが、並べたコンポーザブルをスクロール可能にしたり数が不定なデータを効率的に表示したりするためによく利用されるコンポーザブルです。(詳細な違いは後述します)  
 
 ```Kotlin
 @Composable
@@ -486,25 +525,26 @@ fun StatusRow(...) {
       Row {...}
       Text(text = statusBindingModel.content)
 
-      Row(modifier = Modifier.fillMaxWidth()) {
-        statusBindingModel.attachmentMediaList.map {
+      LazyRow {
+        // itemsの第一引数に並べたいデータセットを渡す
+        items(statusBindingModel.attachmentMediaList) { attachmentMedia ->
+          // データ1件あたりに表示したいコンポーザブルを呼び出す
           AsyncImage(
-            modifier = Modifier.size(96.dp),
-            model = it.url,
-            contentDescription = it.description
+            model = attachmentMedia.url,
+            contentDescription = attachmentMedia.description
           )
+          Spacer(modifier = Modifier.width(4.dp))
         }
-      }
     }
   }
 }
 ```
 
 ここまで実装できたらプレビュー上で表示が問題なさそうか確認します。  
-プレビュー機能の都合上、アイコン画像などのURLから画像を取得する部分は動作しませんので、その画像用のスペースが確保されて、テキストがきちんと表示されていることが確認できれば問題ありません。  
+プレビュー機能の都合上、アバター画像などのURLから画像を取得する部分は動作しませんので、プレイスホルダー画像が表示され、テキストがきちんと表示されていることが確認できれば問題ありません。  
 プレビューが表示される箇所にビルドが必要とあった場合は、ビルドを行なってください。  
 
----
+#### Templateの実装
 
 Statusの1行分のUIが構築できたところでリストの実装を`Template`にて行います。  
 
@@ -514,7 +554,7 @@ DMMでのJetpack Composeの実装をする上で`Page`と`Template`という概�
 ざっくりとした説明にはなりますが  
 `Page`では、ViewModelからJetpack Composeで構築したUIで利用する値を取得し渡す役割があります。基本的には`Template`のみを呼び出します。  
 `Template`は複数のコンポーザブルを呼び出し画面全体のレイアウトをします。`Page`から渡された値を各コンポーザブルに渡す役割もあります。  
-詳細は実装しながら掴んでいってください。  
+詳細は実装を進めると把握できるようになってくると思います。  
 
 先にTemplateを実装します。  
 `PublicTimelineTemplate`ファイルを開きコンポーザブルを定義します。  
@@ -544,25 +584,37 @@ private fun PublicTimelineTemplatePreview() {
       PublicTimelineTemplate(
         statusList = listOf(
           StatusBindingModel(
-            id = "id",
-            displayName = "display name",
-            username = "username",
+            id = "id1",
+            displayName = "display name1",
+            username = "username1",
             avatar = null,
-            content = "preview content",
+            content = "preview content1",
             attachmentMediaList = listOf()
-          )
+          ),
+          StatusBindingModel(
+            id = "id2",
+            displayName = "display name2",
+            username = "username2",
+            avatar = null,
+            content = "preview content2",
+            attachmentMediaList = listOf()
+          ),
         ),
-        isLoading = false,
+        isLoading = true,
+        onClickPost = {},
         isRefreshing = false,
         onRefresh = {},
+        onClickProfile = {}
       )
     }
   }
 }
 ```
 
+#### リスト表示
+
 Jetpack Composeでスクロールが必要なリスト表示をするときは`LazyColumn`・`LazyRow`・`LazyLayout`といった`Lazy~`から始まるコンポーザブルを利用することが一般的です。特に今回のような縦方向のリストは`LazyColumn`を利用します。  
-https://developer.android.com/jetpack/compose/lists?hl=ja
+https://developer.android.com/develop/ui/compose/lists?hl=ja
 
 `LazyColumn`を利用してリスト表示をするときは次のようなコードになります。  
 
@@ -608,7 +660,7 @@ LazyColumn(
 
 ![PublicTimelineのプレビュー例](../image/2/public_timeline_preview.png)
 
-`LazyColumn`を利用してリスト表示を行いましたが、ただリストを表示するだけであれば、`StatusRow`実装時にメディア一覧を表示したときのように`forEach`で並べてスクロールさせることもできます。  
+`LazyColumn`や`LazyRow`を利用してコンポーザブルを複数並べるようなリスト表示を行いましたが、ただコンポーザブルを並べるだけであれば、表示したい要素を`forEach`で並べてスクロールさせることもできます。  
 
 ```Kotlin
 Column(
@@ -621,18 +673,17 @@ Column(
 }
 ```
 
-ただ、この方法の場合はパフォーマンス面で大きな懸念があります。 `Lazy~`を利用しないリスト表示では、リスト全体の描画が一度に全て行われ、その全てがシステム側で保持されます。そのため、リストの要素数が1万件あった場合に1万件全ての描画・保有コストがかかるため動作が著しく重たくなります。  
-それに対して`Lazy~`なコンポーザブルを利用した場合には、画面に表示される分のみを描画・保持されます。その状態でスクロールすると新しく表示される要素が描画され、画面外になった要素は破棄されるため保持する内容が必要最小限に抑えられるためパフォーマンス面の問題が解決されます。スクロールするたびに発生する新規描画・破棄のパフォーマンス面のコストは気にならないほどなので問題ありません。  
+ただ、この方法の場合はパフォーマンス面で大きな懸念があります。  
+`Lazy~`を利用しないリスト表示では、リスト全体の描画が一度に全て行われ、その全てがシステム側で保持されます。そのため、リストの要素数が1万件あった場合に1万件全ての描画・保有コストがかかるため動作が著しく重くなります。  
+それに対して`Lazy~`なコンポーザブルを利用した場合には、画面に表示される分のみを描画・保持されます。その状態でスクロールすると新しく表示される要素が描画され、画面外になった要素は破棄されるため保持する内容が必要最小限に抑えられルコとでパフォーマンス面の問題が解決されます。スクロールするたびに発生する新規描画・破棄のパフォーマンス面のコストは気にならないほどなので問題ありません。  
+主な違いや使い分けとしては以下の表のようになります。
 
-これらのことからリスト表示するときは、次のような使い分けをすると良いです。  
-- `LazyColumn`や`LazyRow`
-  - 表示する要素数が可変長
-  - 要素数が多い
-  - スクロールが必要
-- `Column`や`Row`
-  - 表示する要素数が固定
-  - 要素数が少ない
-  - スクロールが必要ない
+||Row/Column|LazyRow/LazyColumn|
+|-|-|-|
+|スクロール可能か|Modifier設定で可能|デフォルトで可能|
+|描画タイミング|一度に全てを描画|画面に表示される項目だけを描画|
+|表示要素数|少ない、固定|多い、可変|
+|主な利用用途|画面内に収まるような数の表示、並べることにフォーカスした表示|大規模なデータセットの表示、リストにすることにフォーカスした表示|
 
 詳細は次のドキュメントも併せてご覧ください。  
 https://developer.android.com/jetpack/compose/lists?hl=ja
@@ -670,8 +721,8 @@ fun PublicTimelineTemplate(...) {
 }
 ```
 
-また、今回利用する`PullRefreshIndicator`はまだStableでは無いため、そのままではAndroid Studio上でエラー表示になっていると思います。  
-実験的に追加されているAPIを利用するためにも、`@OptIn(ExperimentalMaterialApi::class)`を`PublicTimelineTemplate`の上部に追加して利用できるようにしましょう。  
+また、今回利用するPullToRefreshの実装はまだStableでは無いため、そのままではAndroid Studio上でエラー表示になっていると思います。  
+実験的に追加されているAPIを利用するためにも、`@OptIn(ExperimentalMaterialApi::class)`を` PublicTimelineTemplate`の上部に追加して利用できるようにしましょう。  
 
 ```Kotlin
 @OptIn(ExperimentalMaterialApi::class)
@@ -687,9 +738,9 @@ fun PublicTimelineTemplate(...)
 Box(...) {
   LazyColumn(...)
   PullRefreshIndicator(
-    isRefreshing,
-    pullRefreshState,
-    Modifier.align(Alignment.TopCenter)
+    refreshing = isRefreshing,
+    state = pullRefreshState,
+    modifier = Modifier.align(Alignment.TopCenter)
   )
 }
 ```
@@ -710,12 +761,12 @@ Box(
 これにより`PullToRefresh`の実装が完了しました。  
 
 プレビュー画面で実装できているか確認しましょう。  
-プレビューのInterctive Modeを起動してパブリックタイムライン画面をクリックしてそのまま下に移動すると画面上部からローディングインディケータが降りてくるとおもいます。  
+プレビューのInterctive Modeを起動してパブリックタイムライン画面をクリックしたまま下に引っ張ると画面上部からローディングインディケータが降りてくるとおもいます。  
 これで`PullToRefresh`の動作確認まで完了しました。  
 
 ---
 
-PullToRefreshでのローディング表示が実装できたため、初回読み込みなど画面全体のローディングの実装を行います。  
+PullToRefreshでのローディング表示が実装できたため、初回読み込みなど画面全体に表示するローディングの実装を行います。  
 
 画面全体のローディングには`CircularProgressIndicator()`が利用できます。  
 `CircularProgressIndicator`をBoxコンポーザブル内に配置しローディング表示しましょう。  
@@ -729,7 +780,7 @@ Box(...) {
 }
 ```
 
-ここのままだと常にローディングインディケータが表示されるため、`isLoading`が`true`な時のみ表示するようにif文で分岐させましょう。  
+ここのままだと常にローディングインディケータが表示されるため、`isLoading`が`true`な時のみ表示するようにif文で分岐させます。  
 
 ```Kotlin
 Box(...) {
@@ -742,18 +793,20 @@ Box(...) {
 }
 ```
 
-プレビューコンポーザブルに設定している`isLoading`の値を`true`と`false`を切り替えてみて画面中央にローディングインディケータが表示されることを確認してみてください。  
+`PublicTimelineTemplatePreview`コンポーザブルに設定している`isLoading`の値を`true`と`false`を切り替えてみて画面中央にローディングインディケータが表示されることを確認してみてください。  
 
 プレビュー機能の`Run Preview`で実際にデバイス上で動かした方がローディングインディケータが動いているところが確認しやすいです。  
 
 ここまでで、リスト表示が完了しました。  
 
-ですが、このままではリストだけの殺風景な画面になってしまっていますので、`Scaffold`コンポーザブルを呼び出します。  
-`Scaffold`コンポーザブルとは、`TopAppBar`、`BottomAppBar`、`FloatingActionButton`、`Drawer`などの最も一般的なマテリアルデザインのレイアウトを提供します。  
-`Scaffold`コンポーザブルの適した引数に適したコンポーザブルを渡すことでを渡すことで現在のAndroidアプリにおいて一般的なデザインであるマテリアルデザインに則ったレイアウトをすることが可能です。  
+#### Scaffold
+
+リスト表示までは完了しましたが、このままではリストだけの殺風景な画面になってしまっていますので、`Scaffold`コンポーザブルを利用してよくあるアプリのような画面にします。  
+`Scaffold`コンポーザブルとは、`TopAppBar`、`BottomAppBar`、`FloatingActionButton`、`Drawer`などの一般的なマテリアルデザインのレイアウトを提供します。  
+`Scaffold`コンポーザブルの適した引数に適したコンポーザブルを渡すことで現在のAndroidアプリにおいて一般的なデザインであるマテリアルデザインに則ったレイアウトをすることが可能です。  
 
 Yatterアプリにおいても、画面上部の`TopAppbar`、画面右下の`FloatingActionButton`を実装する予定のため`Scaffold`を用います。  
-これまで実装していたコンポーザブルのルードである`Box`コンポーザブルを`Scaffold`でラップします。  
+これまで実装していたコンポーザブルのルートである`Box`コンポーザブルを`Scaffold`でラップします。  
 
 ラップした際に`Box`コンポーザブル周辺に赤い波線が引かれていると思います。  
 `Scaffold`を使うときには、`Scaffold`から渡される`PaddingValues`を利用する必要があります。  
@@ -762,17 +815,17 @@ Yatterアプリにおいても、画面上部の`TopAppbar`、画面右下の`Fl
 ```Kotlin
 @Composable
 fun PublicTimelineTemplate(...) {
-  Scaffold() {
+  Scaffold() { paddingValues ->
     Box(
       modifier = Modifier
         .fillMaxSize()
-        .padding(it)
+        .padding(paddingValues)
         .pullRefresh(pullRefreshState),
     ) {...}
   }
 }
 ```
-まずは`TopAppbar`を配置して、「タイムライン」という文字列を表示するようにします。  
+まずは`TopAppbar`を配置して、`タイムライン`という文字列を表示するようにします。  
 `Scaffold`の`topBar`引数にラムダでコンポーザブルを配置します。  
 
 ```Kotlin
@@ -797,7 +850,7 @@ fun PublicTimelineTemplate(...) {
 `PublicTimelineTemplate`でStatus一覧の実装はできましたが、このコンポーザブルはまだどこからも呼び出されていないため、アプリを実行しても表示されることはありません。  
 そのため、`Template`コンポーザブルを呼び出す必要があります。  
 
----
+#### コンポーザブルの繋ぎ込み
 
 まずは、`Template`コンポーザブルと`Page`コンポーザブルを繋ぎこみます。  
 
@@ -811,7 +864,7 @@ fun PublicTimelinePage() {
 
 `Page`コンポーザブルは特にUIを実装しないため、今回はプレビューを省略します。  
 
-前述もしましたが、`page`コンポーザブルの役目はViewModelから状態を取り出し、`Template`コンポーザブルに渡すことですので、`PublicTimelinePage`引数にViewModelを取ります。  
+前述もしましたが、`Page`コンポーザブルの役目はViewModelから状態を取り出し、`Template`コンポーザブルに渡すことですので、`PublicTimelinePage`引数にViewModelを取ります。  
 
 ```Kotlin
 @Composable

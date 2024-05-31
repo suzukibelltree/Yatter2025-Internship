@@ -5,7 +5,7 @@ DIについては次の資料をまずはご一読ください。
 https://developer.android.com/training/dependency-injection?hl=ja
 
 Androidアプリ開発ではよくDIが用いられます。  
-DIライブラリとしてDagger/Dagger Hilt・Koin・Kodeinがよく利用されます。  
+DIライブラリとしてDagger/Dagger Hilt・Koinがよく利用されます。  
 
 今回はKoinを利用します。  
 
@@ -97,7 +97,7 @@ single<注入先の型> { 注入するクラスのインスタンス化 }
 viewModel<注入先の型> { 注入するクラスのインスタンス化 }
 ```
 
-`factory`は注入するたびに新しいインスタンスを作成する注入方法で、`single`は注入するインスタンスがアプリ起動中は常に同じもの(シングルトン)を注入する方法で、`viewModel`はViewModelクラスを注入するときにっ利用する注入方法です。  
+`factory`は注入するたびに新しいインスタンスを作成する注入方法で、`single`は注入するインスタンスがアプリ起動中は常に同じもの(シングルトン)を注入する方法で、`viewModel`はViewModelクラスを注入するときに利用する注入方法です。  
 
 では、`StatusRepository`の設定を行います。  
 RepositoryパターンではRepositoryの実装クラス内でキャッシュを持つことも多いため、シングルトンとしてDI設定することがほとんどです。  
