@@ -22,12 +22,12 @@ domain層には、次のクラスを定義します。
 Entityは同一性によって定義・識別されるオブジェクトです。  
 idやそれに値するものをクラスに持たせて利用するケースがほとんどです。  
 
-特にDMMのコードでは、`Identifier`と`Entity`を用いて定義することである値による同一性担保を強制させています。  
+特にDMMのコードでは、`Identifier`と`Entity`を用いて定義することで、ある値による同一性担保を強制させています。  
 
 ### Value Object
-Entityと違い、自身が持つ属性（メンバー変数）が全て一致することで同一のオブジェクトとして扱います。  
+Entityと違い、自身が持つ属性(メンバー変数)が全て一致することで同一のオブジェクトとして扱います。  
 
-Kotlinで定義するときはdata objectで定義し、全プロパティをvalで定義します。  
+Kotlinで定義するときはdata classで定義し、全プロパティをvalで定義します。  
 
 ### Domain Service
 EntityともValue Objectとも違い、振る舞いそのものをモデリングしたい場合に利用されます。  
@@ -51,12 +51,14 @@ domain/Account.kt
 domain/Username.kt
 ```
 
+### Statusの実装
+ファイルが作成できたら、`Status`と`StatusId`を実装します。  
 
 ```Kotlin
 // Status.kt
 class Status(
   id: StatusId, // 一意のID
-  val account: Account, // 投稿者を表すドメイン
+  val account: Account, // 投稿者を表すドメイン、現状エラーになるが許容
   val content: String, // 投稿内容
 ) : Entity<StatusId>(id)
 ```
@@ -68,10 +70,10 @@ class StatusId(value: String): Identifier<String>(value)
 
 同じユーザーが同じ内容を投稿することもあり得るため、idをドメインモデルで持ってStatusの一意性を表すためにEntityにしています。  
 Statusの一意性をidで表現するために`StatusId`クラスを`Identifier`を継承して定義します。  
-実際の値はただのStringですが、StatusIdとして定義することによりStatus以外のidやただの文字列がStatusのIdとして用いられることを防ぐことができます。  
-定義した`StatusId`を`Entity`に渡すことにより、StatusクラスをStatusIdで一意性を表現したEntityとすることができます。  
+中身の値はただのStringですが、StatusIdとして定義することによりStatus以外のidやただの文字列がStatusのIdとして用いられることを防ぐことができます。  
+定義した`StatusId`を`Entity`に渡すことにより、`Status`クラスを`StatusId`で一意性を表現したEntityとすることができます。  
 
----
+### Accountの実装
 
 続いてAccountドメインです。  
 Statusドメインですでに利用されている、投稿者を表すためのAccountドメインも定義します。  
@@ -105,10 +107,10 @@ class Username(value: String): Identifier<String>(value) {
 }
 ```
 
-Accountドメインでも同じ表示名やアバターを使う可能性があるため、一意性を担保するため今回のプロジェクトではidで一意になるようにします。  
+Accountドメインでも同じ表示名やユーザー名を使う可能性があるため、一意性を担保するため今回のプロジェクトではidで同一性を担保します。  
 また、Accountドメインには`followings`と`followers`というメソッドを用意しています。  
 あるユーザーのフォローとフォロワーはそのユーザーのアカウントドメインに属する値として考えることができますが、`account/{username}`のAPIでは取得できない要素になります。  
-そこで前述したようなドメインメソッドを用意することによって、ドメインを扱う側としては通常のアカウントドメイン内の値の一部として読み取ることができます。  
+そこで`followings`や`followers`といったドメインメソッドを用意することによって、ドメインを扱う側としては通常のアカウントドメイン内の値の一部として読み取ることができます。  
 
 AccountドメインはStatusドメインと違い、[abstract](https://kotlinlang.org/docs/classes.html#abstract-classes)で定義されています。  
 `followings()`と`followers()`メソッドをドメインモデルで定義したことによってabstractなクラスにする必要が出てきています。  
@@ -116,9 +118,9 @@ AccountドメインはStatusドメインと違い、[abstract](https://kotlinlan
 繰り返しにはなりますが、あるユーザーのフォロー・フォロワーを取得するには`account/{username}`のAPIを実行する必要があります。  
 愚直に実装しようとした場合は`followings()`と`followers()`メソッド内でAPI実行のコードを書くことになります。  
 ですが、設計方針としてAPIなどのアプリ外部へアクセスするのはinfra層でのみとしています。  
-ドメインモデルから直接API呼び出しを行わずにdomain層ではあくまでドメインモデルの定義のみを行うために、abstractを付けて定義します。  
+ドメインモデルから直接API呼び出しを行わずにdomain層ではあくまでドメインモデルの定義のみを行うために、abstractを付けて定義しています。  
 
----
+### Repositoryの実装
 
 ドメインモデルを作成したらRepositoryの定義をします。  
 `StatusRepository`ファイルを`com.dmm.bootcamp.yatter2024.domain.repositroy`パッケージに作成します。  
