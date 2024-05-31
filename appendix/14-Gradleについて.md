@@ -35,11 +35,11 @@ plugins {
 }
 
 android {
-    namespace "com.dmm.bootcamp.yatter2023"
+    namespace "com.dmm.bootcamp.yatter2024"
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.dmm.bootcamp.yatter2023"
+        applicationId "com.dmm.bootcamp.yatter2024"
         minSdk 24
         targetSdk 33
         versionCode 1
@@ -135,11 +135,11 @@ plugins {
 
 ```gradle
 android {
-    namespace "com.dmm.bootcamp.yatter2023"
+    namespace "com.dmm.bootcamp.yatter2024"
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.dmm.bootcamp.yatter2023"
+        applicationId "com.dmm.bootcamp.yatter2024"
         minSdk 24
         targetSdk 33
         versionCode 1

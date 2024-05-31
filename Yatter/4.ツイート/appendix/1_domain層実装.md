@@ -8,7 +8,7 @@
 `Me`ドメインの実態は`Account`ドメインと同じ値を保持しますが、自身のアカウントであるという情報を扱いやすくするために、`Account`ドメインを継承して定義します。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.domain
+package com.dmm.bootcamp.yatter2024.domain
 
 abstract class Me(
   id: AccountId,
@@ -42,7 +42,7 @@ abstract class Me(
 このDomainServiceを利用して、ログイン済みのアカウント情報を取得し、ツイート画面のアイコン表示やトークン取得に活用します。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.domain.service
+package com.dmm.bootcamp.yatter2024.domain.service
 
 interface GetMeService {
   suspend fun execute(): Me?
