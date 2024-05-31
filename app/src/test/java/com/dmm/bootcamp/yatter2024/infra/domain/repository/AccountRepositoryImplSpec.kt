@@ -25,8 +25,8 @@ class AccountRepositoryImplSpec {
       username = "username",
       displayName = "display name",
       note = null,
-      avatar = "",
-      header = "",
+      avatar = "https://www.google.com",
+      header = "https://www.google.com",
       followingCount = 0,
       followersCount = 0,
       createAt = ""
@@ -55,8 +55,8 @@ class AccountRepositoryImplSpec {
       username = "username",
       displayName = "display name",
       note = null,
-      avatar = "",
-      header = "",
+      avatar = "https://www.google.com",
+      header = "https://www.google.com",
       followingCount = 0,
       followersCount = 0,
       createAt = ""

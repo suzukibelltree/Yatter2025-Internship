@@ -8,7 +8,7 @@ package domain {
 
   class Username {
     + value: String
-    + validate()
+    + validate(): Boolean
   }
 
   package service {
@@ -20,11 +20,11 @@ package domain {
 
 package infra {
   package pref {
-    class MePreferences {
+    class TokenPreferences {
       - context: Context
       - sharedPreferences: SharedPreferences
-      + getUsername(): String
-      + putUsername(username: String?)
+      + getAccessToken(): String
+      + putAccessToken(token: String?)
       + clear()
     }
   }
@@ -32,8 +32,15 @@ package infra {
   package domain {
     package service {
       class LoginServiceImpl {
-        - mePreferences: MePreferences
+        - yatterApi: YatterApi
+        - tokenPreferences: TokenPreferences
       }
+    }
+  }
+
+  package api {
+    interface YatterApi {
+      + login(requestBody: LoginRequestBodyJson): LoginResponseJson
     }
   }
 }
@@ -53,17 +60,16 @@ package usecase {
 
 package ui {
   package login {
-    class LoginActivity
     class LoginViewModel {
       - loginUseCase: LoginUseCase
-      + navigateToPublicTimeLine: LiveData<Unit>
-      + navigateToRegister: LiveData<Unit>
+      + destination: StateFlow<Destination?>
       + uiState: StateFlow<LoginUiState>
 
       + onChangedUsername(username: String)
       + onChangedPassword(password: String)
       + onClickLogin()
       + onClickRegister()
+      + onCompleteNavigation()
     }
     class LoginUiState {
       + loginBindingModel: LoginBindingModel
@@ -80,10 +86,10 @@ package ui {
   }
 }
 
-LoginServiceImpl -- MePreferences
+LoginServiceImpl -- TokenPreferences
+LoginServiceImpl -- YatterApi
 LoginServiceImpl --|> LoginService
 
-LoginActivity -- LoginViewModel
 LoginViewModel -- LoginUseCase
 LoginViewModel -- LoginUiState
 LoginUiState -- LoginBindingModel

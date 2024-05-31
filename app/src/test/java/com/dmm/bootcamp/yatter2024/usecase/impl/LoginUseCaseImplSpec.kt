@@ -3,19 +3,23 @@ package com.dmm.bootcamp.yatter2024.usecase.impl
 import com.dmm.bootcamp.yatter2024.domain.model.Password
 import com.dmm.bootcamp.yatter2024.domain.model.Username
 import com.dmm.bootcamp.yatter2024.domain.service.LoginService
+import com.dmm.bootcamp.yatter2024.infra.pref.MePreferences
 import com.dmm.bootcamp.yatter2024.usecase.impl.login.LoginUseCaseImpl
 import com.dmm.bootcamp.yatter2024.usecase.login.LoginUseCaseResult
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coJustRun
 import io.mockk.coVerify
+import io.mockk.justRun
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
 class LoginUseCaseImplSpec {
   private val loginService = mockk<LoginService>()
-  private val subject = LoginUseCaseImpl(loginService)
+  private val mePreferences = mockk<MePreferences>()
+  private val subject = LoginUseCaseImpl(loginService, mePreferences)
 
   @Test
   fun loginSuccess() = runTest {
@@ -25,11 +29,17 @@ class LoginUseCaseImplSpec {
     coJustRun {
       loginService.execute(any(), any())
     }
+    justRun {
+      mePreferences.putUserName(any())
+    }
 
     val result = subject.execute(username, password)
 
     coVerify {
       loginService.execute(username, password)
+    }
+    verify {
+      mePreferences.putUserName(username.value)
     }
 
     assertThat(result).isEqualTo(LoginUseCaseResult.Success)
@@ -43,11 +53,17 @@ class LoginUseCaseImplSpec {
     coJustRun {
       loginService.execute(any(), any())
     }
+    justRun {
+      mePreferences.putUserName(any())
+    }
 
     val result = subject.execute(username, password)
 
     coVerify(inverse = true) {
       loginService.execute(any(), any())
+    }
+    verify(inverse = true) {
+      mePreferences.putUserName(any())
     }
 
     assertThat(result).isEqualTo(LoginUseCaseResult.Failure.EmptyUsername)
@@ -61,11 +77,17 @@ class LoginUseCaseImplSpec {
     coJustRun {
       loginService.execute(any(), any())
     }
+    justRun {
+      mePreferences.putUserName(any())
+    }
 
     val result = subject.execute(username, password)
 
     coVerify(inverse = true) {
       loginService.execute(any(), any())
+    }
+    verify(inverse = true) {
+      mePreferences.putUserName(any())
     }
 
     assertThat(result).isEqualTo(LoginUseCaseResult.Failure.EmptyPassword)
@@ -79,11 +101,17 @@ class LoginUseCaseImplSpec {
     coJustRun {
       loginService.execute(any(), any())
     }
+    justRun {
+      mePreferences.putUserName(any())
+    }
 
     val result = subject.execute(username, password)
 
     coVerify(inverse = true) {
       loginService.execute(any(), any())
+    }
+    verify(inverse = true) {
+      mePreferences.putUserName(any())
     }
 
     assertThat(result).isEqualTo(LoginUseCaseResult.Failure.InvalidPassword)
@@ -98,11 +126,17 @@ class LoginUseCaseImplSpec {
     coEvery {
       loginService.execute(any(), any())
     } throws error
+    justRun {
+      mePreferences.putUserName(any())
+    }
 
     val result = subject.execute(username, password)
 
     coVerify {
       loginService.execute(any(), any())
+    }
+    verify(inverse = true) {
+      mePreferences.putUserName(any())
     }
 
     assertThat(result).isEqualTo(LoginUseCaseResult.Failure.OtherError(error))

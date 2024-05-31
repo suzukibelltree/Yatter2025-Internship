@@ -1,6 +1,7 @@
 package com.dmm.bootcamp.yatter2024.infra.domain.repository
 
 import android.accounts.AuthenticatorException
+import com.dmm.bootcamp.yatter2024.auth.TokenProvider
 import com.dmm.bootcamp.yatter2024.domain.model.AccountId
 import com.dmm.bootcamp.yatter2024.domain.model.Status
 import com.dmm.bootcamp.yatter2024.domain.model.StatusId
@@ -11,7 +12,6 @@ import com.dmm.bootcamp.yatter2024.infra.api.json.PostStatusJson
 import com.dmm.bootcamp.yatter2024.infra.api.json.StatusJson
 import com.dmm.bootcamp.yatter2024.infra.domain.converter.StatusConverter
 import com.dmm.bootcamp.yatter2024.infra.domain.model.AccountImpl
-import com.dmm.bootcamp.yatter2024.infra.pref.MePreferences
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -23,8 +23,8 @@ import java.net.URL
 
 class StatusRepositoryImplSpec {
   private val yatterApi = mockk<YatterApi>()
-  private val mePreferences = mockk<MePreferences>()
-  private val subject = StatusRepositoryImpl(yatterApi, mePreferences)
+  private val tokenProvider = mockk<TokenProvider>()
+  private val subject = StatusRepositoryImpl(yatterApi, tokenProvider)
 
   @Test
   fun getPublicTimelineFromApi() = runTest {
@@ -81,18 +81,18 @@ class StatusRepositoryImplSpec {
 
   @Test
   fun postStatusWhenLoggedIn() = runTest {
-    val username = "username"
+    val token = "token"
     val content = "content"
 
     val statusJson = StatusJson(
       id = "id",
       account = AccountJson(
         id = "id",
-        username = username,
+        username = token,
         displayName = "",
         note = null,
-        avatar = "",
-        header = "",
+        avatar = "https://www.google.com",
+        header = "https://www.google.com",
         followingCount = 0,
         followersCount = 0,
         createAt = ""
@@ -103,8 +103,8 @@ class StatusRepositoryImplSpec {
     )
 
     coEvery {
-      mePreferences.getUsername()
-    } returns username
+      tokenProvider.provide()
+    } returns token
 
     coEvery {
       yatterApi.postStatus(any(), any())
@@ -120,9 +120,9 @@ class StatusRepositoryImplSpec {
     assertThat(result).isEqualTo(expect)
 
     coVerifyAll {
-      mePreferences.getUsername()
+      tokenProvider.provide()
       yatterApi.postStatus(
-        username,
+        token,
         PostStatusJson(
           status = content,
           mediaList = emptyList()
@@ -133,12 +133,11 @@ class StatusRepositoryImplSpec {
 
   @Test
   fun postStatusWhenNotLoggedIn() = runTest {
-    val username = null
     val content = "content"
 
     coEvery {
-      mePreferences.getUsername()
-    } returns username
+      tokenProvider.provide()
+    } throws AuthenticatorException()
 
 
     var error: Throwable? = null
@@ -158,7 +157,7 @@ class StatusRepositoryImplSpec {
     assertThat(error).isInstanceOf(AuthenticatorException::class.java)
 
     coVerify {
-      mePreferences.getUsername()
+      tokenProvider.provide()
     }
   }
 }

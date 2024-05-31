@@ -2,6 +2,7 @@ package com.dmm.bootcamp.yatter2024.ui.post
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.dmm.bootcamp.yatter2024.common.MainDispatcherRule
+import com.dmm.bootcamp.yatter2024.common.navigation.PopBackDestination
 import com.dmm.bootcamp.yatter2024.domain.model.AccountId
 import com.dmm.bootcamp.yatter2024.domain.model.Username
 import com.dmm.bootcamp.yatter2024.domain.service.GetMeService
@@ -95,7 +96,7 @@ class PostViewModelSpec {
       postStatusUseCase.execute(status, emptyList())
     }
 
-    assertThat(subject.goBack.value).isNotNull()
+    assertThat(subject.destination.value).isInstanceOf(PopBackDestination::class.java)
   }
 
   @Test
@@ -113,13 +114,13 @@ class PostViewModelSpec {
       postStatusUseCase.execute(status, emptyList())
     }
 
-    assertThat(subject.goBack.value).isNull()
+    assertThat(subject.destination.value).isNull()
   }
 
   @Test
   fun clickBack() = runTest {
     subject.onClickNavIcon()
 
-    assertThat(subject.goBack.value).isNotNull()
+    assertThat(subject.destination.value).isInstanceOf(PopBackDestination::class.java)
   }
 }
