@@ -358,10 +358,11 @@ fun PostPage(
 }
 ```
 
-`PostPage`の定義ができたら、ViewModelとTemplateの繋ぎこみをします。
-`onCreate`でViewModelの`onCreate`メソッドを呼び出すようにします。
-ViewModelの`destination`を取得し、値が更新されたら画面遷移するようにします。
-ViewModelから`uiState`を取り出し、`PageTemplate`に適した引数を渡します。
+`PostPage`の定義ができたら、ViewModelとTemplateの繋ぎこみをします。  
+繋ぎ込む際に次に示す内容を実装します。  
+- `onCreate`でViewModelの`onCreate`メソッド呼び出し
+- ViewModelの`destination`を取得し、値が更新されたら画面遷移
+- ViewModelから`uiState`を取り出し、`PageTemplate`に適した引数を渡す
 
 ```kotlin
 @Composable
