@@ -16,7 +16,7 @@ internal val domainImplModule = module {
   single<AccountRepository> { AccountRepositoryImpl(get(), get()) }
   single<StatusRepository> { StatusRepositoryImpl(get(), get()) }
 
-  factory<CheckLoginService> { CheckLoginServiceImpl(get()) }
   factory<GetMeService> { GetMeServiceImpl(get()) }
   factory<LoginService> { LoginServiceImpl(get(), get()) }
+  factory<CheckLoginService> { CheckLoginServiceImpl(get()) }
 }

@@ -1,6 +1,7 @@
 package com.dmm.bootcamp.yatter2024.infra.pref
 
 import android.content.Context
+import androidx.core.content.edit
 
 class TokenPreferences(context: Context) {
   companion object {
@@ -19,11 +20,15 @@ class TokenPreferences(context: Context) {
   )
 
   fun putAccessToken(token: String?) {
-    sharedPreferences.edit().putString(
-      KEY_ACCESS_TOKEN,
-      token
-    ).apply()
+    sharedPreferences.edit {
+      putString(
+        KEY_ACCESS_TOKEN,
+        token
+      )
+    }
   }
 
-  fun clear() = sharedPreferences.edit().clear().apply()
+  fun clear() = sharedPreferences.edit {
+    clear()
+  }
 }
