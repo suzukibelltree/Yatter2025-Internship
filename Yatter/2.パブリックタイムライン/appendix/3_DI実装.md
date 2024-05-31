@@ -131,15 +131,22 @@ single { YatterApiFactory().create() }
 Repositoryの時とは違い、注入先の型とインスタンス化で生成されるクラスの型が一致しているため`<>`は省略して問題ありません。  
 
 最後に`ViewModelModule`の設定です。  
+詳細は後述しますので、ひとまず下記コードをコピーしましょう。  
 
 ```Kotlin
 val viewModelModule = module {
+//  viewModel { MainViewModel(get()) }
+//  viewModel { PublicTimelineViewModel(get()) }
+//  viewModel { PostViewModel(get(), get()) }
+//  viewModel { RegisterAccountViewModel(get()) }
+//  viewModel { LoginViewModel(get()) } // こちらの//を削除
 }
 ```
 
 先述したようにViewModelのDI設定は`viewModel`という専用のものを使います。  
 
 ViewModelは他のクラスとは違ったインスタンス化方法やライフサイクルを持っているため、専用のものとなっています。  
+今回の実装ではパブリックタイムライン用のViewModelをDI設定するため、`PublicTimelineViewModel`がある行の先頭にある`//`を削除してコメントアウトを外しましょう。  
 
 ```Kotlin
 viewModel { PublicTimelineViewModel(get()) }
