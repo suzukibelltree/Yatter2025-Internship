@@ -233,7 +233,7 @@ fun PostTemplate(...) {
         navigationIcon = {
           IconButton(onClick = onClickNavIcon) {
             Icon(
-              imageVector = Icons.Default.ArrowBack,
+              imageVector = Icons.AutoMirrored.Filled.ArrowBack
               contentDescription = "戻る"
             )
           }
@@ -247,7 +247,7 @@ fun PostTemplate(...) {
 `navigationIcon`が他の画面と比べて増えていると思います。  
 この引数にコンポーザブルを渡すことによってTopAppBarのタイトル左横に表示することができます。  
 
-今回は、`IconButton`というアイコン(画像)をボタンとして扱うことのできるコンポーザブルを呼び出し、アイコンに`Icons.Default.ArrowBack`を指定して戻るボタンを実装しています。  
+今回は、`IconButton`というアイコン(画像)をボタンとして扱うことのできるコンポーザブルを呼び出し、アイコンに`Icons.AutoMirrored.Filled.ArrowBack`を指定して戻るボタンを実装しています。  
 
 続いては、投稿画面全体とローディングインディケータを表示するための`Box`コンポーザブルを用意して、最大サイズまで拡げコンテンツを画面中央に配置するように指定します。  
 
