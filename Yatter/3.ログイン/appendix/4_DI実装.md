@@ -27,14 +27,14 @@ modules(
 
 UseCase用のDIモジュールの用意ができたところでログイン画面実装時に追加したクラスを各層のDIモジュールに定義していきます。  
 
-`DomainImplModule`に`LoginService`、`InfraModule`に`MePreferences`、`UseCaseModule`に`LoginUseCase`、`ViewModelModule`に`LoginViewModel`を定義してみましょう。  
+`DomainImplModule`に`LoginService`と`CheckLoginService`、`InfraModule`に`MePreferences`と`TokenPreferences`、`UseCaseModule`に`LoginUseCase`、`ViewModelModule`に`LoginViewModel`を定義してみましょう。  
 
 ```Kotlin
 // DomainImplModule
 
 val domainImplModule = module {
   ...
-  factory<LoginService> { LoginServiceImpl(get()) }
+  factory<LoginService> { LoginServiceImpl(get(), get()) }
   factory<CheckLoginService> { CheckLoginServiceImpl(get()) }
   ...
 }
@@ -44,6 +44,7 @@ val domainImplModule = module {
 val infraModule = module {
   ...
   single { MePreferences(get()) }
+  single { TokenPreferences(get()) }
   ...
 }
 
@@ -51,7 +52,7 @@ val infraModule = module {
 
 val domainImplModule = module {
   ...
-  factory<LoginUseCase> { LoginUseCaseImpl(get()) }
+  factory<LoginUseCase> { LoginUseCaseImpl(get(), get()) }
   ...
 }
 
@@ -66,7 +67,4 @@ val viewModelModule = module {
 
 ```
 
-
 これでDI層の実装も完了です。  
-
-次の章で画面導線実装を行います。  

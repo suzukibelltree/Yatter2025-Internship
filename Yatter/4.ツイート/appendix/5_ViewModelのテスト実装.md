@@ -93,7 +93,7 @@ class PostViewModelSpec {
       postStatusUseCase.execute(status, emptyList())
     }
 
-    assertThat(subject.goBack.value).isNotNull()
+    assertThat(subject.destination.value).isInstanceOf(PopBackDestination::class.java)
   }
 
   @Test
@@ -111,14 +111,14 @@ class PostViewModelSpec {
       postStatusUseCase.execute(status, emptyList())
     }
 
-    assertThat(subject.goBack.value).isNull()
+    assertThat(subject.destination.value).isNull()
   }
 
   @Test
   fun clickBack() = runTest {
     subject.onClickNavIcon()
 
-    assertThat(subject.goBack.value).isNotNull()
+    assertThat(subject.destination.value).isInstanceOf(PopBackDestination::class.java)
   }
 }
 ```
