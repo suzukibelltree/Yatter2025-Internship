@@ -8,7 +8,7 @@ package domain {
 
   class Username {
     + value: String
-    + validate()
+    + validate(): Boolean
   }
 
   package service {
@@ -32,6 +32,7 @@ package infra {
   package domain {
     package service {
       class LoginServiceImpl {
+        - yatterApi: YatterApi
         - tokenPreferences: TokenPreferences
       }
     }
@@ -59,17 +60,16 @@ package usecase {
 
 package ui {
   package login {
-    class LoginActivity
     class LoginViewModel {
       - loginUseCase: LoginUseCase
-      + navigateToPublicTimeLine: LiveData<Unit>
-      + navigateToRegister: LiveData<Unit>
+      + destination: StateFlow<Destination?>
       + uiState: StateFlow<LoginUiState>
 
       + onChangedUsername(username: String)
       + onChangedPassword(password: String)
       + onClickLogin()
       + onClickRegister()
+      + onCompleteNavigation()
     }
     class LoginUiState {
       + loginBindingModel: LoginBindingModel
@@ -90,7 +90,6 @@ LoginServiceImpl -- TokenPreferences
 LoginServiceImpl -- YatterApi
 LoginServiceImpl --|> LoginService
 
-LoginActivity -- LoginViewModel
 LoginViewModel -- LoginUseCase
 LoginViewModel -- LoginUiState
 LoginUiState -- LoginBindingModel

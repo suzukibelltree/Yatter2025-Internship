@@ -1,6 +1,7 @@
 package com.dmm.bootcamp.yatter2024.infra.pref
 
 import android.content.Context
+import androidx.core.content.edit
 
 class MePreferences(context: Context) {
   companion object {
@@ -19,11 +20,15 @@ class MePreferences(context: Context) {
   )
 
   fun putUserName(username: String?) {
-    sharedPreferences.edit().putString(
-      KEY_USERNAME,
-      username
-    ).apply()
+    sharedPreferences.edit {
+      putString(
+        KEY_USERNAME,
+        username
+      )
+    }
   }
 
-  fun clear() = sharedPreferences.edit().clear().apply()
+  fun clear() = sharedPreferences.edit {
+    clear()
+  }
 }
