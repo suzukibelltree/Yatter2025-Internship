@@ -17,7 +17,7 @@ fun LayoutSample() {
     Text(text = "in DMM", color = Color.Green)
 }
 ```
-<img src="image/component_sample/layout_sample.png">
+<img src="../image/component_sample/layout_sample.png">
 
 上記の通り、配置方法を指定しないと各コンポーネントが重なって表示されてしまいます。
 
@@ -36,7 +36,7 @@ fun LayoutSample() {
     }
 }
 ```
-<img src="image/component_sample/layout_sample_row.png">
+<img src="../image/component_sample/layout_sample_row.png">
 
 複数の`Text`が水平方向に配置されるようになりました。
 
@@ -56,7 +56,7 @@ fun LayoutSample() {
     }
 }
 ```
-<img src="image/component_sample/layout_sample_row_space.png">
+<img src="../image/component_sample/layout_sample_row_space.png">
 
 これでアイテム間に余白が生まれました
 
@@ -73,7 +73,7 @@ fun LayoutSample() {
     }
 }
 ```
-<img src="image/component_sample/layout_sample_column.png">
+<img src="../image/component_sample/layout_sample_column.png">
 
 複数の`Text`が垂直方向に配置されるようになりました。
 
@@ -95,7 +95,7 @@ fun LayoutSample() {
 }
 ```
 
-<img src="image/component_sample/layout_sample_column_center.png">
+<img src="../image/component_sample/layout_sample_column_center.png">
 
 
 今回のサンプルでは、少ないコンポーネントでの配置方法について触れました。

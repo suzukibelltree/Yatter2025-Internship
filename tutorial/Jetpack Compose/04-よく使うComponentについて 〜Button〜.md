@@ -17,7 +17,7 @@ fun ButtonSample() {
     }
 }
 ```
-![Button Sample](image/component_sample/button_sample.png)
+![Button Sample](../image/component_sample/button_sample.png)
 
 上記の例では、ボタンをクリックするとアクションとしてログの出力を行います
 
@@ -49,7 +49,7 @@ fun ButtonSample() {
 }
 ```
 
-![Custom Button](image/component_sample/button_sample_custom.png)
+![Custom Button](../image/component_sample/button_sample_custom.png)
 
 また、ボタンにはテキストだけではなくアイコンを追加することも可能です
 
@@ -70,7 +70,7 @@ fun ButtonSample() {
 }
 ```
 
-![Custom Button](image/component_sample/button_sample_icon.png
+![Custom Button](../image/component_sample/button_sample_icon.png
 )
 
 マテリアルデザイン準拠のアイコンが提供されています

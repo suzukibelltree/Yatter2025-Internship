@@ -16,7 +16,7 @@ fun GreetingText() {
 
 `Text`コンポーネントに文字列を渡すことによりテキストが表示されるようになります
 
-![Text Sample](image/component_sample/text_sample.png)
+![Text Sample](../image/component_sample/text_sample.png)
 
 `Text`コンポーネントには文字列リソースIDを渡すことによってもテキストを表示できるため、ハードコードを避けるためリソースによる指定を推奨します
 
@@ -59,7 +59,7 @@ fun GreetingText() {
     )
 }
 ```
-![Text Sample](image/component_sample/text_red_sample.png)
+![Text Sample](../image/component_sample/text_red_sample.png)
 
 
 ### テキストの文字サイズを変える
@@ -85,7 +85,7 @@ fun GreetingTitleText() {
     }
 }
 ```
-![Text Size Sample](image/component_sample/text_size_sample.png)
+![Text Size Sample](../image/component_sample/text_size_sample.png)
 
 ## テキストを編集したい
 編集可能なテキストボックスを実現するためには、`TextField`を使用します
@@ -111,11 +111,11 @@ fun SimpleFilledTextFieldSample() {
 
 非フォーカス時
 
-![TextField Sample](image/component_sample/textfield_sample.png)
+![TextField Sample](../image/component_sample/textfield_sample.png)
 
 フォーカス時
 
-![TextField Focus Sample](image/component_sample/textfield_sample_forcus.png)
+![TextField Focus Sample](../image/component_sample/textfield_sample_forcus.png)
 
 
 

@@ -21,7 +21,7 @@ fun ImageSample() {
     )
 }
 ```
-<img src="image/component_sample/image_sample.png" width="250">
+<img src="../image/component_sample/image_sample.png" width="250">
 
 
 上記の例では、アプリ内にバンドルしている画像ファイルを画面一杯に表示しています
@@ -58,7 +58,7 @@ fun ImageSample() {
 }
 ```
 
-<img src="image/component_sample/image_sample_size.png" width="250">
+<img src="../image/component_sample/image_sample_size.png" width="250">
 
 
 これで画面一杯ではなく、横幅を指定することができました。
@@ -84,7 +84,7 @@ fun ImageSample() {
 ```
 
 
-<img src="image/component_sample/image_sample_fillmaxwidth.png" width="250">
+<img src="../image/component_sample/image_sample_fillmaxwidth.png" width="250">
 
 
 ## 画像の切り抜き
@@ -108,7 +108,7 @@ fun ImageSample() {
 }
 ```
 
-<img src="image/component_sample/Image_sample_clip_circle.png" width="250">
+<img src="../image/component_sample/Image_sample_clip_circle.png" width="250">
 
 
 また、切り抜いた画像の角のサイズを指定することもできます
@@ -131,7 +131,7 @@ fun ImageSample() {
 }
 ```
 
-<img src="image/component_sample/Image_sample_clip_corner.png" width="250">
+<img src="../image/component_sample/Image_sample_clip_corner.png" width="250">
 
 
 
