@@ -243,7 +243,7 @@ class PublicTimelineViewModel(...) {
 }
 ```
 
-`viewModelScode.launch`に関して補足をします。  
+`viewModelScope.launch`に関して補足をします。  
 本来、coroutineを起動すると意図的に止めないと動き続けます。  
 動き続けた場合、アプリが閉じられた後などにcoroutine内の処理が発火してエラーになってしまったりリソースを浪費したりと不都合が多くあります。  
 そのためViewModelが生成・破棄されるタイミングでcoroutineを生成・キャンセルする必要があります。  
