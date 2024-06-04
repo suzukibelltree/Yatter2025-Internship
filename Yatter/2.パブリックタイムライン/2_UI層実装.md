@@ -33,7 +33,7 @@ data class MediaBindingModel(
 ```
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.ui.timeline.bindingmodel
+package com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel
 
 data class StatusBindingModel(
   val id: String,
