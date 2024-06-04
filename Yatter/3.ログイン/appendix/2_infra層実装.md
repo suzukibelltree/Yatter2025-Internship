@@ -1,3 +1,5 @@
+# [前の資料](./1_domain層実装.md)
+
 # ログイン画面のinfra層実装
 ログイン画面のinfra層実装を行います。  
 
@@ -310,3 +312,5 @@ class CheckLoginServiceImplSpec {
 ここまでで`TokenPreferences`と`LoginService`、`CheckLoginService`とが属するinfra層の実装は完了しました。  
 
 続いてusecase層の実装に移ります。  
+
+# [次の資料](./3_usecase層実装.md)

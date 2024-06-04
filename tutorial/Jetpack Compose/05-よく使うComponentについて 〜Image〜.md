@@ -1,3 +1,4 @@
+# [前の資料](./04-よく使うComponentについて%20〜Button〜.md)
 # よく使うコンポーネントについて 〜Image編〜
 
 JetpackComposeでUIを構築するには、コンポーネントを組み合わせることで実現します。
@@ -138,3 +139,5 @@ fun ImageSample() {
 他にも画像自体をぼかして加工したりすることも可能です
 
 指定可能な値が他にもあるので、気になるかたは[Android Delopers](https://developer.android.com/jetpack/compose/graphics/images/customize?hl=ja)をご参照ください
+
+# [次の資料](./06-よく使うComponentについて%20〜Row・Column〜.md)

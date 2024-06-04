@@ -1,3 +1,4 @@
+# [前の資料](./10-Activityの画面遷移について.md)
 # Fragmentの画面遷移について
 
 この章ではFragmentでどのように画面遷移するのかを解説します。
@@ -282,3 +283,5 @@ class MainActivity : AppCompatActivity() {
 ![11-3](image/11-3.png)
 
 ![11-4](image/11-4.png)
+
+# [次の資料](./12-Retrofitを用いた通信について.md)

@@ -1,3 +1,4 @@
+# [前の資料](./04-画面の要素を取得して操作する.md)
 # よく使うLayout/Viewの紹介
 
 XMLでAndroidのUIを実装するときによく使うViewをいくつか紹介します。
@@ -252,3 +253,5 @@ override fun onCreateView(
 ## RecyclerView
 
 リスト表示などに使うViewです。使い方が複雑なため、別の章で解説します。
+
+# [次の資料](./06-RecyclerViewについて.md)

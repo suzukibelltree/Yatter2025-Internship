@@ -1,3 +1,4 @@
+# [前の資料](./01-はじめに.md)
 # Activityについて
 
 Androidの最も重要なコンポーネントの1つに、 `Activity` があります。
@@ -165,3 +166,4 @@ namespace 'com.dmm.playground'
 
 `<intent-filter>` セクションに `<action android:name="android.intent.action.MAIN" />` と `<category android:name="android.intent.category.LAUNCHER" />` があります。これは、アプリをランチャーに表示する(ホーム画面などから起動できるようにする)のに必要な設定です。これにより、指定したActivityがホーム画面などからアプリを開いた際に起動します。
 
+# [次の資料](./03-Fragmentについて.md)

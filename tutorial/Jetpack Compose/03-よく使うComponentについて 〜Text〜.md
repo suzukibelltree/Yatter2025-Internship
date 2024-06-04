@@ -1,3 +1,4 @@
+# [前の資料](./02-Composable関数について.md)
 # よく使うコンポーネントについて 〜Text編〜
 
 JetpackComposeでUIを構築するには、コンポーネントを組み合わせることで実現します。
@@ -121,3 +122,5 @@ fun SimpleFilledTextFieldSample() {
 
 
 本サンプルで紹介できなかった便利なパラメータやテキストのフォント変更なども可能なので、[developers guide](https://developer.android.com/jetpack/compose/text?hl=ja)もぜひご覧ください
+
+# [次の資料](./04-よく使うComponentについて%20〜Button〜.md)

@@ -1,3 +1,4 @@
+# [前の資料](./1_パブリックタイムライン機能概要.md)
 # パブリックタイムラインのUI層実装
 パブリックタイムラインのUI層実装を行います。  
 
@@ -28,12 +29,12 @@ data class MediaBindingModel(
   val id: String,
   val type: String,
   val url: String,
-  val description: String
+  val description: String?
 )
 ```
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2023.ui.timeline.bindingmodel
+package com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel
 
 data class StatusBindingModel(
   val id: String,
@@ -46,7 +47,7 @@ data class StatusBindingModel(
 ```
 
 `Media`から`MediaBindingModel`に変換するための`MediaConverter`と、`Status`から`StatusBindingModel`に変換するための`StatusConverter`も実装しましょう。  
-`ui/bindingmodel/converter`パッケージにファイルを作成していきます。  
+`ui/timeline/bindingmodel/converter`パッケージにファイルを作成していきます。  
 
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel.converter
@@ -83,7 +84,8 @@ object StatusConverter {
       displayName = status.account.displayName ?: "",
       username = status.account.username.value,
       avatar = status.account.avatar.toString(),
-      content = status.content
+      content = status.content,
+      attachmentMediaList = MediaConverter.convertToBindingModel(status.attachmentMediaList)
     )
 }
 ```
@@ -1020,3 +1022,6 @@ context.getString(R.string.string_resource_id)
 
 詳しい内容は公式ドキュメントをご一読ください。  
 https://developer.android.com/guide/topics/resources/string-resource?hl=ja
+
+# [Appendixへ](./appendix/1_domain層実装.md)
+# [次の章へ](../3.ログイン/1_ログイン機能概要.md)
