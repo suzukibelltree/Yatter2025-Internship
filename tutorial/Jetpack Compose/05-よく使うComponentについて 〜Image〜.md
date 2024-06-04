@@ -109,7 +109,7 @@ fun ImageSample() {
 }
 ```
 
-<img src="../image/component_sample/Image_sample_clip_circle.png" width="250">
+<img src="../image/component_sample/image_sample_clip_circle.png" width="250">
 
 
 また、切り抜いた画像の角のサイズを指定することもできます
@@ -132,7 +132,7 @@ fun ImageSample() {
 }
 ```
 
-<img src="../image/component_sample/Image_sample_clip_corner.png" width="250">
+<img src="../image/component_sample/image_sample_clip_corner.png" width="250">
 
 
 
