@@ -569,8 +569,10 @@ DMMでのJetpack Composeの実装をする上で`Page`と`Template`という概�
 fun PublicTimelineTemplate(
   statusList: List<StatusBindingModel>,
   isLoading: Boolean,
+  onClickPost: () -> Unit,
   isRefreshing: Boolean,
   onRefresh: () -> Unit,
+  onClickProfile: () -> Unit,
 ) {
 }
 ```
