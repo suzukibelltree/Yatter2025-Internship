@@ -1,3 +1,4 @@
+# [前の資料](./05-よく使うComponentについて%20〜Image〜.md)
 # よく使うコンポーネントについて 〜Row/Column編〜
 
 JetpackComposeでUIを構築するには、コンポーネントを組み合わせることで実現します。
