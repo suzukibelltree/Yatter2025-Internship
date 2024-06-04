@@ -241,7 +241,7 @@ fun onClickLogin() {
       is LoginUseCaseResult.Success -> {
         // 3
         // パブリックタイムライン画面に遷移する処理の追加
-    }
+      }
 
       is LoginUseCaseResult.Failure -> {
         // 4
