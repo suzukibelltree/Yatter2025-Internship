@@ -953,6 +953,20 @@ fun PublicTimelinePage(
 }
 ```
 
+`PublicTimelinePage`コンポーザブルの引数で、`PublicTimelineViewModel = getViewModel()`でデフォルト引数としてViewModelをDIから取得する処理をしていますが、ViewModelを実装したあとでViewModelをDIする設定をまだ実装していないため、このままだとビルドしてもエラーでアプリがクラッシュしてしまいます。
+
+`di/ViewModelModule.kt`を開き、`PublicTimelineViewModel`のコメントアウトを外します。
+
+```kotlin
+internal val viewModelModule = module {
+//  viewModel { MainViewModel(get()) }
+  viewModel { PublicTimelineViewModel(get()) } // コメントアウトを外す
+//  viewModel { PostViewModel(get(), get()) }
+//  viewModel { RegisterAccountViewModel(get()) }
+//  viewModel { LoginViewModel(get()) }
+}
+```
+
 これでViewModel, Pageコンポーザブル, Templateコンポーザブルの繋ぎこみが完了しました。  
 
 ---
