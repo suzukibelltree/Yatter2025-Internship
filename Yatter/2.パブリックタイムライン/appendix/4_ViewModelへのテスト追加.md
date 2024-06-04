@@ -1,3 +1,4 @@
+# [前の資料](./3_DI実装.md)
 # パブリックタイムラインのテスト実装
 パブリックタイムラインで使用しているクラスのテストを書いてみましょう。  
 
@@ -119,3 +120,5 @@ fun onRefreshPublicTimeline() = runTest {
   assertThat(subject.uiState.value.statusList).isEqualTo(expect)
 }
 ```
+
+# [次の章へ](../3.ログイン/1_ログイン機能概要.md)

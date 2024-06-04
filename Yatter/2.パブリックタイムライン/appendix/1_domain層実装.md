@@ -153,3 +153,5 @@ interface StatusRepository {
 ```
 
 これでパブリックタイムライン画面で利用するdomain層の実装を行うことができました。  
+
+# [次の資料](./2_infra層実装.md)

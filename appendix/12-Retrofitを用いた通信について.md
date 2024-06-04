@@ -1,3 +1,4 @@
+# [前の資料](./11-Fragmentの画面遷移について.md)
 # Retrofitを用いた通信について
 
 AndroidでHTTP通信をする際に使えるライブラリの1つに、Retrofitがあります。
@@ -266,3 +267,5 @@ val updateResponse = yatterApi.updateCredentials(
     header = headerBody,
 )
 ```
+
+# [次の資料](./13-JetpackComposeについて.md)

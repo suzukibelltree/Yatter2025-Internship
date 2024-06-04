@@ -1,3 +1,4 @@
+# [前の資料](./03-よく使うComponentについて%20〜Text〜.md)
 # よく使うコンポーネントについて 〜Button編〜
 
 JetpackComposeでUIを構築するには、コンポーネントを組み合わせることで実現します。
@@ -76,3 +77,5 @@ fun ButtonSample() {
 マテリアルデザイン準拠のアイコンが提供されています
 
 他のアイコンも使いたい方はGoogle Fontsの[アイコン一覧](https://fonts.google.com/icons)をご参照ください
+
+# [次の資料](./05-よく使うComponentについて%20〜Image〜.md)

@@ -98,3 +98,5 @@ interface StatusRepository {
 ```
 
 これにてツイート機能に必要なdomain層の実装は完了です。  
+
+# [次の資料](./2_infra層実装.md)

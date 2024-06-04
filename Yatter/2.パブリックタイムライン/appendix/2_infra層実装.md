@@ -1,3 +1,4 @@
+# [前の資料](./1_domain層実装.md)
 # パブリックタイムライン画面のinfra層実装
 パブリックタイムライン画面のinfra層の実装を行います。 
 
@@ -729,3 +730,5 @@ assertThat(result).isEqualTo(expect)
 ```
 app/build/reports/tests/testReleaseUnitTest/index.html
 ```
+
+# [次の資料](./3_DI実装.md)

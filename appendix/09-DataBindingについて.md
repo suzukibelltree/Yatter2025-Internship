@@ -1,3 +1,4 @@
+# [前の資料](./08-ViewModelについて.md)
 # DataBindingについて
 
 画面の要素を取得する章で少しだけ `DataBinding` に触れましたが、それについてもう少し解説します。
@@ -73,3 +74,5 @@ override fun onCreateView(
     return binding.root
 }
 ```
+
+# [次の資料](./10-Activityの画面遷移について.md)

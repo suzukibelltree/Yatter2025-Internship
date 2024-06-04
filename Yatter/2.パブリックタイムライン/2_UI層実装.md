@@ -1,3 +1,4 @@
+# [前の資料](./1_パブリックタイムライン機能概要.md)
 # パブリックタイムラインのUI層実装
 パブリックタイムラインのUI層実装を行います。  
 
@@ -1021,3 +1022,6 @@ context.getString(R.string.string_resource_id)
 
 詳しい内容は公式ドキュメントをご一読ください。  
 https://developer.android.com/guide/topics/resources/string-resource?hl=ja
+
+# [Appendixへ](./appendix/1_domain層実装.md)
+# [次の章へ](../3.ログイン/1_ログイン機能概要.md)

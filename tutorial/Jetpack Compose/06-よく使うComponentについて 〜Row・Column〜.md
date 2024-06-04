@@ -1,3 +1,4 @@
+# [前の資料](./05-よく使うComponentについて%20〜Image〜.md)
 # よく使うコンポーネントについて 〜Row/Column編〜
 
 JetpackComposeでUIを構築するには、コンポーネントを組み合わせることで実現します。
@@ -104,3 +105,5 @@ fun LayoutSample() {
 要素が多い・複数種類のコンポーネントを配置したいなど高度なレイアウトについては、
 
 Android Developerの[レイアウト](https://developer.android.com/jetpack/compose/layouts/basics?hl=ja)をご参照ください
+
+# [次の章へ(アーキテクチャについて)](../アーキテクチャについて/architecture.md)

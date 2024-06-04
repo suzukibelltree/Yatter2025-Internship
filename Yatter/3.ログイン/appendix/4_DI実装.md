@@ -1,3 +1,4 @@
+# [前の資料](./3_usecase層実装.md)
 # ログイン画面のDI実装
 ログイン画面のDI実装を行います。  
 
@@ -68,3 +69,5 @@ val viewModelModule = module {
 ```
 
 これでDI層の実装も完了です。  
+
+# [次の資料](./5_ViewModelのテスト実装.md)

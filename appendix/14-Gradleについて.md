@@ -1,3 +1,4 @@
+# [前の資料](./13-JetpackComposeについて.md)
 # Gradleについて
 
 Androidアプリ開発をはじめ、Kotlinでの開発ではビルドツールにGradleが使われています。
