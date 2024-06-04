@@ -105,3 +105,5 @@ fun LayoutSample() {
 要素が多い・複数種類のコンポーネントを配置したいなど高度なレイアウトについては、
 
 Android Developerの[レイアウト](https://developer.android.com/jetpack/compose/layouts/basics?hl=ja)をご参照ください
+
+# [次の章へ(アーキテクチャについて)](../アーキテクチャについて/architecture.md)
