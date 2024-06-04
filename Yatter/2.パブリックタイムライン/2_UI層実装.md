@@ -46,7 +46,7 @@ data class StatusBindingModel(
 ```
 
 `Media`から`MediaBindingModel`に変換するための`MediaConverter`と、`Status`から`StatusBindingModel`に変換するための`StatusConverter`も実装しましょう。  
-`ui/bindingmodel/converter`パッケージにファイルを作成していきます。  
+`ui/timeline/bindingmodel/converter`パッケージにファイルを作成していきます。  
 
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel.converter
