@@ -489,23 +489,25 @@ fun StatusRow(...) {
     AsyncImage(...)
 
     Column(...) {
-      Text(
-        text = buildAnnotatedString {
-          // appendで文字列セット
-          append(statusBindingModel.displayName)
-          withStyle(
-            style = SpanStyle(
-              // 文字色を薄くするために、ContentAlpha.mediumを指定
-              color = MaterialTheme.colors.onBackground.copy(alpha = ContentAlpha.medium),
-            )
-          ) {
-            append(" @${statusBindingModel.username}")
-          }
-        },
-        maxLines = 1, // 文字列が複数行にならないように指定
-        overflow = TextOverflow.Ellipsis, // はみ出した分を「...」で表現
-        fontWeight = FontWeight.Bold, // 文字を太字に
-      )
+      Row {
+        Text(
+          text = buildAnnotatedString {
+            // appendで文字列セット
+            append(statusBindingModel.displayName)
+            withStyle(
+              style = SpanStyle(
+                // 文字色を薄くするために、ContentAlpha.mediumを指定
+                color = MaterialTheme.colors.onBackground.copy(alpha = ContentAlpha.medium),
+              )
+            ) {
+              append(" @${statusBindingModel.username}")
+            }
+          },
+          maxLines = 1, // 文字列が複数行にならないように指定
+          overflow = TextOverflow.Ellipsis, // はみ出した分を「...」で表現
+          fontWeight = FontWeight.Bold, // 文字を太字に
+        )
+      }
     }
   }
 }
