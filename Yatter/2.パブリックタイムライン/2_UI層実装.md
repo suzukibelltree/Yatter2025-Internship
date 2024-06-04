@@ -28,7 +28,7 @@ data class MediaBindingModel(
   val id: String,
   val type: String,
   val url: String,
-  val description: String
+  val description: String?
 )
 ```
 
@@ -83,7 +83,8 @@ object StatusConverter {
       displayName = status.account.displayName ?: "",
       username = status.account.username.value,
       avatar = status.account.avatar.toString(),
-      content = status.content
+      content = status.content,
+      attachmentMediaList = MediaConverter.convertToBindingModel(status.attachmentMediaList)
     )
 }
 ```
