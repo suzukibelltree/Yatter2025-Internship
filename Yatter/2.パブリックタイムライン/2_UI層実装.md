@@ -243,7 +243,7 @@ class PublicTimelineViewModel(...) {
 }
 ```
 
-`viewModelScode.launch`に関して補足をします。  
+`viewModelScope.launch`に関して補足をします。  
 本来、coroutineを起動すると意図的に止めないと動き続けます。  
 動き続けた場合、アプリが閉じられた後などにcoroutine内の処理が発火してエラーになってしまったりリソースを浪費したりと不都合が多くあります。  
 そのためViewModelが生成・破棄されるタイミングでcoroutineを生成・キャンセルする必要があります。  
@@ -950,6 +950,20 @@ fun PublicTimelinePage(
     isRefreshing = uiState.isRefreshing,
     onRefresh = viewModel::onRefresh,
   )
+}
+```
+
+`PublicTimelinePage`コンポーザブルの引数で、`PublicTimelineViewModel = getViewModel()`でデフォルト引数としてViewModelをDIから取得する処理をしていますが、ViewModelを実装したあとでViewModelをDIする設定をまだ実装していないため、このままだとビルドしてもエラーでアプリがクラッシュしてしまいます。
+
+`di/ViewModelModule.kt`を開き、`PublicTimelineViewModel`のコメントアウトを外します。
+
+```kotlin
+internal val viewModelModule = module {
+//  viewModel { MainViewModel(get()) }
+  viewModel { PublicTimelineViewModel(get()) } // コメントアウトを外す
+//  viewModel { PostViewModel(get(), get()) }
+//  viewModel { RegisterAccountViewModel(get()) }
+//  viewModel { LoginViewModel(get()) }
 }
 ```
 
