@@ -28,7 +28,7 @@ data class MediaBindingModel(
   val id: String,
   val type: String,
   val url: String,
-  val description: String
+  val description: String?
 )
 ```
 
@@ -46,7 +46,7 @@ data class StatusBindingModel(
 ```
 
 `Media`から`MediaBindingModel`に変換するための`MediaConverter`と、`Status`から`StatusBindingModel`に変換するための`StatusConverter`も実装しましょう。  
-`ui/bindingmodel/converter`パッケージにファイルを作成していきます。  
+`ui/timeline/bindingmodel/converter`パッケージにファイルを作成していきます。  
 
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel.converter
@@ -83,7 +83,8 @@ object StatusConverter {
       displayName = status.account.displayName ?: "",
       username = status.account.username.value,
       avatar = status.account.avatar.toString(),
-      content = status.content
+      content = status.content,
+      attachmentMediaList = MediaConverter.convertToBindingModel(status.attachmentMediaList)
     )
 }
 ```
