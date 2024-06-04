@@ -249,7 +249,7 @@ fun onClickLogin() {
       }
     }
 
-    _uiState.update { it.copy(isLoading = true) } // 5
+    _uiState.update { it.copy(isLoading = false) } // 5
   }
 }
 ```
