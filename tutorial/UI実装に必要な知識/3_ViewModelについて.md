@@ -141,4 +141,4 @@ fun EditText(viewModel: MainViewModel = viewModel()) {
 
 これでビルドして起動すると、画面回転してもテキストが消えないことが確認できると思います。
 
-# [次の章へ(Jetpack COmpose)](../Jetpack%20Compose/01-はじめに.md)
+# [次の章へ(Jetpack Compose)](../Jetpack%20Compose/01-はじめに.md)
