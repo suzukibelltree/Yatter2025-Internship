@@ -1,3 +1,4 @@
+# [前の資料](./4_DI実装.md)
 # ViewModelのテスト実装
 ツイート画面で利用しているViewModelのテストを書いてみましょう。
 
@@ -124,3 +125,5 @@ class PostViewModelSpec {
 ```
 
 </details>
+
+# [次の章へ](../5.その次は/1_その次は.md)
