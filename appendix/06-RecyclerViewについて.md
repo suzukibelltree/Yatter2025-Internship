@@ -1,3 +1,4 @@
+# [前の資料](./05-よく使うViewの紹介.md)
 # RecyclerViewについて
 
 `RecyclerView` はリスト表示をする際に使うViewです。
@@ -156,3 +157,5 @@ RecyclerViewにadapterをセットすればOKです。
 ビルドして実行すると、以下のように表示されると思います。
 
 ![6-1](image/6-1.png)
+
+# [次の資料](./07-ImageViewでネットワークの画像を表示する.md)

@@ -1,3 +1,4 @@
+# [前の資料](./12-Retrofitを用いた通信について.md)
 # Jetpack Composeとは
 Jetpack ComposeとはAndroidアプリのネイティブUIをビルドする際に推奨されるAndroidの最新ツールキットです。  
 
@@ -126,3 +127,5 @@ val value by flowValue.collectAsStateWithLifecycle()
 
 詳細な概念の説明や使い方等は公式のドキュメント(日本語)で簡潔に説明されているため合わせてご確認ください。  
 https://developer.android.com/jetpack/compose?hl=ja
+
+# [次の資料](./14-Gradleについて.md)

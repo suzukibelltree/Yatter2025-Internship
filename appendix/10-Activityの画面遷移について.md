@@ -1,3 +1,4 @@
+# [前の資料](./09-DataBindingについて.md)
 # Activityの画面遷移について
 
 この章ではActivityでどのように画面遷移するのかを解説します。
@@ -122,3 +123,5 @@ class MainActivity : AppCompatActivity() {
 ![10-1](image/10-1.png)
 
 ![10-2](image/10-2.png)
+
+# [次の資料](./11-Fragmentの画面遷移について.md)
