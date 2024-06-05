@@ -603,10 +603,8 @@ private fun PublicTimelineTemplatePreview() {
           ),
         ),
         isLoading = true,
-        onClickPost = {},
         isRefreshing = false,
-        onRefresh = {},
-        onClickProfile = {}
+        onRefresh = {}
       )
     }
   }
