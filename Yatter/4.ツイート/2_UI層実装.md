@@ -242,7 +242,7 @@ fun PostTemplate(...) {
         navigationIcon = {
           IconButton(onClick = onClickNavIcon) {
             Icon(
-              imageVector = Icons.AutoMirrored.Filled.ArrowBack
+              imageVector = Icons.AutoMirrored.Filled.ArrowBack,
               contentDescription = "戻る"
             )
           }
