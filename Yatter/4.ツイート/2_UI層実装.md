@@ -227,6 +227,31 @@ fun PostTemplate(
 ) {}
 ```
 
+続いてプレビュー側にも引数とテストようの値を追加します。
+
+```Kotlin
+@Preview
+@Composable
+private fun PostTemplatePreview() {
+    Yatter2024Theme {
+        Surface {
+            PostTemplate(
+                postBindingModel = PostBindingModel(
+                    avatarUrl = "https://avatars.githubusercontent.com/u/19385268?v=4",
+                    statusText = ""
+                ),
+                isLoading = false,
+                canPost = false,
+                onStatusTextChanged = {},
+                onClickPost = {},
+                onClickNavIcon = {},
+            )
+        }
+    }
+}
+```
+
+
 引数を追加できたらまずはTopAppBarの表示から行います。  
 他ページ同様にScaffoldコンポーザブルを用意し、TopAppBarを表示します。  
 
