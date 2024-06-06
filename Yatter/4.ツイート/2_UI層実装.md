@@ -297,7 +297,7 @@ Scaffold(...) {
 それでは、アバターアイコン・ツイート内容・投稿ボタンを並べます。  
 実装する画面のイメージを確認するとツイート内容と投稿ボタンが縦に並び、その2つとアバターアイコンが横に並んでいるように考えることができます。  
 
-![post_template_preview](../image/4/post_template_preview.png)
+![post_template_device_preview](../image/4/post_template_device_preview.png)
 
 そのため次のように横方向に並べる`Row`と縦方向に並べる`Column`を組みあせて画面を構成します。  
 
