@@ -227,6 +227,31 @@ fun PostTemplate(
 ) {}
 ```
 
+続いてプレビュー側にも引数とテストようの値を追加します。
+
+```Kotlin
+@Preview
+@Composable
+private fun PostTemplatePreview() {
+    Yatter2024Theme {
+        Surface {
+            PostTemplate(
+                postBindingModel = PostBindingModel(
+                    avatarUrl = "https://avatars.githubusercontent.com/u/19385268?v=4",
+                    statusText = ""
+                ),
+                isLoading = false,
+                canPost = false,
+                onStatusTextChanged = {},
+                onClickPost = {},
+                onClickNavIcon = {},
+            )
+        }
+    }
+}
+```
+
+
 引数を追加できたらまずはTopAppBarの表示から行います。  
 他ページ同様にScaffoldコンポーザブルを用意し、TopAppBarを表示します。  
 
@@ -272,7 +297,7 @@ Scaffold(...) {
 それでは、アバターアイコン・ツイート内容・投稿ボタンを並べます。  
 実装する画面のイメージを確認するとツイート内容と投稿ボタンが縦に並び、その2つとアバターアイコンが横に並んでいるように考えることができます。  
 
-![post_template_preview](../image/4/post_template_preview.png)
+![post_template_device_preview](../image/4/post_template_device_preview.png)
 
 そのため次のように横方向に並べる`Row`と縦方向に並べる`Column`を組みあせて画面を構成します。  
 
