@@ -16,7 +16,8 @@ data class PostBindingModel(
 ```
 
 ## UiStateの実装
-続いて、UiStateの実装です。  
+続いて、UiStateの実装です。
+`ui/post`パッケージに`PostUiState`クラスを作成しましょう。
 UiStateではツイートの投稿内容`PostBindingModel`と読み込み中かを表す`isLoading`、そしてツイートの投稿ができるかどうかの`canPost`を実装します。  
 `canPost`は`PostBindingModel#statusText`が空かどうかで判断するようにします。
 
