@@ -298,7 +298,7 @@ Jetpack Composeではコンポーザブルと呼ばれるコンポーザブル�
 
 ```Kotlin
 @Composale
-fun FirsstComposable() {
+fun FirstComposable() {
 }
 ```
 
