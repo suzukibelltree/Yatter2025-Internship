@@ -15,8 +15,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            PlayGroundTheme {
-                // A surface container using the 'background' color from the theme
+            // XXXの部分は自身が設定したプロジェクト名
+            XXXTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -28,7 +28,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditText() {
     var text by remember { mutableStateOf("") }
@@ -72,13 +71,22 @@ ViewModelは、UIに表示するデータに関する責務を持ちます。デ
 
 ## ViewModelの導入
 
-ViewModel自体は特に依存を追加しなくても使えますが、Kotlinから使う上で便利になるKotlin拡張を導入しましょう。 `app/build.gradle` の `dependencies` ブロックに以下を追加します。
+ViewModel自体は特に依存を追加しなくても使えますが、Kotlinから使う上で便利になるKotlin拡張を導入しましょう。 `build.gradle.kts(:app)` の `dependencies` ブロックに以下を追加します。
 
 ```gradle
 dependencies {
     ...
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1'
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 }
+```
+
+Gradleの同期を実行します。
+
+<img width="259" alt="image" src="https://media.git.dmm.com/user/2885/files/66e1480b-6bab-47d9-a060-747dbe8fddef">
+
+※implementationを解決できない（赤文字になっている）場合は、libs.versions.tomlに以下を追記してみてください。
+```Gradle
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 ```
 
 ## ViewModelをActivityに追加する
@@ -111,8 +119,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            PlayGroundTheme {
-                // A surface container using the 'background' color from the theme
+            // XXXの部分は自身が設定したプロジェクト名
+            XXXTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -124,7 +132,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditText(viewModel: MainViewModel = viewModel()) {
     val text by viewModel.textStateFlow.collectAsState()
@@ -140,5 +147,10 @@ fun EditText(viewModel: MainViewModel = viewModel()) {
 ```
 
 これでビルドして起動すると、画面回転してもテキストが消えないことが確認できると思います。
+
+※viewModel()の部分が解決できない場合は、MainActivity.ktの以下を追加してみてください。
+```Kotlin
+import androidx.lifecycle.viewmodel.compose.viewModel
+```
 
 # [次の章へ(Jetpack Compose)](../Jetpack%20Compose/01-はじめに.md)
