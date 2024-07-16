@@ -75,7 +75,7 @@ data class LoginUiState(...) {
 
 ## ViewModelの実装
 ViewModelの実装に移ります。  
-`Ui/login`パッケージに`LoginViewModel`クラスを作成しているのでそこに処理を追記していきます。  
+`Ui/login`パッケージに`LoginViewModel`クラスを作成し、そこに処理を追記していきます。  
 ログイン処理では`LoginUseCase`を使用します。
 
 ```Kotlin
