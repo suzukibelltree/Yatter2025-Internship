@@ -523,7 +523,10 @@ fun StatusRow(...) {
   Row(...) {
     AsyncImage(...)
 
-    Column {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+      Text(
+        ...
+      )
       Text(text = statusBindingModel.content)
 
       LazyRow {
@@ -536,6 +539,7 @@ fun StatusRow(...) {
           )
           Spacer(modifier = Modifier.width(4.dp))
         }
+      }
     }
   }
 }
@@ -818,8 +822,7 @@ fun PublicTimelineTemplate(...) {
     Box(
       modifier = Modifier
         .fillMaxSize()
-        .padding(paddingValues)
-        .pullRefresh(pullRefreshState),
+        .padding(paddingValues),
     ) {...}
   }
 }
