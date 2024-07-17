@@ -822,8 +822,7 @@ fun PublicTimelineTemplate(...) {
     Box(
       modifier = Modifier
         .fillMaxSize()
-        .padding(paddingValues)
-        .pullRefresh(pullRefreshState),
+        .padding(paddingValues),
     ) {...}
   }
 }
