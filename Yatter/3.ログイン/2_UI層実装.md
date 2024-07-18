@@ -285,7 +285,7 @@ fun LoginTemplate() {
 @Composable
 private fun LoginTemplatePreview() {
   Yatter2024Theme {
-    Surface() {
+    Surface {
       LoginTemplate()
     }
   }
