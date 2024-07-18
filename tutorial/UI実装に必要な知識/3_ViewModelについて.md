@@ -82,7 +82,7 @@ dependencies {
 
 Gradleの同期を実行します。
 
-<img width="259" alt="image" src="https://media.git.dmm.com/user/2885/files/66e1480b-6bab-47d9-a060-747dbe8fddef">
+<img width="259" alt="image" src="image/gradle_sync.png">
 
 ※implementationを解決できない（赤文字になっている）場合は、libs.versions.tomlに以下を追記してみてください。
 ```Gradle
