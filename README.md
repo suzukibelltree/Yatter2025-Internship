@@ -1,1 +1,1 @@
-# yatter-android-template-2024
+# yatter-android-template-2025
