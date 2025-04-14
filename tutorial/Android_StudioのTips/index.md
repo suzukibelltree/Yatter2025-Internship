@@ -24,7 +24,7 @@ Yatterの実装に入る前に、Android Studioの便利な使い方を知りま
 https://developer.android.com/studio/intro/keyboard-shortcuts
 
 映像付きで、ショートカットの解説をしている動画もあります！  
-古い動画なのでみなさんの使っている画面とは見た目が乳部異なりますが、ショートカット自体は変化していないため参考になるはずです。  
+古い動画なのでみなさんの使っている画面とは見た目が一部異なりますが、ショートカット自体は変化していないため参考になるはずです。  
 https://www.youtube.com/watch?v=qoWmJ8tPY_I (気になったら見るぐらいでOKです。30分ほどあります。)
 
 ## 設定編
