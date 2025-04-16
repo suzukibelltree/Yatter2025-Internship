@@ -235,7 +235,7 @@ suspend fun getHomeTimeline(
 
 例えば、Yatterのアカウント情報の更新のエンドポイントなど、一部のエンドポイントだけ `ContentType: multipart/form-data` でリクエストを送りたい場合があると思います。
 
-この場合は、メソッドにHTTPのメソッドの指定に加えて `@Multipart` アノテーションを付与し、フォームとして渡したい引数に `@Part` アノテーションを付与することでできます。 `@Part` アノテーションを付与する場合、単純な文字列などの場合は型の指定を通常と同じように `String` のようにして大丈夫ですが、ファイルのアップロードをしたい場合はファイルとして渡したい引数を `RequestBody` 型で指定する必要があります。
+この場合は、メソッドにHTTPのメソッドの指定に加えて `@Multipart` アノテーションを付与し、フォームとして渡したい引数に `@Part` アノテーションを付与した `MultipartBody.Part` を指定することでできます。
 
 ```kotlin
 @Multipart
@@ -243,28 +243,26 @@ suspend fun getHomeTimeline(
 suspend fun updateCredentials(
     @Header("Authorization")
     token: String,
-    @Part("display_name")
-    displayName: String,
     @Part
-    note: String,
-    @Part("avatar")
-    avatar: RequestBody,
-    @Part("header")
-    header: RequestBody,
+    displayName: MultipartBody.Part,
+    @Part
+    note: MultipartBody.Part,
+    @Part
+    avatar: MultipartBody.Part,
+    @Part
+    header: MultipartBody.Part,
 ): AccountJson
 ```
 
 呼び出し側は次のようになります。
 
 ```kotlin
-val avatarBody = avatarFile.asRequestBody()
-val headerBody = headerFile.asRequestBody()
 val updateResponse = yatterApi.updateCredentials(
     token = token,
-    displayName = displayName,
-    note = note,
-    avatar = avatarBody,
-    header = headerBody,
+    displayName = MultipartBody.Part.createFormData("display_name", displayName),
+    note = MultipartBody.Part.createFormData("note", note),
+    avatar = MultipartBody.Part.createFormData("avatar", avatarFile.name, RequestBody.create(MediaType.parse("image/*"), avatarFile)),
+    header = MultipartBody.Part.createFormData("header", headerFile.name, RequestBody.create(MediaType.parse("image/*"), headerFile)),
 )
 ```
 
