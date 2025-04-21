@@ -2,6 +2,7 @@ package com.dmm.bootcamp.yatter2024.infra.domain.repository
 
 import android.accounts.AuthenticatorException
 import com.dmm.bootcamp.yatter2024.auth.TokenProvider
+import com.dmm.bootcamp.yatter2024.domain.model.Account
 import com.dmm.bootcamp.yatter2024.domain.model.AccountId
 import com.dmm.bootcamp.yatter2024.domain.model.Status
 import com.dmm.bootcamp.yatter2024.domain.model.StatusId
@@ -11,7 +12,6 @@ import com.dmm.bootcamp.yatter2024.infra.api.json.AccountJson
 import com.dmm.bootcamp.yatter2024.infra.api.json.PostStatusJson
 import com.dmm.bootcamp.yatter2024.infra.api.json.StatusJson
 import com.dmm.bootcamp.yatter2024.infra.domain.converter.StatusConverter
-import com.dmm.bootcamp.yatter2024.infra.domain.model.AccountImpl
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -51,7 +51,7 @@ class StatusRepositoryImplSpec {
     val expect = listOf(
       Status(
         id = StatusId(value = "id"),
-        account = AccountImpl(
+        account = Account(
           id = AccountId("id"),
           username = Username("username"),
           displayName = "display name",

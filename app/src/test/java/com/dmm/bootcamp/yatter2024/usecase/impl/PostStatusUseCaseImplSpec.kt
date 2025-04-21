@@ -1,12 +1,12 @@
 package com.dmm.bootcamp.yatter2024.usecase.impl
 
 import android.accounts.AuthenticatorException
+import com.dmm.bootcamp.yatter2024.domain.model.Account
 import com.dmm.bootcamp.yatter2024.domain.model.AccountId
 import com.dmm.bootcamp.yatter2024.domain.model.Status
 import com.dmm.bootcamp.yatter2024.domain.model.StatusId
 import com.dmm.bootcamp.yatter2024.domain.model.Username
 import com.dmm.bootcamp.yatter2024.domain.repository.StatusRepository
-import com.dmm.bootcamp.yatter2024.infra.domain.model.MeImpl
 import com.dmm.bootcamp.yatter2024.usecase.impl.post.PostStatusUseCaseImpl
 import com.dmm.bootcamp.yatter2024.usecase.post.PostStatusUseCaseResult
 import com.google.common.truth.Truth.assertThat
@@ -27,7 +27,7 @@ class PostStatusUseCaseImplSpec {
 
     val status = Status(
       id = StatusId(value = ""),
-      account = MeImpl(
+      account = Account(
         id = AccountId(value = ""),
         username = Username(value = ""),
         displayName = null,

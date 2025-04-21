@@ -4,7 +4,6 @@ import com.dmm.bootcamp.yatter2024.domain.model.Account
 import com.dmm.bootcamp.yatter2024.domain.model.AccountId
 import com.dmm.bootcamp.yatter2024.domain.model.Username
 import com.dmm.bootcamp.yatter2024.infra.api.json.AccountJson
-import com.dmm.bootcamp.yatter2024.infra.domain.model.AccountImpl
 import java.net.URL
 
 object AccountConverter {
@@ -12,7 +11,7 @@ object AccountConverter {
     jsonList: List<AccountJson>,
   ): List<Account> = jsonList.map { convertToDomainModel(it) }
 
-  fun convertToDomainModel(json: AccountJson): Account = AccountImpl(
+  fun convertToDomainModel(json: AccountJson): Account = Account(
     id = AccountId(json.id),
     username = Username(json.username),
     displayName = json.displayName,

@@ -1,16 +1,19 @@
 @startuml
 
 package domain {
-  class Me
+  package model {
+    class Account
+  }
+
   interface AccountRepository {
-    + findMe(): Me?
+    + findLoginUser(): Account?
     + findByUsername(username: Username): Account?
     + create(...)
     + update(...)
   }
 
-  interface GetMeService {
-    + execute(): Me?
+  interface GetLoginUserService {
+    + execute(): Account?
   }
 
   interface StatusRepository {
@@ -20,20 +23,19 @@ package domain {
 
 package infra {
   package domain {
-    class MeImpl
     package repository {
       class AccountRepositoryImpl {
-        - mePreferences: MePreferences
+        - loginUserPreference: LoginUserPreference
         - yatterApi: YatterApi
       }
 
       class StatusRepositoryImpl {
-        - mePreferences: MePreferences
+        - loginUserPreference: LoginUserPreference
         - yatterApi: YatterApi
       }
     }
     package service {
-      class GetMeServiceImpl {
+      class GetLoginUserServiceImpl {
         - accountRepository: AccountRepository
       }
     }
@@ -55,7 +57,7 @@ package usecase {
 package ui.post {
   class PostViewModel {
     - postStatusUseCase: PostStatusUseCase
-    - getMeService: GetMeService
+    - getLoginUserService: GetLoginUserServiceImpl
 
     + uiState: StateFlow<PostUiState>
     + destination: StateFlow<Destination?>
@@ -79,15 +81,13 @@ package ui.post {
   }
 }
 
-MeImpl --|> Me
-AccountRepository -- Me
-GetMeService -- Me
+GetLoginUserService -- Account
 
-GetMeServiceImpl --|> GetMeService
+GetLoginUserServiceImpl --|> GetLoginUserService
 AccountRepositoryImpl --|> AccountRepository
 StatusRepositoryImpl --|> StatusRepository
 
-GetMeService -- AccountRepository
+GetLoginUserService -- AccountRepository
 
 PostStatusUseCaseImpl --|> PostStatusUseCase
 PostStatusUseCase -- PostStatusUseCaseResult
@@ -97,5 +97,5 @@ PostViewModel -- PostUiState
 PostUiState -- PostBindingModel
 
 PostViewModel -- PostStatusUseCase
-PostViewModel -- GetMeService
+PostViewModel -- GetLoginUserService
 @enduml

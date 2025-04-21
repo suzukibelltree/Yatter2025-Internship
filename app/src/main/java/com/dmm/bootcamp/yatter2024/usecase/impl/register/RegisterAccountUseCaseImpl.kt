@@ -4,14 +4,13 @@ import com.dmm.bootcamp.yatter2024.domain.model.Password
 import com.dmm.bootcamp.yatter2024.domain.model.Username
 import com.dmm.bootcamp.yatter2024.domain.repository.AccountRepository
 import com.dmm.bootcamp.yatter2024.domain.service.LoginService
-import com.dmm.bootcamp.yatter2024.infra.pref.MePreferences
-import com.dmm.bootcamp.yatter2024.infra.pref.TokenPreferences
+import com.dmm.bootcamp.yatter2024.infra.pref.LoginAccountPreferences
 import com.dmm.bootcamp.yatter2024.usecase.register.RegisterAccountUseCase
 import com.dmm.bootcamp.yatter2024.usecase.register.RegisterAccountUseCaseResult
 
 class RegisterAccountUseCaseImpl(
   private val accountRepository: AccountRepository,
-  private val mePreferences: MePreferences,
+  private val loginAccountPreferences: LoginAccountPreferences,
   private val loginService: LoginService,
 ) : RegisterAccountUseCase {
   override suspend fun execute(
@@ -33,9 +32,9 @@ class RegisterAccountUseCaseImpl(
     runCatching {
       val me = accountRepository.create(
         newUsername,
-        newPassword
+        newPassword,
       )
-      mePreferences.putUserName(me.username.value)
+      loginAccountPreferences.putUserName(me.username.value)
     }.onFailure {
       return RegisterAccountUseCaseResult.Failure.CreateAccountError(it)
     }

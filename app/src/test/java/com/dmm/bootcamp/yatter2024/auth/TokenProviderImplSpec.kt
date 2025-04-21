@@ -3,8 +3,6 @@ package com.dmm.bootcamp.yatter2024.auth
 import android.accounts.AuthenticatorException
 import com.dmm.bootcamp.yatter2024.domain.model.AccountId
 import com.dmm.bootcamp.yatter2024.domain.model.Username
-import com.dmm.bootcamp.yatter2024.domain.service.GetMeService
-import com.dmm.bootcamp.yatter2024.infra.domain.model.MeImpl
 import com.dmm.bootcamp.yatter2024.infra.pref.TokenPreferences
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
