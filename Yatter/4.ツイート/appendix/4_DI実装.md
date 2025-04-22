@@ -5,8 +5,8 @@
 ツイート画面用に新規作成したDI実装を行う対象は次になります。  
 
 - `GetMeService`
-- `AccountRepository`
-- `PostStatusUseCase`
+- `UserRepository`
+- `PostYweetUseCase`
 - `PostViewModel`
 
 それぞれ的したモジュールにインスタンス化方法を定義します。  
@@ -14,7 +14,7 @@
 ```Kotlin
 // DomainImplModule
 internal val domainImplModule = module {
-  single<AccountRepository> { AccountRepositoryImpl(get(), get()) }
+  single<UserRepository> { UserRepositoryImpl(get(), get()) }
   ...
 
   factory<GetMeService> { GetMeServiceImpl(get()) }
@@ -22,7 +22,7 @@ internal val domainImplModule = module {
 
 // UseCaseModule
 internal val useCaseModule = module {
-  factory<PostStatusUseCase> { PostStatusUseCaseImpl(get()) }
+  factory<PostYweetUseCase> { PostYweetUseCaseImpl(get()) }
 }
 
 // ViewModelModule

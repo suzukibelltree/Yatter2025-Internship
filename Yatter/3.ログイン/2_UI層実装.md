@@ -259,7 +259,7 @@ fun onClickLogin() {
 
 ```Kotlin
 fun onClickRegister() {
-  // _destination.value = RegisterAccountDestination()
+  // _destination.value = RegisterUserDestination()
 }
 ```
 
@@ -565,7 +565,7 @@ internal val viewModelModule = module {
 //  viewModel { MainViewModel(get()) }
   viewModel { PublicTimelineViewModel(get()) }
 //  viewModel { PostViewModel(get(), get()) }
-//  viewModel { RegisterAccountViewModel(get()) }
+//  viewModel { RegisterUserViewModel(get()) }
   viewModel { LoginViewModel(get()) } // こちらの//を削除
 }
 ```
