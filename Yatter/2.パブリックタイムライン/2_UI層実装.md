@@ -14,18 +14,18 @@ UI層は実際にユーザーが接する部分を実装します。
 ### BindingModelの作成
 まずは、BindingModelを定義します。  
 BindingModelは、画面を表示する上で必要な情報をまとめた`data class`で実装されることがほとんどです。  
-`Status`などのドメインモデルクラスをそのままUI実装に利用することもできますが、アプリの画面では複数のドメインモデルを組み合わせたり、ドメインモデルの値を加工して利用したりすることが多いため、表示する値を保持するだけのBindingModelを用意します。  
+`Yweet`などのドメインモデルクラスをそのままUI実装に利用することもできますが、アプリの画面では複数のドメインモデルを組み合わせたり、ドメインモデルの値を加工して利用したりすることが多いため、表示する値を保持するだけのBindingModelを用意します。  
 今回のパブリックタイムライン画面開発ではドメインモデルを特に加工することなく表示に利用できますが、プロジェクト全体で設計方針を統一するためにもBindingModelを実装します。  
 
-`StatusJson`ではJsonを表現したデータモデル、`Status`ではドメインモデル、`StatusBindingModel`ではuiに表示するためのデータモデルというように、責務によって使用するモデルを変換するようにしています。  
+`YweetJson`ではJsonを表現したデータモデル、`Yweet`ではドメインモデル、`YweetBindingModel`ではuiに表示するためのデータモデルというように、責務によって使用するモデルを変換するようにしています。  
 
-タイムライン1行分の見た目に必要な値を`MediaBindingModel`と`StatusBindingModel`に定義していきます。  
+タイムライン1行分の見た目に必要な値を`ImageBindingModel`と`YweetBindingModel`に定義していきます。  
 BindingModelは`ui/timeline/bindingmodel`パッケージにファイルを作成していきましょう。  
 
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel
 
-data class MediaBindingModel(
+data class ImageBindingModel(
   val id: String,
   val type: String,
   val url: String,
@@ -36,34 +36,34 @@ data class MediaBindingModel(
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel
 
-data class StatusBindingModel(
+data class YweetBindingModel(
   val id: String,
   val displayName: String,
   val username: String,
   val avatar: String?,
   val content: String,
-  val attachmentMediaList: List<MediaBindingModel>
+  val attachmentImageList: List<ImageBindingModel>
 )
 ```
 
-`Media`から`MediaBindingModel`に変換するための`MediaConverter`と、`Status`から`StatusBindingModel`に変換するための`StatusConverter`も実装しましょう。  
+`Image`から`ImageBindingModel`に変換するための`ImageConverter`と、`Yweet`から`YweetBindingModel`に変換するための`YweetConverter`も実装しましょう。  
 `ui/timeline/bindingmodel/converter`パッケージにファイルを作成していきます。  
 
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel.converter
 
-import com.dmm.bootcamp.yatter2024.domain.model.Media
-import com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel.MediaBindingModel
+import com.dmm.bootcamp.yatter2024.domain.model.Image
+import com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel.ImageBindingModel
 
-object MediaConverter {
-  fun convertToBindingModel(mediaList: List<Media>): List<MediaBindingModel> =
-    mediaList.map { convertToBindingModel(it) }
+object ImageConverter {
+  fun convertToBindingModel(imageList: List<Image>): List<ImageBindingModel> =
+    imageList.map { convertToBindingModel(it) }
 
-  private fun convertToBindingModel(media: Media): MediaBindingModel = MediaBindingModel(
-    id = media.id.value,
-    type = media.type,
-    url = media.url,
-    description = media.description,
+  private fun convertToBindingModel(image: Image): ImageBindingModel = ImageBindingModel(
+    id = image.id.value,
+    type = image.type,
+    url = image.url,
+    description = image.description,
   )
 }
 ```
@@ -71,21 +71,21 @@ object MediaConverter {
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel.converter
 
-import com.dmm.bootcamp.yatter2024.domain.model.Status
-import com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel.StatusBindingModel
+import com.dmm.bootcamp.yatter2024.domain.model.Yweet
+import com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel.YweetBindingModel
 
-object StatusConverter {
-  fun convertToBindingModel(statusList: List<Status>): List<StatusBindingModel> =
-    statusList.map { convertToBindingModel(it) }
+object YweetConverter {
+  fun convertToBindingModel(yweetList: List<Yweet>): List<YweetBindingModel> =
+    yweetList.map { convertToBindingModel(it) }
 
-  fun convertToBindingModel(status: Status): StatusBindingModel =
-    StatusBindingModel(
-      id = status.id.value,
-      displayName = status.account.displayName ?: "",
-      username = status.account.username.value,
-      avatar = status.account.avatar.toString(),
-      content = status.content,
-      attachmentMediaList = MediaConverter.convertToBindingModel(status.attachmentMediaList)
+  fun convertToBindingModel(yweet: Yweet): YweetBindingModel =
+    YweetBindingModel(
+      id = yweet.id.value,
+      displayName = yweet.user.displayName ?: "",
+      username = yweet.user.username.value,
+      avatar = yweet.user.avatar.toString(),
+      content = yweet.content,
+      attachmentImageList = ImageConverter.convertToBindingModel(yweet.attachmentImageList)
     )
 }
 ```
@@ -109,7 +109,7 @@ UiStateで保持する値は、
 `PublicTimelineUiState`を`ui/timeline`パッケージ内に作成します。
 ```Kotlin
 data class PublicTimelineUiState(
-  val statusList: List<StatusBindingModel>,
+  val statusList: List<YweetBindingModel>,
   val isLoading: Boolean,
   val isRefreshing: Boolean,
 )
@@ -181,7 +181,7 @@ UI構築に利用する値の準備が済み、実装に入っていきます。
 
 ```Kotlin
 class PublicTimelineViewModel(
-  private val statusRepository: StatusRepository,
+  private val yweetRepository: YweetRepository,
 ) : ViewModel() { ... }
 ```
 
@@ -196,10 +196,10 @@ class PublicTimelineViewModel(
 ```Kotlin
 class PublicTimelineViewModel(...) {
   private suspend fun fetchPublicTimeline() {
-    val statusList = statusRepository.findAllPublic() // 1
+    val yweetList = yweetRepository.findAllPublic() // 1
     _uiState.update {
       it.copy(
-        statusList = StatusConverter.convertToBindingModel(statusList), // 2
+        statusList = YweetConverter.convertToBindingModel(yweetList), // 2
       )
     }
   }
@@ -310,7 +310,7 @@ fun FirstComposable() {
 
 まずは、`StatusRow`コンポーザブルを定義します。  
 `ui/timeline`パッケージ内にファイルを作成します。  
-1つのStatusを表示するコンポーザブルになるため、必要な値が含まれている`StatusBindingModel`を引数にとります。  
+1つのStatusを表示するコンポーザブルになるため、必要な値が含まれている`YweetBindingModel`を引数にとります。  
 
 また、コンポーザブルを定義する時にはModifierも引数で受け取るようにしましょう。  
 Modifierに関しては以下ドキュメントをご覧ください。  
@@ -319,7 +319,7 @@ https://developer.android.com/develop/ui/compose/modifiers?hl=ja
 ```Kotlin
 @Composable
 fun StatusRow(
-  statusBindingModel: StatusBindingModel,
+  statusBindingModel: YweetBindingModel,
   modifier: Modifier = Modifier,
 ) {
 }
@@ -332,7 +332,7 @@ Previewを用意すると多少の変更はビルドなくとも変更を確認�
 Previewの利用は、`@Preview`アノテーションを使って次のようなコードを書きます。  
 `@Preview`アノテーションをつけたコンポーザブル内でプレビューを表示したいコンポーザブルを呼び出すことでプレビューが表示できます。  
 IDE右上に`Code`/`Split`/`Design`並んでいる箇所で`Split`を選択するとコードを書きながらプレビューを確認できるためおすすめです。  
-`StatusRow`引数の`StatusBindingModel`はプレビュー用のため、適当な値で問題ありません。  
+`YweetRow`引数の`YweetBindingModel`はプレビュー用のため、適当な値で問題ありません。  
 
 `Yatter2024Theme`や`Surface`に関しては後述しますのでひとまずそのまま写経してください。  
 
@@ -343,14 +343,14 @@ private fun StatusRowPreview() {
   Yatter2024Theme {
     Surface {
       StatusRow(
-        statusBindingModel = StatusBindingModel(
+        statusBindingModel = YweetBindingModel(
           id = "id",
           displayName = "mito",
           username = "mitohato14",
           avatar = "https://avatars.githubusercontent.com/u/19385268?v=4",
           content = "preview content",
-          attachmentMediaList = listOf(
-            MediaBindingModel(
+          attachmentImageList = listOf(
+            ImageBindingModel(
               id = "id",
               type = "image",
               url = "https://avatars.githubusercontent.com/u/39693306?v=4",
@@ -513,7 +513,7 @@ fun StatusRow(...) {
 
 最後にStatusのコンテンツ(テキストと画像)を表示するための`Text`コンポーザブルと`AsyncImage`コンポーザブルを表示します。  
 `content`は単純なテキストになるため、`Text`コンポーザブルでそのまま表示します。  
-`attachmentMediaList`は複数の画像が入っている場合があるため、リストに含まれる画像全てを横一列に並べ、`AsyncImage`で画像を表示します。  
+`attachmentImageList`は複数の画像が入っている場合があるため、リストに含まれる画像全てを横一列に並べ、`AsyncImage`で画像を表示します。  
 画像の数がいくつになっても横一列に全て並べるために今回は`LazyRow`を利用します。  
 横一列にコンポーザブルを並べるという点は`Row`と同様ですが、並べたコンポーザブルをスクロール可能にしたり数が不定なデータを効率的に表示したりするためによく利用されるコンポーザブルです。(詳細な違いは後述します)  
 
@@ -531,11 +531,11 @@ fun StatusRow(...) {
 
       LazyRow {
         // itemsの第一引数に並べたいデータセットを渡す
-        items(statusBindingModel.attachmentMediaList) { attachmentMedia ->
+        items(statusBindingModel.attachmentImageList) { attachmentImage ->
           // データ1件あたりに表示したいコンポーザブルを呼び出す
           AsyncImage(
-            model = attachmentMedia.url,
-            contentDescription = attachmentMedia.description
+            model = attachmentImage.url,
+            contentDescription = attachmentImage.description
           )
           Spacer(modifier = Modifier.width(4.dp))
         }
@@ -570,7 +570,7 @@ DMMでのJetpack Composeの実装をする上で`Page`と`Template`という概�
 ```Kotlin
 @Composable
 fun PublicTimelineTemplate(
-  statusList: List<StatusBindingModel>,
+  statusList: List<YweetBindingModel>,
   isLoading: Boolean,
   isRefreshing: Boolean,
   onRefresh: () -> Unit,
@@ -588,21 +588,21 @@ private fun PublicTimelineTemplatePreview() {
     Surface {
       PublicTimelineTemplate(
         statusList = listOf(
-          StatusBindingModel(
+          YweetBindingModel(
             id = "id1",
             displayName = "display name1",
             username = "username1",
             avatar = null,
             content = "preview content1",
-            attachmentMediaList = listOf()
+            attachmentImageList = listOf()
           ),
-          StatusBindingModel(
+          YweetBindingModel(
             id = "id2",
             displayName = "display name2",
             username = "username2",
             avatar = null,
             content = "preview content2",
-            attachmentMediaList = listOf()
+            attachmentImageList = listOf()
           ),
         ),
         isLoading = true,
@@ -962,7 +962,7 @@ internal val viewModelModule = module {
 //  viewModel { MainViewModel(get()) }
   viewModel { PublicTimelineViewModel(get()) } // コメントアウトを外す
 //  viewModel { PostViewModel(get(), get()) }
-//  viewModel { RegisterAccountViewModel(get()) }
+//  viewModel { RegisterUserViewModel(get()) }
 //  viewModel { LoginViewModel(get()) }
 }
 ```

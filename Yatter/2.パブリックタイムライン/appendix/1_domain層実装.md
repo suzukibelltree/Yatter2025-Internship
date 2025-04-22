@@ -39,66 +39,66 @@ EntityやValue Objectの集約を扱います。
 
 ## ドメインの考え方と実装
 パブリックタイムライン画面を実装する際に必要な概念を検討します。  
-まずパブリックタイムライン画面でStatusを表示するためにStatusドメインをEntityで定義します。  
+まずパブリックタイムライン画面でYweetを表示するためにYweetドメインをEntityで定義します。  
 
 ドメインを実装する前に次のファイルを新規作成します。  
 domainパッケージ(ディレクトリ)は作成されていないためパッケージの作成からしましょう。  
 
 ```
-domain/Status.kt
-domain/StatusId.kt
-domain/Account.kt
+domain/Yweet.kt
+domain/YweetId.kt
+domain/User.kt
 domain/Username.kt
 ```
 
-### Statusの実装
-ファイルが作成できたら、`Status`と`StatusId`を実装します。  
+### Yweetの実装
+ファイルが作成できたら、`Yweet`と`YweetId`を実装します。  
 
 ```Kotlin
-// Status.kt
-class Status(
-  id: StatusId, // 一意のID
-  val account: Account, // 投稿者を表すドメイン、現状エラーになるが許容
+// Yweet.kt
+class Yweet(
+  id: YweetId, // 一意のID
+  val user: User, // 投稿者を表すドメイン、現状エラーになるが許容
   val content: String, // 投稿内容
-) : Entity<StatusId>(id)
+) : Entity<YweetId>(id)
 ```
 
 ```Kotlin
-// StatusId.kt
-class StatusId(value: String): Identifier<String>(value)
+// YweetId.kt
+class YweetId(value: String): Identifier<String>(value)
 ```
 
-同じユーザーが同じ内容を投稿することもあり得るため、idをドメインモデルで持ってStatusの一意性を表すためにEntityにしています。  
-Statusの一意性をidで表現するために`StatusId`クラスを`Identifier`を継承して定義します。  
-中身の値はただのStringですが、StatusIdとして定義することによりStatus以外のidやただの文字列がStatusのIdとして用いられることを防ぐことができます。  
-定義した`StatusId`を`Entity`に渡すことにより、`Status`クラスを`StatusId`で一意性を表現したEntityとすることができます。  
+同じユーザーが同じ内容を投稿することもあり得るため、idをドメインモデルで持ってYweetの一意性を表すためにEntityにしています。  
+Yweetの一意性をidで表現するために`YweetId`クラスを`Identifier`を継承して定義します。  
+中身の値はただのStringですが、YweetIdとして定義することによりYweet以外のidやただの文字列がYweetのIdとして用いられることを防ぐことができます。  
+定義した`YweetId`を`Entity`に渡すことにより、`Yweet`クラスを`YweetId`で一意性を表現したEntityとすることができます。  
 
-### Accountの実装
+### Userの実装
 
-続いてAccountドメインです。  
-Statusドメインですでに利用されている、投稿者を表すためのAccountドメインも定義します。  
+続いてUserドメインです。  
+Yweetドメインですでに利用されている、投稿者を表すためのUserドメインも定義します。  
 ユーザー名が空文字になることは許容されていないため、Usernameドメインに`validate`メソッドを作成しバリデーションチェックできるようにしておきます。  
 
 ```Kotlin
-abstract class Account(
-  id: AccountId,
+abstract class User(
+  id: UserId,
   val username: Username, // ユーザー名
   val displayName: String?, // 表示名
-  val note: String?, // アカウントノート
+  val note: String?, // ユーザーノート
   val avatar: URL, // アバター画像URL
   val header: URL, // ヘッダー画像URL
   val followingCount: Int, // フォロー数
   val followerCount: Int, // フォロワー数
-) : Entity<AccountId>(id) {
+) : Entity<UserId>(id) {
 
-  abstract suspend fun followings(): List<Account>
+  abstract suspend fun followings(): List<User>
 
-  abstract suspend fun followers(): List<Account>
+  abstract suspend fun followers(): List<User>
 }
 ```
 
 ```Kotlin
-class AccountId(value: String) : Identifier<String>(value)
+class UserId(value: String) : Identifier<String>(value)
 ```
 
 ```Kotlin
@@ -107,15 +107,15 @@ class Username(value: String): Identifier<String>(value) {
 }
 ```
 
-Accountドメインでも同じ表示名やユーザー名を使う可能性があるため、一意性を担保するため今回のプロジェクトではidで同一性を担保します。  
-また、Accountドメインには`followings`と`followers`というメソッドを用意しています。  
-あるユーザーのフォローとフォロワーはそのユーザーのアカウントドメインに属する値として考えることができますが、`account/{username}`のAPIでは取得できない要素になります。  
-そこで`followings`や`followers`といったドメインメソッドを用意することによって、ドメインを扱う側としては通常のアカウントドメイン内の値の一部として読み取ることができます。  
+Userドメインでも同じ表示名やユーザー名を使う可能性があるため、一意性を担保するため今回のプロジェクトではidで同一性を担保します。  
+また、Userドメインには`followings`と`followers`というメソッドを用意しています。  
+あるユーザーのフォローとフォロワーはそのユーザーのユーザードメインに属する値として考えることができますが、`user/{username}`のAPIでは取得できない要素になります。  
+そこで`followings`や`followers`といったドメインメソッドを用意することによって、ドメインを扱う側としては通常のユーザードメイン内の値の一部として読み取ることができます。  
 
-AccountドメインはStatusドメインと違い、[abstract](https://kotlinlang.org/docs/classes.html#abstract-classes)で定義されています。  
+UserドメインはYweetドメインと違い、[abstract](https://kotlinlang.org/docs/classes.html#abstract-classes)で定義されています。  
 `followings()`と`followers()`メソッドをドメインモデルで定義したことによってabstractなクラスにする必要が出てきています。  
 
-繰り返しにはなりますが、あるユーザーのフォロー・フォロワーを取得するには`account/{username}`のAPIを実行する必要があります。  
+繰り返しにはなりますが、あるユーザーのフォロー・フォロワーを取得するには`user/{username}`のAPIを実行する必要があります。  
 愚直に実装しようとした場合は`followings()`と`followers()`メソッド内でAPI実行のコードを書くことになります。  
 ですが、設計方針としてAPIなどのアプリ外部へアクセスするのはinfra層でのみとしています。  
 ドメインモデルから直接API呼び出しを行わずにdomain層ではあくまでドメインモデルの定義のみを行うために、abstractを付けて定義しています。  
@@ -123,31 +123,31 @@ AccountドメインはStatusドメインと違い、[abstract](https://kotlinlan
 ### Repositoryの実装
 
 ドメインモデルを作成したらRepositoryの定義をします。  
-`StatusRepository`ファイルを`com.dmm.bootcamp.yatter2024.domain.repositroy`パッケージに作成します。  
-Domain層では、Repositoryのinterface定義のみをするので、interfaceとして`domain/repository`配下に`StatusRepository`を作成します。  
+`YweetRepository`ファイルを`com.dmm.bootcamp.yatter2024.domain.repositroy`パッケージに作成します。  
+Domain層では、Repositoryのinterface定義のみをするので、interfaceとして`domain/repository`配下に`YweetRepository`を作成します。  
 
 ```Kotlin
-interface StatusRepository {
+interface YweetRepository {
 }
 ```
 
-`StatusRepository`でStatusの取得や作成、削除といったメソッドを定義していきます。  
+`YweetRepository`でYweetの取得や作成、削除といったメソッドを定義していきます。  
 
 ```Kotlin
-interface StatusRepository {
-  suspend fun findById(id: StatusId): Status?
+interface YweetRepository {
+  suspend fun findById(id: YweetId): Yweet?
 
-  suspend fun findAllPublic(): List<Status>
+  suspend fun findAllPublic(): List<Yweet>
 
-  suspend fun findAllHome(): List<Status>
+  suspend fun findAllHome(): List<Yweet>
 
   suspend fun create(
     content: String,
     attachmentList: List<File>
-  ): Status
+  ): Yweet
 
   suspend fun delete(
-    status: Status
+    yweet: Yweet
   )
 }
 ```

@@ -71,21 +71,21 @@ GET /timelines/public
 ]
 ```
 
-`Status`(ツイート)の配列で`Status`はいろんなパラメータと、そのほかに`Account`の情報と`MediaAttachment`の配列を持っています。  
+`Yweet`(ツイート)の配列で`Yweet`はいろんなパラメータと、そのほかに`User`の情報と`ImageAttachment`の配列を持っています。  
 こういったレスポンスをそのまま文字列として扱うには不便なので、アプリ開発では一般的にJsonなどのレスポンスをクラス（型）で表現します。  
 クラスで表現し、シリアライザやデシリアライザを使用することで、Jsonの文字列とクラスの変換をできるようにします。  
 ちなみに、今回は[Moshi](https://github.com/square/moshi)というライブラリを使用します。
 
-早速、`StatusJson`クラス・`AccountJson`クラス・`MediaAttachmentJson`クラスを実装してみましょう。  
+早速、`YweetJson`クラス・`UserJson`クラス・`ImageAttachmentJson`クラスを実装してみましょう。  
 `com.dmm.bootcamp.yatter2024.infra.api.json`パッケージを作り、そこにそれぞれのクラスを追加していきます。  
-まずは、サンプルとして`AccountJson`を実装してみます。`Account`のJsonはこうなってます。
+まずは、サンプルとして`UserJson`を実装してみます。`User`のJsonはこうなってます。
 
 ```
 {
   "id": 0,
   "username": "string",
   "display_name": "string",
-  "create_at": "2019-04-23T04:42:43.836Z",
+  "created_at": "2019-04-23T04:42:43.836Z",
   "note": "string",
   "avatar": "string",
   "following_count": 100,
@@ -100,7 +100,7 @@ Moshiライブラリを使うため、Jsonのキーと名前が一致する
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.infra.api.json
 
-data class AccountJson(
+data class UserJson(
   val id: String,
   val username: String,
   val display_name: String?,
@@ -109,7 +109,7 @@ data class AccountJson(
   val header: String?,
   val following_count: Int,
   val followers_count: Int,
-  val create_at: String,
+  val created_at: String,
 )
 ```
 
@@ -121,12 +121,12 @@ Androidをはじめとするモバイルアプリ開発において、アプリ�
 そのため、修正が入ってもアプリの修正・リリースをしなくとも機能するように意識して実装することが多くあります。  
 今回のidをintではなくStringで最初から扱うのもそういった理由からきています。  
 
-このままのクラス実装でも動作するのですが、一般的にAndroidの開発で推奨されているコーディング規約には変数の命名は`camelCase`であるため`display_name`や`create_at`という命名は規約違反となっています。そのため、下記のように`camelCase`に修正します。  
+このままのクラス実装でも動作するのですが、一般的にAndroidの開発で推奨されているコーディング規約には変数の命名は`camelCase`であるため`display_name`や`created_at`という命名は規約違反となっています。そのため、下記のように`camelCase`に修正します。  
 
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.infra.api.json
 
-data class AccountJson(
+data class UserJson(
   val id: String,
   val username: String,
   val displayName: String?,
@@ -135,18 +135,18 @@ data class AccountJson(
   val header: String?,
   val followingCount: Int,
   val followersCount: Int,
-  val createAt: String,
+  val createdAt: String,
 )
 ```
 
-ただしこれでは動きません。実際のJsonでは`display_name`や`created_at`というキーであるのに対して、クラスでは`displayName`、`createAt`という違う文字列になっているので、シリアライザが対応関係を解決することができません。  
-この対応関係を揃えるための機能を`Moshi`が用意しているため、`AccountJson`クラスは下記のように修正します。  
+ただしこれでは動きません。実際のJsonでは`display_name`や`created_at`というキーであるのに対して、クラスでは`displayName`、`createdAt`という違う文字列になっているので、シリアライザが対応関係を解決することができません。  
+この対応関係を揃えるための機能を`Moshi`が用意しているため、`UserJson`クラスは下記のように修正します。  
 
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.infra.api.json
 
 @JsonClass(generateAdapter = true) // @Json(name = )を利用するクラスに必要
-data class AccountJson(
+data class UserJson(
   @Json(name = "id") val id: String,
   @Json(name = "username") val username: String,
   @Json(name = "display_name") val displayName: String?,
@@ -155,7 +155,7 @@ data class AccountJson(
   @Json(name = "header") val header: String?,
   @Json(name = "following_count") val followingCount: Int,
   @Json(name = "followers_count") val followersCount: Int,
-  @Json(name = "create_at") val createAt: String
+  @Json(name = "created_at") val createAt: String
 )
 ```
 
@@ -167,7 +167,7 @@ data class AccountJson(
 package com.dmm.bootcamp.yatter2024.infra.api.json
 
 @JsonClass(generateAdapter = true)
-data class AccountJson(
+data class UserJson(
   val id: String,
   val username: String,
   @Json(name = "display_name") val displayName: String?,
@@ -176,29 +176,29 @@ data class AccountJson(
   val header: String?,
   @Json(name = "following_count") val followingCount: Int,
   @Json(name = "followers_count") val followersCount: Int,
-  @Json(name = "create_at") val createAt: String
+  @Json(name = "created_at") val createAt: String
 )
 ```
 
-これで`AccountJson`の実装は完了です。  
-`AccountJson`ではありませんでしたが、ネストしたJsonArrayは次のように表現します。  
+これで`UserJson`の実装は完了です。  
+`UserJson`ではありませんでしたが、ネストしたJsonArrayは次のように表現します。  
 
 ```Kotlin
 @JsonClass(generateAdapter = true)
-data class StatusJson(
+data class YweetJson(
   ...
-  val account: AccountJson,
-  @Json(name = "media_attachments") val attachmentMediaList: List<MediaJson>?,
+  val user: UserJson,
+  @Json(name = "image_attachments") val attachmentImageList: List<MediaJson>?,
   ...
 )
 ```
 
-では、残りの`StatusJson`と`MediaJson`を自力で実装してみましょう。  
+では、残りの`YweetJson`と`ImageJson`を自力で実装してみましょう。  
 
 <details>
-<summary>StatusJsonとMediaJsonの実装例</summary>
+<summary>YweetJsonとImageJsonの実装例</summary>
 
-`StatusJson`と`MediaJson`は次のように実装できます。  
+`YweetJson`と`ImageJson`は次のように実装できます。  
 これらの実装例は一例になりますので変数名等が多少違っていても問題ありません。  
 
 ```Kotlin
@@ -207,12 +207,12 @@ package com.dmm.bootcamp.yatter2024.infra.api.json
 import com.squareup.moshi.Json
 
 @JsonClass(generateAdapter = true)
-data class StatusJson(
+data class YweetJson(
   val id: String,
-  val account: AccountJson,
+  val user: UserJson,
   val content: String?,
-  @Json(name = "create_at") val createAt: String,
-  @Json(name = "media_attachments") val attachmentMediaList: List<MediaJson>?,
+  @Json(name = "created_at") val createAt: String,
+  @Json(name = "image_attachments") val attachmentImageList: List<MediaJson>?,
 )
 ```
 
@@ -221,7 +221,7 @@ package com.dmm.bootcamp.yatter2024.infra.api.json
 
 import com.squareup.moshi.Json
 
-data class MediaJson(
+data class ImageJson(
   val id: String,
   val type: String,
   val url: String,
@@ -244,12 +244,12 @@ interface YatterApi
 この`YatterApi`に、1つのAPIに対して1つのメソッドを定義することで`Retrofit`が生成するコードで通信を行い、APIのレスポンスを指定したJsonクラスに変換してくれます。  
 
 `GET /timelines/public`のAPIに対するメソッドとして`getPublicTimeline`を定義します。  
-返り値の方はStatus一覧のレスポンスになるため`List<StatusJson>`とします。  
+返り値の方はYweet一覧のレスポンスになるため`List<YweetJson>`とします。  
 さらにAPIの実行は非同期処理になるため`suspend`も付け、メソッドが非同期処理を行えるようにします。  
 
 ```Kotlin
 interface YatterApi {
-  suspend fun getPublicTimeline(): List<StatusJson>
+  suspend fun getPublicTimeline(): List<YweetJson>
 }
 ```
 
@@ -273,7 +273,7 @@ interface YatterApi {
     @Query("max_id") maxId: String?,
     @Query("since_id") sinceId: String?,
     @Query("limit") limit: Int,
-  ): List<StatusJson>
+  ): List<YweetJson>
 }
 ```
 
@@ -283,11 +283,11 @@ API Doc上では全てオプションとなっているためデフォルト値�
 interface YatterApi {
   @GET("timelines/public")
   suspend fun getPublicTimeline(
-    @Query("only_media") onlyMedia: Boolean = false,
+    @Query("only_image") onlyImage: Boolean = false,
     @Query("max_id") maxId: String? = null,
     @Query("since_id") sinceId: String? = null,
     @Query("limit") limit: Int = 40,
-  ): List<StatusJson>
+  ): List<YweetJson>
 }
 ```
 
@@ -402,38 +402,38 @@ Androidアプリのインターネット接続を許可するためには、`And
 
 ## Repositoryの実装
 `com.dmm.bootcamp.yatter2024.infra.domain.repository`というパッケージを作成します。  
-作成したパッケージに属するように、`StatusRepositoryImpl`クラスを作成し、`StatusRepository`の実装を行います。  
+作成したパッケージに属するように、`YweetRepositoryImpl`クラスを作成し、`YweetRepository`の実装を行います。  
 
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.infra.domain.repository
 
-import com.dmm.bootcamp.yatter2024.domain.repository.StatusRepository
+import com.dmm.bootcamp.yatter2024.domain.repository.YweetRepository
 
-class StatusRepositoryImpl : StatusRepository
+class YweetRepositoryImpl : YweetRepository
 ```
 
-`StatusRepositoryImpl`で`StatusRepository`内のメソッドの実装を行なっていないため、`class StatusRepositoryImpl`に赤い波線が入っていると思います。赤い波線部にカーソルを当て、「option + return」を押して、`implemention members`を選択します。  
+`YweetRepositoryImpl`で`YweetRepository`内のメソッドの実装を行なっていないため、`class YweetRepositoryImpl`に赤い波線が入っていると思います。赤い波線部にカーソルを当て、「option + return」を押して、`implemention members`を選択します。  
 どのメソッドを実装するか確認するダイアログが表示されるため、全てのメソッドを選択しOKを押せば次のようなコードが生成されます。  
 
 ```Kotlin
-class StatusRepositoryImpl : StatusRepository {
-  override suspend fun findById(id: StatusId): Status? {
+class YweetRepositoryImpl : YweetRepository {
+  override suspend fun findById(id: YweetId): Yweet? {
     TODO("Not yet implemented")
   }
 
-  override suspend fun findAllPublic(): List<Status> {
+  override suspend fun findAllPublic(): List<Yweet> {
     TODO("Not yet implemented")
   }
 
-  override suspend fun findAllHome(): List<Status> {
+  override suspend fun findAllHome(): List<Yweet> {
     TODO("Not yet implemented")
   }
 
-  override suspend fun create(content: String, attachmentList: List<File>): Status {
+  override suspend fun create(content: String, attachmentList: List<File>): Yweet {
     TODO("Not yet implemented")
   }
 
-  override suspend fun delete(status: Status) {
+  override suspend fun delete(yweet: Yweet) {
     TODO("Not yet implemented")
   }
 }
@@ -445,22 +445,22 @@ class StatusRepositoryImpl : StatusRepository {
 まずは、クラスのコンストラクタでAPI通信を行うための`YatterApi`を受け取ります。  
 
 ```Kotlin
-class StatusRepositoryImpl(
+class YweetRepositoryImpl(
   private val yatterApi: YatterApi,
-): StatusRepository {
+): YweetRepository {
   ...
 }
 ```
 
-`StatusRepositoryImpl#findAllPublic()`を実装するには`YatterApi`の`getPublicTimeline`を呼び出し、取得したレスポンスのリストをアプリのドメインリストに変換する必要があります。  
+`YweetRepositoryImpl#findAllPublic()`を実装するには`YatterApi`の`getPublicTimeline`を呼び出し、取得したレスポンスのリストをアプリのドメインリストに変換する必要があります。  
 
 まずは、レスポンスのリストを取得するところまで実装します。  
 現時点でエラーになっているかと思いますが、後に実装しますので今はこのままで問題ありません。  
 
 ```Kotlin
-override suspend fun findAllPublic(): List<Status> = withContext(Dispatchers.IO) {
+override suspend fun findAllPublic(): List<Yweet> = withContext(Dispatchers.IO) {
   val jsonList = yatterApi.getPublicTimeline()
-  //ここで `List<StatusJson>` を `List<Status>` に変換
+  //ここで `List<YweetJson>` を `List<Yweet>` に変換
 }
 ```
 
@@ -473,21 +473,21 @@ https://developer.android.com/kotlin/coroutines/coroutines-adv
 ---
 
 続いて、変換部分を作っていきましょう。  
-`Status`ドメインモデルが`Account`をメンバとして持っているために`Account`のコンバーターを、さらには現状Accountは `abstract class`なのでその実装クラスも必要になります。  
+`Yweet`ドメインモデルが`User`をメンバとして持っているために`User`のコンバーターを、さらには現状Userは `abstract class`なのでその実装クラスも必要になります。  
 
 それぞれ次のようになります。  
 package通りに配置していってください。
 
-### AccountImpl
+### UserImpl
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.infra.domain
 
-import com.dmm.bootcamp.yatter2024.domain.Account
+import com.dmm.bootcamp.yatter2024.domain.User
 import com.dmm.bootcamp.yatter2024.domain.Username
 import java.net.URL
 
-class AccountImpl(
-  id: AccountId,
+class UserImpl(
+  id: UserId,
   username: Username,
   displayName: String?,
   note: String?,
@@ -495,7 +495,7 @@ class AccountImpl(
   header: URL,
   followingCount: Int,
   followerCount: Int,
-) : Account(
+) : User(
   id,
   username,
   displayName,
@@ -505,34 +505,34 @@ class AccountImpl(
   followingCount,
   followerCount,
 ) {
-  override suspend fun followings(): List<Account> {
+  override suspend fun followings(): List<User> {
     TODO("Not yet implemented")
   }
 
-  override suspend fun followers(): List<Account> {
+  override suspend fun followers(): List<User> {
     TODO("Not yet implemented")
   }
 }
 ```
 
-### AccountConverter
+### UserConverter
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.infra.domain.converter
 
 import com.dmm.bootcamp.yatter2024.BuildConfig
-import com.dmm.bootcamp.yatter2024.domain.Account
+import com.dmm.bootcamp.yatter2024.domain.User
 import com.dmm.bootcamp.yatter2024.domain.Username
-import com.dmm.bootcamp.yatter2024.infra.api.json.AccountJson
-import com.dmm.bootcamp.yatter2024.infra.domain.AccountImpl
+import com.dmm.bootcamp.yatter2024.infra.api.json.UserJson
+import com.dmm.bootcamp.yatter2024.infra.domain.UserImpl
 import java.net.URL
 
-object AccountConverter {
+object UserConverter {
   fun convertToDomainModel(
-    jsonList: List<AccountJson>
-  ): List<Account> = jsonList.map { convertToDomainModel(it) }
+    jsonList: List<UserJson>
+  ): List<User> = jsonList.map { convertToDomainModel(it) }
 
-  fun convertToDomainModel(json: AccountJson): Account = AccountImpl(
-    id = AccountId(json.id),
+  fun convertToDomainModel(json: UserJson): User = UserImpl(
+    id = UserId(json.id),
     username = Username(json.username),
     displayName = json.displayName,
     note = json.note,
@@ -544,21 +544,21 @@ object AccountConverter {
 }
 ```
 
-### StatusConverter
+### YweetConverter
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.infra.domain.converter
 
-import com.dmm.bootcamp.yatter2024.domain.Status
-import com.dmm.bootcamp.yatter2024.domain.StatusId
-import com.dmm.bootcamp.yatter2024.infra.api.json.StatusJson
+import com.dmm.bootcamp.yatter2024.domain.Yweet
+import com.dmm.bootcamp.yatter2024.domain.YweetId
+import com.dmm.bootcamp.yatter2024.infra.api.json.YweetJson
 
-object StatusConverter {
-  fun convertToDomainModel(jsonList: List<StatusJson>): List<Status> =
+object YweetConverter {
+  fun convertToDomainModel(jsonList: List<YweetJson>): List<Yweet> =
     jsonList.map { convertToDomainModel(it) }
 
-  fun convertToDomainModel(json: StatusJson): Status = Status(
-    id = StatusId(json.id),
-    account = AccountConverter.convertToDomainModel(json.account),
+  fun convertToDomainModel(json: YweetJson): Yweet = Yweet(
+    id = YweetId(json.id),
+    user = UserConverter.convertToDomainModel(json.user),
     content = json.content ?: "",
     attachmentMediaList = MediaConverter.convertToDomainModel(json.attachmentMediaList),
   )
@@ -569,12 +569,12 @@ object StatusConverter {
 
 ---
 
-最後に、`StatusRepositoryImpl#findAllPublic()`の実装を仕上げます。  
+最後に、`YweetRepositoryImpl#findAllPublic()`の実装を仕上げます。  
 
 ```Kotlin
-  override suspend fun findAllPublic(): List<Status> = withContext(IO) {
-    val statusList = yatterApi.getPublicTimeline()
-    StatusConverter.convertToDomainModel(statusList)
+  override suspend fun findAllPublic(): List<Yweet> = withContext(IO) {
+    val yweetList = yatterApi.getPublicTimeline()
+    YweetConverter.convertToDomainModel(yweetList)
   }
 ```
 
@@ -588,13 +588,13 @@ Androidアプリ開発での単体テストは、`app/src/test/java`ディレク
 
 ![test_dir](../../image/2/test_dir.png)
 
-今回は`StatusRepositoryImpl`のテストを書くため、`infra/domain/repository`パッケージをtestディレクトリ内にも作成し、作成したパッケージに`StatusRepositoryImplSpec`というクラスも作成します。  
+今回は`YweetRepositoryImpl`のテストを書くため、`infra/domain/repository`パッケージをtestディレクトリ内にも作成し、作成したパッケージに`YweetRepositoryImplSpec`というクラスも作成します。  
 
 Yatterアプリ開発ではテストクラスの命名規則として`${テスト対象クラス名}Spec`という名前にします。  
 `Spec`は仕様という意味のある`specification`の略で、テストは仕様であるという意味合いを持たせています。  
 
 ```Kotlin
-class StatusRepositoryImplSpec {}
+class YweetRepositoryImplSpec {}
 ```
 
 単体テストの実装時にテスト対象クラスが利用する他のクラスはモック化して利用します。  
@@ -628,12 +628,12 @@ verify { // 実行するメソッドがsuspendであれば、coVerify
 
 ここで記載したmockkの使い方は基本的なことのみですので、さらに詳しい実装方法は[公式ページ](https://mockk.io/)をご確認ください。  
 
-`StatusRepository`は`YatterApi`を引数に取るため、`YatterApi`をモック化してテスト対象をインスタンス化します。  
+`YweetRepository`は`YatterApi`を引数に取るため、`YatterApi`をモック化してテスト対象をインスタンス化します。  
 
 ```Kotlin
-class StatusRepositoryImplSpec {
+class YweetRepositoryImplSpec {
   private val yatterApi = mockk<YatterApi>()
-  private val subject = StatusRepositoryImpl(yatterApi)
+  private val subject = YweetRepositoryImpl(yatterApi)
 }
 ```
 
@@ -641,9 +641,9 @@ jUnitでのテストはテストケースごとにメソッドを用意します
 APIから値を取得し、変換できることを確認します。  
 
 ```Kotlin
-class StatusRepositoryImplSpec {
+class YweetRepositoryImplSpec {
   private val yatterApi = mockk<YatterApi>()
-  private val subject = StatusRepositoryImpl(yatterApi)
+  private val subject = YweetRepositoryImpl(yatterApi)
 
   @Test
   fun getPublicTimelineFromApi() = runTest {
@@ -656,9 +656,9 @@ class StatusRepositoryImplSpec {
 
 ```Kotlin
 val jsonList = listOf(
-  StatusJson(
+  YweetJson(
     id = "id",
-    account = AccountJson(
+    user = UserJson(
       id = "id",
       username = "username",
       displayName = "display name",
@@ -676,10 +676,10 @@ val jsonList = listOf(
 )
 
 val expect = listOf(
-  Status(
-    id = StatusId(value = "id"),
-    account = AccountImpl(
-      id = AccountId("id"),
+  Yweet(
+    id = YweetId(value = "id"),
+    user = UserImpl(
+      id = UserId("id"),
       username = Username("username"),
       displayName = "display name",
       note = "note",
@@ -702,7 +702,7 @@ coEvery {
 ここで利用してる`assertThat`は`Truth`ライブラリのものを利用していますので、`com.google.common.truth.Truth.assertThat`がimportされていることを確認してください。  
 
 ```Kotlin
-val result: List<Status> = subject.findAllPublic()
+val result: List<Yweet> = subject.findAllPublic()
 
 coVerify {
   yatterApi.getPublicTimeline()
