@@ -258,7 +258,7 @@ API Docを見るとリクエストに必要な値は次のようになってい�
 
 |パラメータ名|option/required|Param Type|Type|説明|
 |-|-|-|-|-|
-|only_image|option|query|boolean|Only return statuses that have image attachments (public and tag timelines only)|
+|only_image|option|query|boolean|Only return yweets that have image attachments (public and tag timelines only)|
 // TODO: offsetを追加
 |limit|option|query|integer|Maximum number of followings to get (Default 40, Max 80)|
 
