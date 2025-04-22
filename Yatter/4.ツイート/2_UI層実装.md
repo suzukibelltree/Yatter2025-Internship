@@ -54,7 +54,7 @@ class PostViewModel(
 ```
 
 次に、必要なメソッドを定義します。  
-今回は画面の初期起動時にユーザー情報取得する`onCreate`とStatusの内容を書き換えた時に呼び出される`onChangedYweetText`、そして投稿ボタンを押下した時の`onClickPost`を用意します。  
+今回は画面の初期起動時にユーザー情報取得する`onCreate`とYweetの内容を書き換えた時に呼び出される`onChangedYweetText`、そして投稿ボタンを押下した時の`onClickPost`を用意します。  
 さらにツイート画面ではパブリックタイムライン画面に戻るために表示するボタン押下時の`onClickNavIcon`と画面遷移が終わったあとにDestinationを初期化する`onCompleteNavigation`も定義します。  
 
 
@@ -430,7 +430,7 @@ internal val viewModelModule = module {
   viewModel { MainViewModel(get()) }
   viewModel { PublicTimelineViewModel(get()) }
   viewModel { PostViewModel(get(), get()) } // こちらの//を削除
-//  viewModel { RegisterAccountViewModel(get()) }
+//  viewModel { RegisterUserViewModel(get()) }
   viewModel { LoginViewModel(get()) }
 }
 ```

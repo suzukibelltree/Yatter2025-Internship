@@ -46,11 +46,11 @@ GET /timelines/public
 [
   {
     "id": 123,
-    "account": {
+    "user": {
       "id": 0,
       "username": "john",
       "display_name": "ジョン",
-      "create_at": "2023-05-22T05:23:19.017Z",
+      "created_at": "2023-05-22T05:23:19.017Z",
       "followers_count": 52,
       "following_count": 128,
       "note": "string",
@@ -58,8 +58,8 @@ GET /timelines/public
       "header": "string"
     },
     "content": "ピタ ゴラ スイッチ♪",
-    "create_at": "2023-05-22T05:23:19.017Z",
-    "media_attachments": [
+    "created_at": "2023-05-22T05:23:19.017Z",
+    "image_attachments": [
       {
         "id": 123,
         "type": "image",
@@ -155,7 +155,7 @@ data class UserJson(
   @Json(name = "header") val header: String?,
   @Json(name = "following_count") val followingCount: Int,
   @Json(name = "followers_count") val followersCount: Int,
-  @Json(name = "created_at") val createAt: String
+  @Json(name = "created_at") val createdAt: String
 )
 ```
 
@@ -176,7 +176,7 @@ data class UserJson(
   val header: String?,
   @Json(name = "following_count") val followingCount: Int,
   @Json(name = "followers_count") val followersCount: Int,
-  @Json(name = "created_at") val createAt: String
+  @Json(name = "created_at") val createdAt: String
 )
 ```
 
@@ -188,7 +188,7 @@ data class UserJson(
 data class YweetJson(
   ...
   val user: UserJson,
-  @Json(name = "image_attachments") val attachmentImageList: List<MediaJson>?,
+  @Json(name = "image_attachments") val attachmentImageList: List<ImageJson>?,
   ...
 )
 ```
@@ -211,8 +211,8 @@ data class YweetJson(
   val id: String,
   val user: UserJson,
   val content: String?,
-  @Json(name = "created_at") val createAt: String,
-  @Json(name = "image_attachments") val attachmentImageList: List<MediaJson>?,
+  @Json(name = "created_at") val createdAt: String,
+  @Json(name = "image_attachments") val attachmentImageList: List<ImageJson>?,
 )
 ```
 
@@ -258,9 +258,8 @@ API Docを見るとリクエストに必要な値は次のようになってい�
 
 |パラメータ名|option/required|Param Type|Type|説明|
 |-|-|-|-|-|
-|onlye_media|option|query|boolean|Only return statuses that have media attachments (public and tag timelines only)|
-|max_id|option|query|integer|Get a list of followings with ID less than this value|
-|since_id|option|query|integer|Get a list of followings with ID greater than this value|
+|only_image|option|query|boolean|Only return statuses that have image attachments (public and tag timelines only)|
+// TODO: offsetを追加
 |limit|option|query|integer|Maximum number of followings to get (Default 40, Max 80)|
 
 `Retrofit`ではリクエストに必要な値を引数で表現します。  
@@ -269,9 +268,8 @@ API Docを見るとリクエストに必要な値は次のようになってい�
 interface YatterApi {
   @GET("timelines/public")
   suspend fun getPublicTimeline(
-    @Query("only_media") onlyMedia: Boolean,
-    @Query("max_id") maxId: String?,
-    @Query("since_id") sinceId: String?,
+    @Query("only_image") onlyImage: Boolean,
+    @Query("offset") offset: Int?,
     @Query("limit") limit: Int,
   ): List<YweetJson>
 }
@@ -284,8 +282,7 @@ interface YatterApi {
   @GET("timelines/public")
   suspend fun getPublicTimeline(
     @Query("only_image") onlyImage: Boolean = false,
-    @Query("max_id") maxId: String? = null,
-    @Query("since_id") sinceId: String? = null,
+    @Query("offset") offset: Int?,
     @Query("limit") limit: Int = 40,
   ): List<YweetJson>
 }
@@ -560,7 +557,7 @@ object YweetConverter {
     id = YweetId(json.id),
     user = UserConverter.convertToDomainModel(json.user),
     content = json.content ?: "",
-    attachmentMediaList = MediaConverter.convertToDomainModel(json.attachmentMediaList),
+    attachmentImageList = ImageConverter.convertToDomainModel(json.attachmentImageList),
   )
 }
 ```
@@ -667,11 +664,11 @@ val jsonList = listOf(
       header = "https://www.google.com",
       followingCount = 100,
       followersCount = 200,
-      createAt = "2023-06-02T12:44:35.030Z"
+      createdAt = "2023-06-02T12:44:35.030Z"
     ),
     content = "content",
-    createAt = "2023-06-02T12:44:35.030Z",
-    attachmentMediaList = emptyList(),
+    createdAt = "2023-06-02T12:44:35.030Z",
+    attachmentImageList = emptyList(),
   )
 )
 
@@ -689,7 +686,7 @@ val expect = listOf(
       followerCount = 200
     ),
     content = "content",
-    attachmentMediaList = emptyList()
+    attachmentImageList = emptyList()
   )
 )
 
