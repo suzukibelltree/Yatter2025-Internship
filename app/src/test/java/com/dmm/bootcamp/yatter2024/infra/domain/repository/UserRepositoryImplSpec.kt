@@ -2,9 +2,9 @@ package com.dmm.bootcamp.yatter2024.infra.domain.repository
 
 import com.dmm.bootcamp.yatter2024.domain.model.Username
 import com.dmm.bootcamp.yatter2024.infra.api.YatterApi
-import com.dmm.bootcamp.yatter2024.infra.api.json.AccountJson
-import com.dmm.bootcamp.yatter2024.infra.domain.converter.AccountConverter
-import com.dmm.bootcamp.yatter2024.infra.pref.LoginAccountPreferences
+import com.dmm.bootcamp.yatter2024.infra.api.json.UserJson
+import com.dmm.bootcamp.yatter2024.infra.domain.converter.UserConverter
+import com.dmm.bootcamp.yatter2024.infra.pref.LoginUserPreferences
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -12,15 +12,15 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
-class AccountRepositoryImplSpec {
+class UserRepositoryImplSpec {
   val yatterApi = mockk<YatterApi>()
-  val loginAccountPreferences = mockk<LoginAccountPreferences>()
-  val subject = AccountRepositoryImpl(yatterApi, loginAccountPreferences)
+  val loginUserPreferences = mockk<LoginUserPreferences>()
+  val subject = UserRepositoryImpl(yatterApi, loginUserPreferences)
 
   @Test
   fun findByUsername() = runTest {
     val username = Username("username")
-    val accountJson = AccountJson(
+    val userJson = UserJson(
       id = "id",
       username = "username",
       displayName = "display name",
@@ -32,16 +32,16 @@ class AccountRepositoryImplSpec {
       createAt = ""
     )
 
-    val expect = AccountConverter.convertToDomainModel(accountJson)
+    val expect = UserConverter.convertToDomainModel(userJson)
 
     coEvery {
-      yatterApi.getAccountByUsername(any())
-    } returns accountJson
+      yatterApi.getUserByUsername(any())
+    } returns userJson
 
     val result = subject.findByUsername(username)
 
     coVerify {
-      yatterApi.getAccountByUsername(username.value)
+      yatterApi.getUserByUsername(username.value)
     }
 
     assertThat(result).isEqualTo(expect)

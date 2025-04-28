@@ -3,7 +3,7 @@ package com.dmm.bootcamp.yatter2024.infra.pref
 import android.content.Context
 import androidx.core.content.edit
 
-class LoginAccountPreferences(context: Context) {
+class LoginUserPreferences(context: Context) {
   companion object {
     private const val PREF_NAME = "login_user"
     private const val KEY_USERNAME = "username"

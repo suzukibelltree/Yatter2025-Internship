@@ -3,7 +3,7 @@ package com.dmm.bootcamp.yatter2024.usecase.impl
 import com.dmm.bootcamp.yatter2024.domain.model.Password
 import com.dmm.bootcamp.yatter2024.domain.model.Username
 import com.dmm.bootcamp.yatter2024.domain.service.LoginService
-import com.dmm.bootcamp.yatter2024.infra.pref.LoginAccountPreferences
+import com.dmm.bootcamp.yatter2024.infra.pref.LoginUserPreferences
 import com.dmm.bootcamp.yatter2024.usecase.impl.login.LoginUseCaseImpl
 import com.dmm.bootcamp.yatter2024.usecase.login.LoginUseCaseResult
 import com.google.common.truth.Truth.assertThat
@@ -18,8 +18,8 @@ import org.junit.Test
 
 class LoginUseCaseImplSpec {
   private val loginService = mockk<LoginService>()
-  private val loginAccountPreferences = mockk<LoginAccountPreferences>()
-  private val subject = LoginUseCaseImpl(loginService, loginAccountPreferences)
+  private val loginUserPreferences = mockk<LoginUserPreferences>()
+  private val subject = LoginUseCaseImpl(loginService, loginUserPreferences)
 
   @Test
   fun loginSuccess() = runTest {
@@ -30,7 +30,7 @@ class LoginUseCaseImplSpec {
       loginService.execute(any(), any())
     }
     justRun {
-      loginAccountPreferences.putUserName(any())
+      loginUserPreferences.putUserName(any())
     }
 
     val result = subject.execute(username, password)
@@ -39,7 +39,7 @@ class LoginUseCaseImplSpec {
       loginService.execute(username, password)
     }
     verify {
-      loginAccountPreferences.putUserName(username.value)
+      loginUserPreferences.putUserName(username.value)
     }
 
     assertThat(result).isEqualTo(LoginUseCaseResult.Success)
@@ -54,7 +54,7 @@ class LoginUseCaseImplSpec {
       loginService.execute(any(), any())
     }
     justRun {
-      loginAccountPreferences.putUserName(any())
+      loginUserPreferences.putUserName(any())
     }
 
     val result = subject.execute(username, password)
@@ -63,7 +63,7 @@ class LoginUseCaseImplSpec {
       loginService.execute(any(), any())
     }
     verify(inverse = true) {
-      loginAccountPreferences.putUserName(any())
+      loginUserPreferences.putUserName(any())
     }
 
     assertThat(result).isEqualTo(LoginUseCaseResult.Failure.EmptyUsername)
@@ -78,7 +78,7 @@ class LoginUseCaseImplSpec {
       loginService.execute(any(), any())
     }
     justRun {
-      loginAccountPreferences.putUserName(any())
+      loginUserPreferences.putUserName(any())
     }
 
     val result = subject.execute(username, password)
@@ -87,7 +87,7 @@ class LoginUseCaseImplSpec {
       loginService.execute(any(), any())
     }
     verify(inverse = true) {
-      loginAccountPreferences.putUserName(any())
+      loginUserPreferences.putUserName(any())
     }
 
     assertThat(result).isEqualTo(LoginUseCaseResult.Failure.EmptyPassword)
@@ -102,7 +102,7 @@ class LoginUseCaseImplSpec {
       loginService.execute(any(), any())
     }
     justRun {
-      loginAccountPreferences.putUserName(any())
+      loginUserPreferences.putUserName(any())
     }
 
     val result = subject.execute(username, password)
@@ -111,7 +111,7 @@ class LoginUseCaseImplSpec {
       loginService.execute(any(), any())
     }
     verify(inverse = true) {
-      loginAccountPreferences.putUserName(any())
+      loginUserPreferences.putUserName(any())
     }
 
     assertThat(result).isEqualTo(LoginUseCaseResult.Failure.InvalidPassword)
@@ -127,7 +127,7 @@ class LoginUseCaseImplSpec {
       loginService.execute(any(), any())
     } throws error
     justRun {
-      loginAccountPreferences.putUserName(any())
+      loginUserPreferences.putUserName(any())
     }
 
     val result = subject.execute(username, password)
@@ -136,7 +136,7 @@ class LoginUseCaseImplSpec {
       loginService.execute(any(), any())
     }
     verify(inverse = true) {
-      loginAccountPreferences.putUserName(any())
+      loginUserPreferences.putUserName(any())
     }
 
     assertThat(result).isEqualTo(LoginUseCaseResult.Failure.OtherError(error))

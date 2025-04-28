@@ -10,7 +10,7 @@ object StatusConverter {
 
   fun convertToDomainModel(json: StatusJson): Status = Status(
     id = StatusId(json.id),
-    account = AccountConverter.convertToDomainModel(json.account),
+    user = UserConverter.convertToDomainModel(json.user),
     content = json.content ?: "",
     attachmentMediaList =  MediaConverter.convertToDomainModel(json.attachmentMediaList)
   )

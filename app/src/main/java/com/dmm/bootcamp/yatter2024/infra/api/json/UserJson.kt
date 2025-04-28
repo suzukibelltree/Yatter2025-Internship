@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class AccountJson(
+data class UserJson(
   @Json(name = "id") val id: String,
   @Json(name = "username") val username: String,
   @Json(name = "display_name") val displayName: String,

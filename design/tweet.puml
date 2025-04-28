@@ -2,18 +2,18 @@
 
 package domain {
   package model {
-    class Account
+    class User
   }
 
-  interface AccountRepository {
-    + findLoginUser(): Account?
-    + findByUsername(username: Username): Account?
+  interface UserRepository {
+    + findLoginUser(): User?
+    + findByUsername(username: Username): User?
     + create(...)
     + update(...)
   }
 
   interface GetLoginUserService {
-    + execute(): Account?
+    + execute(): User?
   }
 
   interface StatusRepository {
@@ -24,7 +24,7 @@ package domain {
 package infra {
   package domain {
     package repository {
-      class AccountRepositoryImpl {
+      class UserRepositoryImpl {
         - loginUserPreference: LoginUserPreference
         - yatterApi: YatterApi
       }
@@ -36,7 +36,7 @@ package infra {
     }
     package service {
       class GetLoginUserServiceImpl {
-        - accountRepository: AccountRepository
+        - userRepository: UserRepository
       }
     }
   }
@@ -81,13 +81,13 @@ package ui.post {
   }
 }
 
-GetLoginUserService -- Account
+GetLoginUserService -- User
 
 GetLoginUserServiceImpl --|> GetLoginUserService
-AccountRepositoryImpl --|> AccountRepository
+UserRepositoryImpl --|> UserRepository
 StatusRepositoryImpl --|> StatusRepository
 
-GetLoginUserService -- AccountRepository
+GetLoginUserService -- UserRepository
 
 PostStatusUseCaseImpl --|> PostStatusUseCase
 PostStatusUseCase -- PostStatusUseCaseResult

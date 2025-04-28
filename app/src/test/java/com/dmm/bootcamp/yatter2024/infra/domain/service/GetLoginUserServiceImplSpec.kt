@@ -1,9 +1,9 @@
 package com.dmm.bootcamp.yatter2024.infra.domain.service
 
-import com.dmm.bootcamp.yatter2024.domain.model.Account
-import com.dmm.bootcamp.yatter2024.domain.model.AccountId
+import com.dmm.bootcamp.yatter2024.domain.model.User
+import com.dmm.bootcamp.yatter2024.domain.model.UserId
 import com.dmm.bootcamp.yatter2024.domain.model.Username
-import com.dmm.bootcamp.yatter2024.domain.repository.AccountRepository
+import com.dmm.bootcamp.yatter2024.domain.repository.UserRepository
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -11,14 +11,14 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import java.net.URL
 
-class GetLoginAccountServiceImplSpec {
-  private val accountRepository = mockk<AccountRepository>()
-  private val subject = GetLoginAccountServiceImpl(accountRepository)
+class GetLoginUserServiceImplSpec {
+  private val userRepository = mockk<UserRepository>()
+  private val subject = GetLoginUserServiceImpl(userRepository)
 
   @Test
   fun getLoginUser() {
-    val account = Account(
-      id = AccountId(value = ""),
+    val user = User(
+      id = UserId(value = ""),
       username = Username(value = ""),
       displayName = null,
       note = null,
@@ -28,10 +28,10 @@ class GetLoginAccountServiceImplSpec {
       followerCount = 0
     )
 
-    coEvery { accountRepository.findLoginUser() } returns account
+    coEvery { userRepository.findLoginUser() } returns user
 
     val result = runBlocking { subject.execute() }
 
-    assertThat(result).isEqualTo(account)
+    assertThat(result).isEqualTo(user)
   }
 }

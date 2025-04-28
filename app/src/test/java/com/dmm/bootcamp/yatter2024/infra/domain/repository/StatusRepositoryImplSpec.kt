@@ -2,13 +2,13 @@ package com.dmm.bootcamp.yatter2024.infra.domain.repository
 
 import android.accounts.AuthenticatorException
 import com.dmm.bootcamp.yatter2024.auth.TokenProvider
-import com.dmm.bootcamp.yatter2024.domain.model.Account
-import com.dmm.bootcamp.yatter2024.domain.model.AccountId
+import com.dmm.bootcamp.yatter2024.domain.model.User
+import com.dmm.bootcamp.yatter2024.domain.model.UserId
 import com.dmm.bootcamp.yatter2024.domain.model.Status
 import com.dmm.bootcamp.yatter2024.domain.model.StatusId
 import com.dmm.bootcamp.yatter2024.domain.model.Username
 import com.dmm.bootcamp.yatter2024.infra.api.YatterApi
-import com.dmm.bootcamp.yatter2024.infra.api.json.AccountJson
+import com.dmm.bootcamp.yatter2024.infra.api.json.UserJson
 import com.dmm.bootcamp.yatter2024.infra.api.json.PostStatusJson
 import com.dmm.bootcamp.yatter2024.infra.api.json.StatusJson
 import com.dmm.bootcamp.yatter2024.infra.domain.converter.StatusConverter
@@ -31,7 +31,7 @@ class StatusRepositoryImplSpec {
     val jsonList = listOf(
       StatusJson(
         id = "id",
-        account = AccountJson(
+        user = UserJson(
           id = "id",
           username = "username",
           displayName = "display name",
@@ -51,8 +51,8 @@ class StatusRepositoryImplSpec {
     val expect = listOf(
       Status(
         id = StatusId(value = "id"),
-        account = Account(
-          id = AccountId("id"),
+        user = User(
+          id = UserId("id"),
           username = Username("username"),
           displayName = "display name",
           note = "note",
@@ -86,7 +86,7 @@ class StatusRepositoryImplSpec {
 
     val statusJson = StatusJson(
       id = "id",
-      account = AccountJson(
+      user = UserJson(
         id = "id",
         username = token,
         displayName = "",
