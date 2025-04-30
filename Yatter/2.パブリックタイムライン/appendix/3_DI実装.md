@@ -100,18 +100,18 @@ viewModel<注入先の型> { 注入するクラスのインスタンス化 }
 
 `factory`は注入するたびに新しいインスタンスを作成する注入方法で、`single`は注入するインスタンスがアプリ起動中は常に同じもの(シングルトン)を注入する方法で、`viewModel`はViewModelクラスを注入するときに利用する注入方法です。  
 
-では、`StatusRepository`の設定を行います。  
+では、`YweetRepository`の設定を行います。  
 RepositoryパターンではRepositoryの実装クラス内でキャッシュを持つことも多いため、シングルトンとしてDI設定することがほとんどです。  
 
 ```Kotlin
 val domainImplModule = module {
-  single<StatusRepository> { StatusRepositoryImpl(get()) }
+  single<YweetRepository> { YweetRepositoryImpl(get()) }
 }
 ```
 
-`StatusRepositoryImpl`の引数に`get()`という記述があります。  
+`YweetRepositoryImpl`の引数に`get()`という記述があります。  
 この記述は、あるクラスを注入するときのインスタンス化でさらに他のクラスが必要なときに記述されます。  
-`get()`とすることにより、`StatusRepositoryImpl`の引数で必要なオブジェクト(今回は`YatterApi`)をKoin DIで注入することができます。  
+`get()`とすることにより、`YweetRepositoryImpl`の引数で必要なオブジェクト(今回は`YatterApi`)をKoin DIで注入することができます。  
 
 `DomainImplModule`で定義したいDI設定は完了したため、続いては`InfraModule`の定義をします。  
 
@@ -123,7 +123,7 @@ val infraModule = module {
 ```
 
 `InfraModule`ではAPI接続に必要な`YatterApi`の定義をします。  
-`DomainImplModule`で定義した`StatusRepositoryImpl`の引数でも必要なものです。  
+`DomainImplModule`で定義した`YweetRepositoryImpl`の引数でも必要なものです。  
 
 ```Kotlin
 single { YatterApiFactory().create() }
@@ -139,7 +139,7 @@ val viewModelModule = module {
 //  viewModel { MainViewModel(get()) }
 //  viewModel { PublicTimelineViewModel(get()) }
 //  viewModel { PostViewModel(get(), get()) }
-//  viewModel { RegisterAccountViewModel(get()) }
+//  viewModel { RegisterUserViewModel(get()) }
 //  viewModel { LoginViewModel(get()) } // こちらの//を削除
 }
 ```
@@ -171,4 +171,4 @@ Android Studio上部にある`Run app`ボタンからアプリのビルド・実
 
 ![run_app](../../image/2/run_app.png)
 
-パブリックタイムラインが表示され、Statusの一覧が表示されれば実装は完了です。  
+パブリックタイムラインが表示され、Yweetの一覧が表示されれば実装は完了です。  

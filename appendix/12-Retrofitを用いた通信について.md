@@ -80,19 +80,19 @@ GET /timelines/public
 [
   {
     "id": 123,
-    "account": {
+    "user": {
       "id": 0,
       "username": "mayamito",
       "display_name": "マヤミト",
-      "create_at": "2023-06-05T12:00:00.000Z",
+      "created_at": "2023-06-05T12:00:00.000Z",
       "followers_count": 10,
       "note": "Kotlinおたく",
       "avatar": "https://example.com/avatars/mayamito.png",
       "header": "https://example.com/headers/mayamito.png"
     },
     "content": "KotlinかわいいよKotlin",
-    "create_at": "2023-06-05T13:00:00.000Z",
-    "media_attachments": [
+    "created_at": "2023-06-05T13:00:00.000Z",
+    "image_attachments": [
       {
         "id": 123,
         "type": "image",
@@ -107,13 +107,13 @@ GET /timelines/public
 まずはレスポンスの型を定義します。
 
 ```kotlin
-data class AccountJson(
+data class UserJson(
     val id: Int,
     val username: String,
     @Json(name = "display_name")
     val displayName: String,
-    @Json(name = "create_at")
-    val createAt: Date,
+    @Json(name = "created_at")
+    val createdAt: Date,
     @Json(name = "followers_count")
     val followersCount: Int,
     @Json(name = "following_count")
@@ -130,18 +130,18 @@ data class AttachmentJson(
     val description: String,
 )
 
-data class StatusJson(
+data class YweetJson(
     val id: String,
-    val account: AccountJson,
+    val user: UserJson,
     val content: String,
-    @Json(name = "create_at")
-    val createAt: Date,
-    @Json(name = "media_attachments")
-    val mediaAttachments: List<AttachmentJson>,
+    @Json(name = "created_at")
+    val createdAt: Date,
+    @Json(name = "image_attachments")
+    val imageAttachments: List<AttachmentJson>,
 )
 ```
 
-Kotlinのプロパティ名とJSONのフィールド名が一致しない場合(createAtとcreate_atなど)は、 `@Json` で実際のJSONのフィールド名を `name` に指定することで対応させることができます。
+Kotlinのプロパティ名とJSONのフィールド名が一致しない場合(createdAtとcreated_atなど)は、 `@Json` で実際のJSONのフィールド名を `name` に指定することで対応させることができます。
 
 次はエンドポイントのinterfaceの定義です。
 
@@ -150,15 +150,13 @@ interface YatterApi {
 
     @GET("/timelines/public")
     suspend fun getPublicTimeline(
-        @Query("only_media")
-        onlyMedia: Boolean? = null,
-        @Query("max_id")
-        maxId: Int? = null,
-        @Query("since_id")
-        sinceId: Int? = null,
+        @Query("only_image")
+        onlyImage: Boolean? = null,
+        @Query("offset")
+        offset: Int? = null,
         @Query("limit")
         limit: Int? = null,
-    ): List<StatusJson>
+    ): List<YweetJson>
 }
 ```
 
@@ -193,7 +191,7 @@ val timelineResponse = yatterApi.getPublicTimeline()
 例えば、Yatterのアカウント作成のエンドポイントなど、bodyにJSONを渡したい場合はよくあります。
 
 ```kotlin
-data class CreateAccountJson(
+data class CreateUserJson(
     val username: String,
     val password: String,
 )
@@ -202,11 +200,11 @@ data class CreateAccountJson(
 このJSONをbodyとして渡すには、エンドポイントの定義で引数に `@Body` アノテーションを付与することで指定した引数をbodyにできます。
 
 ```kotlin
-@POST("/accounts")
-suspend fun createAccount(
+@POST("/users")
+suspend fun createUser(
     @Body
-    createAccountJson: CreateAccountJson,
-): AccountJson
+    createUserJson: CreateUserJson,
+): UserJson
 ```
 
 ### Headerを渡したい場合
@@ -220,15 +218,13 @@ suspend fun createAccount(
 suspend fun getHomeTimeline(
     @Header("Authorization")
     token: String,
-    @Query("only_media")
-    onlyMedia: Boolean? = null,
-    @Query("max_id")
-    maxId: Int? = null,
-    @Query("since_id")
-    sinceId: Int? = null,
+    @Query("only_image")
+    onlyImage: Boolean? = null,
+    @Query("offset")
+    offset: Int? = null,
     @Query("limit")
     limit: Int? = null,
-): List<StatusJson>
+): List<YweetJson>
 ```
 
 ### multipart/form-data でリクエストしたい場合
@@ -239,7 +235,7 @@ suspend fun getHomeTimeline(
 
 ```kotlin
 @Multipart
-@POST("/accounts/update_credentials")
+@POST("/users/update_credentials")
 suspend fun updateCredentials(
     @Header("Authorization")
     token: String,
@@ -251,7 +247,7 @@ suspend fun updateCredentials(
     avatar: RequestBody,
     @Part("header")
     header: RequestBody,
-): AccountJson
+): UserJson
 ```
 
 呼び出し側は次のようになります。
