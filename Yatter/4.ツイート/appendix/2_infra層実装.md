@@ -298,7 +298,7 @@ APIの定義を確認するとツイート用のAPIを実行する際にはBodyJ
 
 ```Kotlin
 data class PostYweetJson(
-  val yweet: String,
+  val content: String,
   @Json(name = "image_ids") val imageIds: List<Int>
 )
 ```
