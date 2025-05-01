@@ -487,10 +487,9 @@ class YweetRepositoryImpl(
 auth/impl/TokenProviderImpl.kt  
 
 ```Kotlin
-class TokenProviderImpl(private val getLoginUserService: GetLoginUserService) : TokenProvider {
+class TokenProviderImpl(private val tokenPreferences: TokenPreferences) : TokenProvider {
   override suspend fun provide(): String {
-    val me = getLoginUserService.execute()
-    return me?.username?.value?.let { "username $it" } ?: throw AuthenticatorException()
+    return tokenPreferences.getAccessToken()?.let { "username $it" } ?: throw AuthenticatorException()
   }
 }
 ```
@@ -508,47 +507,37 @@ TokenProviderImplのテスト
 
 ```Kotlin
 class TokenProviderImplSpec {
-  private val getLoginUserService = mockk<GetLoginUserService>()
-  private val subject = TokenProviderImpl(getLoginUserService)
+  private val tokenPreferences = mockk<TokenPreferences>()
+  private val subject = TokenProviderImpl(tokenPreferences)
 
   @Test
   fun getTokenSuccess() = runTest {
     val username = "username"
-    val me = MeImpl(
-      id = UserId(value = "id"),
-      username = Username(value = username),
-      displayName = null,
-      note = null,
-      avatar = URL("https:www.google.com"),
-      header = URL("https:www.google.com"),
-      followingCount = 0,
-      followerCount = 0
-    )
-    
+
     val expect = "username $username"
 
     coEvery {
-      getLoginUserService.execute()
-    } returns me
-    
+      tokenPreferences.getAccessToken()
+    } returns username
+
     val result = subject.provide()
-    
-    coVerify { 
-      getLoginUserService.execute()
+
+    coVerify {
+      tokenPreferences.getAccessToken()
     }
-    
+
     assertThat(result).isEqualTo(expect)
   }
-  
+
   @Test
-  fun getTokenFailure() = runTest { 
-    coEvery { 
-      getLoginUserService.execute()
+  fun getTokenFailure() = runTest {
+    coEvery {
+      tokenPreferences.getAccessToken()
     } returns null
-    
-    var error: Throwable? = null 
+
+    var error: Throwable? = null
     var result: String? = null
-    
+
     try {
       result = subject.provide()
     } catch (e: Exception) {
@@ -556,9 +545,9 @@ class TokenProviderImplSpec {
     }
 
     coVerify {
-      getLoginUserService.execute()
+      tokenPreferences.getAccessToken()
     }
-    
+
     assertThat(result).isNull()
     assertThat(error).isInstanceOf(AuthenticatorException::class.java)
   }
