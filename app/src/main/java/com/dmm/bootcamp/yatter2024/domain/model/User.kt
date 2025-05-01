@@ -12,4 +12,5 @@ data class User(
   val header: URL,
   val followingCount: Int,
   val followerCount: Int,
+  val isMe: Boolean,
 ) : Entity<UserId>(id)

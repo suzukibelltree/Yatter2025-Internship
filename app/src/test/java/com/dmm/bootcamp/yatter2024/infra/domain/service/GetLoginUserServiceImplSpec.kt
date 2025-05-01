@@ -25,10 +25,11 @@ class GetLoginUserServiceImplSpec {
       avatar = URL("https://www.google.com"),
       header = URL("https://www.google.com"),
       followingCount = 0,
-      followerCount = 0
+      followerCount = 0,
+      isMe = true,
     )
 
-    coEvery { userRepository.findLoginUser() } returns user
+    coEvery { userRepository.findLoginUser(disableCache = any()) } returns user
 
     val result = runBlocking { subject.execute() }
 

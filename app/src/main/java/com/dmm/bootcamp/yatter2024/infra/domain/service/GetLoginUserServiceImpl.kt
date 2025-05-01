@@ -10,6 +10,6 @@ class GetLoginUserServiceImpl(
   private val userRepository: UserRepository,
 ) : GetLoginUserService {
   override suspend fun execute(): User? = withContext(Dispatchers.IO) {
-    userRepository.findLoginUser()
+    userRepository.findLoginUser(disableCache = false)
   }
 }

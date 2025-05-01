@@ -35,7 +35,8 @@ class PostStatusUseCaseImplSpec {
         avatar = URL("https://www.google.com"),
         header = URL("https://www.google.com"),
         followingCount = 0,
-        followerCount = 0
+        followerCount = 0,
+        isMe = true,
       ),
       content = content,
       attachmentMediaList = listOf(),

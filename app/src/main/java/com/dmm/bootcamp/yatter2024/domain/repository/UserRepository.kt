@@ -6,9 +6,9 @@ import com.dmm.bootcamp.yatter2024.domain.model.Username
 import java.net.URL
 
 interface UserRepository {
-  suspend fun findLoginUser(): User?
+  suspend fun findLoginUser(disableCache: Boolean): User?
 
-  suspend fun findByUsername(username: Username): User?
+  suspend fun findByUsername(username: Username, disableCache: Boolean): User?
 
   suspend fun create(
     username: Username,

@@ -13,9 +13,9 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
 class UserRepositoryImplSpec {
-  val yatterApi = mockk<YatterApi>()
-  val loginUserPreferences = mockk<LoginUserPreferences>()
-  val subject = UserRepositoryImpl(yatterApi, loginUserPreferences)
+  private val yatterApi = mockk<YatterApi>()
+  private val loginUserPreferences = mockk<LoginUserPreferences>()
+  private val subject = UserRepositoryImpl(yatterApi, loginUserPreferences)
 
   @Test
   fun findByUsername() = runTest {
@@ -32,16 +32,54 @@ class UserRepositoryImplSpec {
       createAt = ""
     )
 
-    val expect = UserConverter.convertToDomainModel(userJson)
+    val expect = UserConverter.convertToDomainModel(userJson, isMe = true)
 
     coEvery {
       yatterApi.getUserByUsername(any())
     } returns userJson
+    coEvery {
+      loginUserPreferences.getUsername()
+    } returns "username"
 
-    val result = subject.findByUsername(username)
+    val result = subject.findByUsername(username, disableCache = false)
 
     coVerify {
       yatterApi.getUserByUsername(username.value)
+    }
+
+    assertThat(result).isEqualTo(expect)
+  }
+
+  @Test
+  fun findLoginUser() = runTest {
+    val username = "username"
+    val userJson = UserJson(
+      id = "id",
+      username = "username",
+      displayName = "display name",
+      note = null,
+      avatar = "https://www.google.com",
+      header = "https://www.google.com",
+      followingCount = 0,
+      followersCount = 0,
+      createAt = ""
+    )
+    val expect = UserConverter.convertToDomainModel(userJson, isMe = true)
+
+    coEvery {
+      loginUserPreferences.getUsername()
+    } returns username
+    coEvery {
+      yatterApi.getUserByUsername(any())
+    } returns userJson
+
+    val result = subject.findLoginUser(disableCache = false)
+
+    coVerify {
+      yatterApi.getUserByUsername(username)
+    }
+    coVerify {
+      loginUserPreferences.getUsername()
     }
 
     assertThat(result).isEqualTo(expect)

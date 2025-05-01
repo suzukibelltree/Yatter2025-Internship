@@ -14,7 +14,7 @@ import org.koin.dsl.module
 
 internal val domainImplModule = module {
   single<UserRepository> { UserRepositoryImpl(get(), get()) }
-  single<StatusRepository> { StatusRepositoryImpl(get(), get()) }
+  single<StatusRepository> { StatusRepositoryImpl(get(), get(), get()) }
 
   factory<GetLoginUserService> { GetLoginUserServiceImpl(get()) }
   factory<LoginService> { LoginServiceImpl(get(), get()) }
