@@ -51,7 +51,7 @@ fun getPublicTimelineFromRepository() = runTest {
   val yweetList = listOf(
     Yweet(
       id = YweetId(value = "id"),
-      user = UserImpl(
+      user = User(
         id= UserId("id"),
         username = Username("username"),
         displayName = "display name",
@@ -59,7 +59,8 @@ fun getPublicTimelineFromRepository() = runTest {
         avatar = URL("https://www.google.com"),
         header = URL("https://www.google.com"),
         followingCount = 100,
-        followerCount = 200
+        followerCount = 200,
+        isMe = false,
       ),
       content = "content",
       attachmentImageList = listOf()
@@ -90,7 +91,7 @@ fun onRefreshPublicTimeline() = runTest {
   val yweetList = listOf(
     Yweet(
       id = YweetId(value = "id"),
-      user = UserImpl(
+      user = User(
         id= UserId("id"),
         username = Username("username"),
         displayName = "display name",
@@ -98,7 +99,8 @@ fun onRefreshPublicTimeline() = runTest {
         avatar = URL("https://www.google.com"),
         header = URL("https://www.google.com"),
         followingCount = 100,
-        followerCount = 200
+        followerCount = 200,
+        isMe = false,
       ),
       content = "content",
       attachmentImageList = listOf()

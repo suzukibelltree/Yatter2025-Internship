@@ -172,3 +172,5 @@ Android Studio上部にある`Run app`ボタンからアプリのビルド・実
 ![run_app](../../image/2/run_app.png)
 
 パブリックタイムラインが表示され、Yweetの一覧が表示されれば実装は完了です。  
+
+# [次の資料](./4_ViewModelへのテスト追加.md)

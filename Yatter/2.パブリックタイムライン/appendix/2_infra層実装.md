@@ -26,11 +26,9 @@ Javaで説明されていますが、次の内容を抑えられれば良いで�
   - レスポンスの表現の仕方
 - converterを指定することでいろんなタイプのレスポンスやシリアライザを指定できること
 
-また、次の資料でもRetrofitの使い方を解説していますので合わせてご一読ください。  
+また、[Retrofitを用いた通信について](../../../appendix/12-Retrofitを用いた通信について.md) でもRetrofitの使い方を解説しています。  
 
-```
-appendix > 12-Retrofitを用いた通信について
-```
+
 
 ### Json定義
 
@@ -42,7 +40,7 @@ GET /timelines/public
 
 このAPIのレスポンスはJsonで次のような値になっています。  
 
-```
+```Json
 [
   {
     "id": 123,
@@ -80,7 +78,7 @@ GET /timelines/public
 `com.dmm.bootcamp.yatter2024.infra.api.json`パッケージを作り、そこにそれぞれのクラスを追加していきます。  
 まずは、サンプルとして`UserJson`を実装してみます。`User`のJsonはこうなってます。
 
-```
+```json
 {
   "id": 0,
   "username": "string",
@@ -95,7 +93,7 @@ GET /timelines/public
 ```
 
 このJsonをそのままクラスで表現します。  
-Moshiライブラリを使うため、Jsonのキーと名前が一致する
+Moshiライブラリを使うため、Jsonのキーと名前が一致するようにします。
 
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.infra.api.json
@@ -470,47 +468,10 @@ https://developer.android.com/kotlin/coroutines/coroutines-adv
 ---
 
 続いて、変換部分を作っていきましょう。  
-`Yweet`ドメインモデルが`User`をメンバとして持っているために`User`のコンバーターを、さらには現状Userは `abstract class`なのでその実装クラスも必要になります。  
+`Yweet`ドメインモデルが`User`をメンバとして持っているために`User`のコンバーターが必要になります。  
 
 それぞれ次のようになります。  
 package通りに配置していってください。
-
-### UserImpl
-```Kotlin
-package com.dmm.bootcamp.yatter2024.infra.domain
-
-import com.dmm.bootcamp.yatter2024.domain.User
-import com.dmm.bootcamp.yatter2024.domain.Username
-import java.net.URL
-
-class UserImpl(
-  id: UserId,
-  username: Username,
-  displayName: String?,
-  note: String?,
-  avatar: URL,
-  header: URL,
-  followingCount: Int,
-  followerCount: Int,
-) : User(
-  id,
-  username,
-  displayName,
-  note,
-  avatar,
-  header,
-  followingCount,
-  followerCount,
-) {
-  override suspend fun followings(): List<User> {
-    TODO("Not yet implemented")
-  }
-
-  override suspend fun followers(): List<User> {
-    TODO("Not yet implemented")
-  }
-}
-```
 
 ### UserConverter
 ```Kotlin
@@ -524,24 +485,23 @@ import com.dmm.bootcamp.yatter2024.infra.domain.UserImpl
 import java.net.URL
 
 object UserConverter {
-  fun convertToDomainModel(
-    jsonList: List<UserJson>
-  ): List<User> = jsonList.map { convertToDomainModel(it) }
-
-  fun convertToDomainModel(json: UserJson): User = UserImpl(
+  fun convertToDomainModel(json: UserJson, isMe: Boolean) = User(
     id = UserId(json.id),
     username = Username(json.username),
     displayName = json.displayName,
     note = json.note,
-    avatar = URL(BuildConfig.API_URL + "/v1/" + json.avatar),
-    header = URL(BuildConfig.API_URL + "/v1/" + json.header),
+    avatar = URL(json.avatar),
+    header = URL(json.header),
     followingCount = json.followingCount,
     followerCount = json.followersCount,
+    isMe = isMe,
   )
 }
 ```
 
 ### YweetConverter
+`UserConverter.convertToDomainModel`で指定している`isMe`は`User`がログイン中のユーザーであるのかを指定するためのフラグです。  
+本来は、ログイン情報を利用して変更されるようにすべきですが、現時点のアプリにはログイン機能が存在しないため、`false`で固定しています。
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.infra.domain.converter
 
@@ -555,7 +515,7 @@ object YweetConverter {
 
   fun convertToDomainModel(json: YweetJson): Yweet = Yweet(
     id = YweetId(json.id),
-    user = UserConverter.convertToDomainModel(json.user),
+    user = UserConverter.convertToDomainModel(json.user, isMe = false),
     content = json.content ?: "",
     attachmentImageList = ImageConverter.convertToDomainModel(json.attachmentImageList),
   )
@@ -675,7 +635,7 @@ val jsonList = listOf(
 val expect = listOf(
   Yweet(
     id = YweetId(value = "id"),
-    user = UserImpl(
+    user = User(
       id = UserId("id"),
       username = Username("username"),
       displayName = "display name",
@@ -684,6 +644,7 @@ val expect = listOf(
       header = URL("https://www.google.com"),
       followingCount = 100,
       followerCount = 200
+      isMe = false,
     ),
     content = "content",
     attachmentImageList = emptyList()
