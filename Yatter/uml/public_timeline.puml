@@ -9,21 +9,21 @@ class PublicTimelineViewModel {
 }
 
 class PublicTimelineUiState {
-  + statusList: List<StatusBindingModel>
+  + yweetList: List<YweetBindingModel>
   + isLoading: Boolean
   + isRefreshing: Boolean
 }
 
-class StatusBindingModel {
+class YweetBindingModel {
   + id: String
   + displayName: String
   + username: String
   + avatar: String?
   + content: String
-  + attachmentMediaList: List<MediaBindingModel>
+  + attachmentImageList: List<ImageBindingModel>
 }
 
-class MediaBindingModel {
+class ImageBindingModel {
   + id: String
   + type: String
   + url: String
@@ -35,7 +35,7 @@ class MediaBindingModel {
 
 package domain {
 
-class Account {
+class User {
   + username: Username
   + displayName: String?
   + note: String?
@@ -45,25 +45,25 @@ class Account {
   + followerCount: Int
 }
 
-class Status {
-  + id: StatusId
-  + account: Account
+class Yweet {
+  + id: YweetId
+  + user: User
   + content: String
-  + attachmentMediaList: List<Media>
+  + attachmentImageList: List<Image>
 }
 
-class StatusId {
+class YweetId {
   + value: String
 }
 
-class Media {
-  + id: MediaId
+class Image {
+  + id: ImageId
   + type: String
   + url: String
   + description: String
 }
 
-class MediaId {
+class ImageId {
   + value: String
 }
 
@@ -72,34 +72,34 @@ class Username {
   + validate()
 }
 
-interface StatusRepository {
-  + findAllPublic(): List<Status>
+interface YweetRepository {
+  + findAllPublic(): List<Yweet>
 }
 
 }
 
 package infra {
-class StatusRepositoryImpl {
+class YweetRepositoryImpl {
 }
 
 interface YatterApi {
-  + getPublicTimeline(onlyMedia: Boolean, maxId: String?, sinceId: String?, limit: Int)
+  + getPublicTimeline(onlyImage: Boolean, offset: Int, limit: Int)
 }
 }
 
-StatusRepositoryImpl -- YatterApi
-StatusRepositoryImpl --|> StatusRepository
+YweetRepositoryImpl -- YatterApi
+YweetRepositoryImpl --|> YweetRepository
 
-PublicTimelineViewModel -- StatusRepository
+PublicTimelineViewModel -- YweetRepository
 PublicTimelineViewModel -- PublicTimelineUiState
-PublicTimelineUiState -- StatusBindingModel
-StatusBindingModel -- MediaBindingModel
+PublicTimelineUiState -- YweetBindingModel
+YweetBindingModel -- ImageBindingModel
 
-StatusRepository -- Status
-Status -- StatusId
-Status -- Account
-Status -- Media
-Media -- MediaId
-Account -- Username
+YweetRepository -- Yweet
+Yweet -- YweetId
+Yweet -- User
+Yweet -- Image
+Image -- ImageId
+User -- Username
 
 @enduml
