@@ -5,13 +5,13 @@
 まずはQuery部分から実装します。  
 
 必要なドメインモデルとして、ログインしているユーザーの情報を扱う`Me`ドメインも実装します。  
-`Me`ドメインの実態は`Account`ドメインと同じ値を保持しますが、自身のアカウントであるという情報を扱いやすくするために、`Account`ドメインを継承して定義します。  
+`Me`ドメインの実態は`User`ドメインと同じ値を保持しますが、自身のユーザーであるという情報を扱いやすくするために、`User`ドメインを継承して定義します。  
 
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.domain
 
 abstract class Me(
-  id: AccountId,
+  id: UserId,
   username: Username,
   displayName: String?,
   note: String?,
@@ -19,7 +19,7 @@ abstract class Me(
   header: URL,
   followingCount: Int,
   followerCount: Int,
-) : Account(
+) : User(
   id,
   username,
   displayName,
@@ -51,15 +51,15 @@ interface GetMeService {
 
 最後にRepositoryの実装を行います。  
 
-アカウント情報を保持するための`AccountRepository`を`domin/repository`に追加します。  
+ユーザー情報を保持するための`UserRepository`を`domin/repository`に追加します。  
 
-`AccountRepository`でアカウントの検索や追加、更新といったアカウント周りの制御・操作を行えるようにします。  
+`UserRepository`でユーザーの検索や追加、更新といったユーザー周りの制御・操作を行えるようにします。  
 
 ```Kotlin
-interface AccountRepository {
+interface UserRepository {
   suspend fun findMe(): Me?
 
-  suspend fun findByUsername(username: Username): Account?
+  suspend fun findByUsername(username: Username): User?
 
   suspend fun create(
     username: Username,
@@ -80,20 +80,20 @@ interface AccountRepository {
 
 続いて、Command部分の実装です。  
 
-ツイート処理は`StatusRepository`にメソッドを追加して実装します。  
+ツイート処理は`YweetRepository`にメソッドを追加して実装します。  
 
-ツイート処理専用の`DomainService`を作ることも可能ですが、Statusを`StatusRepository`で集約することによりキャッシュを有効活用したりRepositoryパターンの概念としても合っていたりするため、`StatusRepository#create`で実施します。  
+ツイート処理専用の`DomainService`を作ることも可能ですが、Yweetを`YweetRepository`で集約することによりキャッシュを有効活用したりRepositoryパターンの概念としても合っていたりするため、`YweetRepository#create`で実施します。  
 
-`StatusRepository`インターフェースを確認し、`create`メソッドが定義されていない場合は次のメソッドを追加します。  
-`Status`を投稿(=新規作成)するため、`create`というメソッド名にしています。  
+`YweetRepository`インターフェースを確認し、`create`メソッドが定義されていない場合は次のメソッドを追加します。  
+`Yweet`を投稿(=新規作成)するため、`create`というメソッド名にしています。  
 
 ```Kotlin
-interface StatusRepository {
+interface YweetRepository {
   ...
   suspend fun create(
-    status: String,
-    attachmentList: List<File>
-  ): Status
+    yweet: String,
+    attachmentList: List<File>,
+  ): Yweet
 }
 ```
 
