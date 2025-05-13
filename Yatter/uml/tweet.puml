@@ -2,9 +2,9 @@
 
 package domain {
   class Me
-  interface AccountRepository {
+  interface UserRepository {
     + findMe(): Me?
-    + findByUsername(username: Username): Account?
+    + findByUsername(username: Username): User?
     + create(...)
     + update(...)
   }
@@ -13,8 +13,8 @@ package domain {
     + execute(): Me?
   }
 
-  interface StatusRepository {
-    + create(...): Status
+  interface YweetRepository {
+    + create(...): Yweet
   }
 }
 
@@ -22,46 +22,46 @@ package infra {
   package domain {
     class MeImpl
     package repository {
-      class AccountRepositoryImpl {
+      class UserRepositoryImpl {
         - mePreferences: MePreferences
         - yatterApi: YatterApi
       }
 
-      class StatusRepositoryImpl {
+      class YweetRepositoryImpl {
         - mePreferences: MePreferences
         - yatterApi: YatterApi
       }
     }
     package service {
       class GetMeServiceImpl {
-        - accountRepository: AccountRepository
+        - userRepository: UserRepository
       }
     }
   }
 }
 
 package usecase {
-  interface PostStatusUseCase {
-    + execute(statusText: String): PostStatusUseCaseResult
+  interface PostYweetUseCase {
+    + execute(yweetText: String): PostYweetUseCaseResult
   }
 
-  class PostStatusUseCaseImpl {
-    - statusRepository: StatusRepository
+  class PostYweetUseCaseImpl {
+    - yweetRepository: YweetRepository
   }
 
-  class PostStatusUseCaseResult
+  class PostYweetUseCaseResult
 }
 
 package ui.post {
   class PostViewModel {
-    - postStatusUseCase: PostStatusUseCase
+    - postYweetUseCase: PostYweetUseCase
     - getMeService: GetMeService
 
     + uiState: StateFlow<PostUiState>
     + destination: StateFlow<Destination?>
 
     + onCreate()
-    + onChangedStatusText(statusText: String)
+    + onChangedYweetText(yweetText: String)
     + onClickPost()
     + onClickNavIcon()
     + onCompleteNavigation()
@@ -75,27 +75,27 @@ package ui.post {
 
   class PostBindingModel {
     + avatarUrl: String?
-    + statusText: String
+    + yweetText: String
   }
 }
 
 MeImpl --|> Me
-AccountRepository -- Me
+UserRepository -- Me
 GetMeService -- Me
 
 GetMeServiceImpl --|> GetMeService
-AccountRepositoryImpl --|> AccountRepository
-StatusRepositoryImpl --|> StatusRepository
+UserRepositoryImpl --|> UserRepository
+YweetRepositoryImpl --|> YweetRepository
 
-GetMeService -- AccountRepository
+GetMeService -- UserRepository
 
-PostStatusUseCaseImpl --|> PostStatusUseCase
-PostStatusUseCase -- PostStatusUseCaseResult
-PostStatusUseCaseImpl -- StatusRepository
+PostYweetUseCaseImpl --|> PostYweetUseCase
+PostYweetUseCase -- PostYweetUseCaseResult
+PostYweetUseCaseImpl -- YweetRepository
 
 PostViewModel -- PostUiState
 PostUiState -- PostBindingModel
 
-PostViewModel -- PostStatusUseCase
+PostViewModel -- PostYweetUseCase
 PostViewModel -- GetMeService
 @enduml
