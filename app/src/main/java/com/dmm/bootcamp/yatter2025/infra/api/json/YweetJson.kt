@@ -4,10 +4,10 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class StatusJson(
+data class YweetJson(
   @Json(name = "id") val id: String,
   @Json(name = "user") val user: UserJson,
   @Json(name = "content") val content: String?,
-  @Json(name = "create_at") val createAt: String,
-  @Json(name = "media_attachments") val attachmentMediaList: List<MediaJson>
+  @Json(name = "created_at") val createdAt: String,
+  @Json(name = "image_attachments") val attachmentImageList: List<ImageJson>
 )

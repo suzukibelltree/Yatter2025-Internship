@@ -10,8 +10,8 @@ import com.dmm.bootcamp.yatter2025.domain.model.YweetId
 import com.dmm.bootcamp.yatter2025.domain.model.Username
 import com.dmm.bootcamp.yatter2025.infra.api.YatterApi
 import com.dmm.bootcamp.yatter2025.infra.api.json.UserJson
-import com.dmm.bootcamp.yatter2025.infra.api.json.PostStatusJson
-import com.dmm.bootcamp.yatter2025.infra.api.json.StatusJson
+import com.dmm.bootcamp.yatter2025.infra.api.json.PostYweetJson
+import com.dmm.bootcamp.yatter2025.infra.api.json.YweetJson
 import com.dmm.bootcamp.yatter2025.infra.domain.converter.StatusConverter
 import com.dmm.bootcamp.yatter2025.infra.pref.LoginUserPreferences
 import com.dmm.bootcamp.yatter2025.infra.pref.TokenPreferences
@@ -34,7 +34,7 @@ class YweetRepositoryImplSpec {
   @Test
   fun getPublicTimelineFromApi() = runTest {
     val jsonList = listOf(
-      StatusJson(
+      YweetJson(
         id = "id",
         user = UserJson(
           id = "id",
@@ -49,7 +49,7 @@ class YweetRepositoryImplSpec {
         ),
         content = "content",
         createAt = "2023-06-02T12:44:35.030Z",
-        attachmentMediaList = emptyList(),
+        attachmentImageList = emptyList(),
       )
     )
 
@@ -94,7 +94,7 @@ class YweetRepositoryImplSpec {
     val content = "content"
     val token = "username $loginUsername"
 
-    val statusJson = StatusJson(
+    val yweetJson = YweetJson(
       id = "id",
       user = UserJson(
         id = "id",
@@ -109,7 +109,7 @@ class YweetRepositoryImplSpec {
       ),
       content = content,
       createAt = "",
-      attachmentMediaList = emptyList(),
+      attachmentImageList = emptyList(),
     )
 
     coEvery {
@@ -118,9 +118,9 @@ class YweetRepositoryImplSpec {
 
     coEvery {
       yatterApi.postStatus(any(), any())
-    } returns statusJson
+    } returns yweetJson
 
-    val expect = StatusConverter.convertToDomainModel(statusJson, isMe = true)
+    val expect = StatusConverter.convertToDomainModel(yweetJson, isMe = true)
 
     val result = subject.create(
       content,
@@ -133,9 +133,9 @@ class YweetRepositoryImplSpec {
       tokenPreferences.getAccessToken()
       yatterApi.postStatus(
         token,
-        PostStatusJson(
-          status = content,
-          mediaList = emptyList()
+        PostYweetJson(
+          yweet = content,
+          imageList = emptyList()
         )
       )
     }

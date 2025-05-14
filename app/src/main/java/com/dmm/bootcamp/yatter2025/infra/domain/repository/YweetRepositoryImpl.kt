@@ -5,7 +5,7 @@ import com.dmm.bootcamp.yatter2025.domain.model.YweetId
 import com.dmm.bootcamp.yatter2025.domain.repository.YweetRepository
 import com.dmm.bootcamp.yatter2025.auth.TokenProvider
 import com.dmm.bootcamp.yatter2025.infra.api.YatterApi
-import com.dmm.bootcamp.yatter2025.infra.api.json.PostStatusJson
+import com.dmm.bootcamp.yatter2025.infra.api.json.PostYweetJson
 import com.dmm.bootcamp.yatter2025.infra.domain.converter.StatusConverter
 import com.dmm.bootcamp.yatter2025.infra.pref.LoginUserPreferences
 import kotlinx.coroutines.Dispatchers.IO
@@ -39,7 +39,7 @@ class YweetRepositoryImpl(
   ): Yweet = withContext(IO) {
     val statusJson = yatterApi.postStatus(
       tokenProvider.provide(),
-      PostStatusJson(
+      PostYweetJson(
         content,
         listOf()
       )
