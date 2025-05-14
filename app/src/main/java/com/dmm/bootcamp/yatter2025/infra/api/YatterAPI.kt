@@ -46,7 +46,7 @@ interface YatterApi {
   ): UserJson
 
   @POST("yweets")
-  suspend fun postStatus(
+  suspend fun postYweet(
     @Header("Authentication") token: String,
     @Body yweetJson: PostYweetJson
   ): YweetJson

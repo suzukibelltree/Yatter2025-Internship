@@ -45,10 +45,10 @@ class YweetRepositoryImplSpec {
           header = "https://www.google.com",
           followingCount = 100,
           followersCount = 200,
-          createAt = "2023-06-02T12:44:35.030Z"
+          createdAt = "2023-06-02T12:44:35.030Z"
         ),
         content = "content",
-        createAt = "2023-06-02T12:44:35.030Z",
+        createdAt = "2023-06-02T12:44:35.030Z",
         attachmentImageList = emptyList(),
       )
     )
@@ -89,7 +89,7 @@ class YweetRepositoryImplSpec {
   }
 
   @Test
-  fun postStatusWhenLoggedIn() = runTest {
+  fun postYweetWhenLoggedIn() = runTest {
     val loginUsername = "token"
     val content = "content"
     val token = "username $loginUsername"
@@ -105,10 +105,10 @@ class YweetRepositoryImplSpec {
         header = "https://www.google.com",
         followingCount = 0,
         followersCount = 0,
-        createAt = ""
+        createdAt = ""
       ),
       content = content,
-      createAt = "",
+      createdAt = "",
       attachmentImageList = emptyList(),
     )
 
@@ -117,7 +117,7 @@ class YweetRepositoryImplSpec {
     } returns loginUsername
 
     coEvery {
-      yatterApi.postStatus(any(), any())
+      yatterApi.postYweet(any(), any())
     } returns yweetJson
 
     val expect = YweetConverter.convertToDomainModel(yweetJson, isMe = true)
@@ -131,7 +131,7 @@ class YweetRepositoryImplSpec {
 
     coVerifyAll {
       tokenPreferences.getAccessToken()
-      yatterApi.postStatus(
+      yatterApi.postYweet(
         token,
         PostYweetJson(
           yweet = content,
@@ -142,7 +142,7 @@ class YweetRepositoryImplSpec {
   }
 
   @Test
-  fun postStatusWhenNotLoggedIn() = runTest {
+  fun postYweetWhenNotLoggedIn() = runTest {
     val username = null
     val content = "content"
 

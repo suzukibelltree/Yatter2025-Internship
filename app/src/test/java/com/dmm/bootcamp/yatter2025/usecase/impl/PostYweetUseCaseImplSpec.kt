@@ -22,7 +22,7 @@ class PostYweetUseCaseImplSpec {
   private val subject = PostYweetUseCaseImpl(yweetRepository)
 
   @Test
-  fun postStatusWithSuccess() = runTest {
+  fun postYweetWithSuccess() = runTest {
     val content = "content"
 
     val yweet = Yweet(
@@ -65,7 +65,7 @@ class PostYweetUseCaseImplSpec {
   }
 
   @Test
-  fun postStatusWithEmptyContent() = runTest {
+  fun postYweetWithEmptyContent() = runTest {
     val content = ""
 
     val result = subject.execute(
@@ -84,7 +84,7 @@ class PostYweetUseCaseImplSpec {
   }
 
   @Test
-  fun postStatusWithNotLoggedIn() = runTest {
+  fun postYweetWithNotLoggedIn() = runTest {
     val content = "content"
 
     coEvery {
@@ -111,7 +111,7 @@ class PostYweetUseCaseImplSpec {
   }
 
   @Test
-  fun postStatusWithOtherError() = runTest {
+  fun postYweetWithOtherError() = runTest {
     val content = "content"
     val exception = Exception()
 

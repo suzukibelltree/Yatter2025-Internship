@@ -29,7 +29,7 @@ class UserRepositoryImplSpec {
       header = "https://www.google.com",
       followingCount = 0,
       followersCount = 0,
-      createAt = ""
+      createdAt = ""
     )
 
     val expect = UserConverter.convertToDomainModel(userJson, isMe = true)
@@ -62,7 +62,7 @@ class UserRepositoryImplSpec {
       header = "https://www.google.com",
       followingCount = 0,
       followersCount = 0,
-      createAt = ""
+      createdAt = ""
     )
     val expect = UserConverter.convertToDomainModel(userJson, isMe = true)
 

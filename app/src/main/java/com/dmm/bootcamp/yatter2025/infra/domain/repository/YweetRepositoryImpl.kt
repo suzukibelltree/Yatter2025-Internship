@@ -37,7 +37,7 @@ class YweetRepositoryImpl(
     content: String,
     attachmentList: List<File>
   ): Yweet = withContext(IO) {
-    val yweetJson = yatterApi.postStatus(
+    val yweetJson = yatterApi.postYweet(
       tokenProvider.provide(),
       PostYweetJson(
         content,
