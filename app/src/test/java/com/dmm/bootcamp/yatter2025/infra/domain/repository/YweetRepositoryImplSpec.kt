@@ -5,14 +5,14 @@ import com.dmm.bootcamp.yatter2025.auth.TokenProvider
 import com.dmm.bootcamp.yatter2025.auth.TokenProviderImpl
 import com.dmm.bootcamp.yatter2025.domain.model.User
 import com.dmm.bootcamp.yatter2025.domain.model.UserId
-import com.dmm.bootcamp.yatter2025.domain.model.Status
-import com.dmm.bootcamp.yatter2025.domain.model.StatusId
+import com.dmm.bootcamp.yatter2025.domain.model.Yweet
+import com.dmm.bootcamp.yatter2025.domain.model.YweetId
 import com.dmm.bootcamp.yatter2025.domain.model.Username
 import com.dmm.bootcamp.yatter2025.infra.api.YatterApi
 import com.dmm.bootcamp.yatter2025.infra.api.json.UserJson
-import com.dmm.bootcamp.yatter2025.infra.api.json.PostStatusJson
-import com.dmm.bootcamp.yatter2025.infra.api.json.StatusJson
-import com.dmm.bootcamp.yatter2025.infra.domain.converter.StatusConverter
+import com.dmm.bootcamp.yatter2025.infra.api.json.PostYweetJson
+import com.dmm.bootcamp.yatter2025.infra.api.json.YweetJson
+import com.dmm.bootcamp.yatter2025.infra.domain.converter.YweetConverter
 import com.dmm.bootcamp.yatter2025.infra.pref.LoginUserPreferences
 import com.dmm.bootcamp.yatter2025.infra.pref.TokenPreferences
 import com.google.common.truth.Truth.assertThat
@@ -24,17 +24,17 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import java.net.URL
 
-class StatusRepositoryImplSpec {
+class YweetRepositoryImplSpec {
   private val yatterApi = mockk<YatterApi>()
   private val tokenPreferences = mockk<TokenPreferences>()
   private val tokenProvider: TokenProvider = TokenProviderImpl(tokenPreferences)
   private val loginUserPreferences = mockk<LoginUserPreferences>()
-  private val subject = StatusRepositoryImpl(yatterApi, tokenProvider, loginUserPreferences)
+  private val subject = YweetRepositoryImpl(yatterApi, tokenProvider, loginUserPreferences)
 
   @Test
   fun getPublicTimelineFromApi() = runTest {
     val jsonList = listOf(
-      StatusJson(
+      YweetJson(
         id = "id",
         user = UserJson(
           id = "id",
@@ -45,17 +45,17 @@ class StatusRepositoryImplSpec {
           header = "https://www.google.com",
           followingCount = 100,
           followersCount = 200,
-          createAt = "2023-06-02T12:44:35.030Z"
+          createdAt = "2023-06-02T12:44:35.030Z"
         ),
         content = "content",
-        createAt = "2023-06-02T12:44:35.030Z",
-        attachmentMediaList = emptyList(),
+        createdAt = "2023-06-02T12:44:35.030Z",
+        attachmentImageList = emptyList(),
       )
     )
 
     val expect = listOf(
-      Status(
-        id = StatusId(value = "id"),
+      Yweet(
+        id = YweetId(value = "id"),
         user = User(
           id = UserId("id"),
           username = Username("username"),
@@ -68,7 +68,7 @@ class StatusRepositoryImplSpec {
           isMe = false,
         ),
         content = "content",
-        attachmentMediaList = emptyList()
+        attachmentImageList = emptyList()
       )
     )
 
@@ -79,7 +79,7 @@ class StatusRepositoryImplSpec {
       loginUserPreferences.getUsername()
     } returns null
 
-    val result: List<Status> = subject.findAllPublic()
+    val result: List<Yweet> = subject.findAllPublic()
 
     coVerify {
       yatterApi.getPublicTimeline()
@@ -89,12 +89,12 @@ class StatusRepositoryImplSpec {
   }
 
   @Test
-  fun postStatusWhenLoggedIn() = runTest {
+  fun postYweetWhenLoggedIn() = runTest {
     val loginUsername = "token"
     val content = "content"
     val token = "username $loginUsername"
 
-    val statusJson = StatusJson(
+    val yweetJson = YweetJson(
       id = "id",
       user = UserJson(
         id = "id",
@@ -105,11 +105,11 @@ class StatusRepositoryImplSpec {
         header = "https://www.google.com",
         followingCount = 0,
         followersCount = 0,
-        createAt = ""
+        createdAt = ""
       ),
       content = content,
-      createAt = "",
-      attachmentMediaList = emptyList(),
+      createdAt = "",
+      attachmentImageList = emptyList(),
     )
 
     coEvery {
@@ -117,10 +117,10 @@ class StatusRepositoryImplSpec {
     } returns loginUsername
 
     coEvery {
-      yatterApi.postStatus(any(), any())
-    } returns statusJson
+      yatterApi.postYweet(any(), any())
+    } returns yweetJson
 
-    val expect = StatusConverter.convertToDomainModel(statusJson, isMe = true)
+    val expect = YweetConverter.convertToDomainModel(yweetJson, isMe = true)
 
     val result = subject.create(
       content,
@@ -131,18 +131,18 @@ class StatusRepositoryImplSpec {
 
     coVerifyAll {
       tokenPreferences.getAccessToken()
-      yatterApi.postStatus(
+      yatterApi.postYweet(
         token,
-        PostStatusJson(
-          status = content,
-          mediaList = emptyList()
+        PostYweetJson(
+          yweet = content,
+          imageList = emptyList()
         )
       )
     }
   }
 
   @Test
-  fun postStatusWhenNotLoggedIn() = runTest {
+  fun postYweetWhenNotLoggedIn() = runTest {
     val username = null
     val content = "content"
 
@@ -155,7 +155,7 @@ class StatusRepositoryImplSpec {
 
 
     var error: Throwable? = null
-    var result: Status? = null
+    var result: Yweet? = null
 
     try {
       result = subject.create(

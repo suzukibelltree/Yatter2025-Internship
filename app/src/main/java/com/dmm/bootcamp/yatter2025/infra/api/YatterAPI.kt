@@ -4,8 +4,8 @@ import com.dmm.bootcamp.yatter2025.infra.api.json.UserJson
 import com.dmm.bootcamp.yatter2025.infra.api.json.CreateUserJson
 import com.dmm.bootcamp.yatter2025.infra.api.json.LoginRequestBodyJson
 import com.dmm.bootcamp.yatter2025.infra.api.json.LoginResponseJson
-import com.dmm.bootcamp.yatter2025.infra.api.json.PostStatusJson
-import com.dmm.bootcamp.yatter2025.infra.api.json.StatusJson
+import com.dmm.bootcamp.yatter2025.infra.api.json.PostYweetJson
+import com.dmm.bootcamp.yatter2025.infra.api.json.YweetJson
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -23,19 +23,17 @@ interface YatterApi {
   @GET("timelines/home")
   suspend fun getHomeTimeline(
     @Header("Authentication") token: String,
-    @Query("only_media") onlyMedia: Boolean = false,
-    @Query("max_id") maxId: String? = null,
-    @Query("since_id") sinceId: String? = null,
+    @Query("only_image") onlyImage: Boolean = false,
+    @Query("offset") offset: Int = 0,
     @Query("limit") limit: Int = 40
-  ): List<StatusJson>
+  ): List<YweetJson>
 
   @GET("timelines/public")
   suspend fun getPublicTimeline(
-    @Query("only_media") onlyMedia: Boolean = false,
-    @Query("max_id") maxId: String? = null,
-    @Query("since_id") sinceId: String? = null,
+    @Query("only_image") onlyImage: Boolean = false,
+    @Query("offset") offset: Int = 0,
     @Query("limit") limit: Int = 80
-  ): List<StatusJson>
+  ): List<YweetJson>
 
   @POST("users")
   suspend fun createNewUser(
@@ -47,9 +45,9 @@ interface YatterApi {
     @Path("username") username: String
   ): UserJson
 
-  @POST("statuses")
-  suspend fun postStatus(
+  @POST("yweets")
+  suspend fun postYweet(
     @Header("Authentication") token: String,
-    @Body statusJson: PostStatusJson
-  ): StatusJson
+    @Body yweetJson: PostYweetJson
+  ): YweetJson
 }

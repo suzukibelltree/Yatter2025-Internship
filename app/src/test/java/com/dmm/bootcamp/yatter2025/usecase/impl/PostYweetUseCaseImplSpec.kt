@@ -3,12 +3,12 @@ package com.dmm.bootcamp.yatter2025.usecase.impl
 import android.accounts.AuthenticatorException
 import com.dmm.bootcamp.yatter2025.domain.model.User
 import com.dmm.bootcamp.yatter2025.domain.model.UserId
-import com.dmm.bootcamp.yatter2025.domain.model.Status
-import com.dmm.bootcamp.yatter2025.domain.model.StatusId
+import com.dmm.bootcamp.yatter2025.domain.model.Yweet
+import com.dmm.bootcamp.yatter2025.domain.model.YweetId
 import com.dmm.bootcamp.yatter2025.domain.model.Username
-import com.dmm.bootcamp.yatter2025.domain.repository.StatusRepository
-import com.dmm.bootcamp.yatter2025.usecase.impl.post.PostStatusUseCaseImpl
-import com.dmm.bootcamp.yatter2025.usecase.post.PostStatusUseCaseResult
+import com.dmm.bootcamp.yatter2025.domain.repository.YweetRepository
+import com.dmm.bootcamp.yatter2025.usecase.impl.post.PostYweetUseCaseImpl
+import com.dmm.bootcamp.yatter2025.usecase.post.PostYweetUseCaseResult
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -17,16 +17,16 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import java.net.URL
 
-class PostStatusUseCaseImplSpec {
-  private val statusRepository = mockk<StatusRepository>()
-  private val subject = PostStatusUseCaseImpl(statusRepository)
+class PostYweetUseCaseImplSpec {
+  private val yweetRepository = mockk<YweetRepository>()
+  private val subject = PostYweetUseCaseImpl(yweetRepository)
 
   @Test
-  fun postStatusWithSuccess() = runTest {
+  fun postYweetWithSuccess() = runTest {
     val content = "content"
 
-    val status = Status(
-      id = StatusId(value = ""),
+    val yweet = Yweet(
+      id = YweetId(value = ""),
       user = User(
         id = UserId(value = ""),
         username = Username(value = ""),
@@ -39,15 +39,15 @@ class PostStatusUseCaseImplSpec {
         isMe = true,
       ),
       content = content,
-      attachmentMediaList = listOf(),
+      attachmentImageList = listOf(),
     )
 
     coEvery {
-      statusRepository.create(
+      yweetRepository.create(
         any(),
         any(),
       )
-    } returns status
+    } returns yweet
 
     val result = subject.execute(
       content,
@@ -55,17 +55,17 @@ class PostStatusUseCaseImplSpec {
     )
 
     coVerify {
-      statusRepository.create(
+      yweetRepository.create(
         content,
         emptyList(),
       )
     }
 
-    assertThat(result).isEqualTo(PostStatusUseCaseResult.Success)
+    assertThat(result).isEqualTo(PostYweetUseCaseResult.Success)
   }
 
   @Test
-  fun postStatusWithEmptyContent() = runTest {
+  fun postYweetWithEmptyContent() = runTest {
     val content = ""
 
     val result = subject.execute(
@@ -74,21 +74,21 @@ class PostStatusUseCaseImplSpec {
     )
 
     coVerify(inverse = true) {
-      statusRepository.create(
+      yweetRepository.create(
         any(),
         any(),
       )
     }
 
-    assertThat(result).isEqualTo(PostStatusUseCaseResult.Failure.EmptyContent)
+    assertThat(result).isEqualTo(PostYweetUseCaseResult.Failure.EmptyContent)
   }
 
   @Test
-  fun postStatusWithNotLoggedIn() = runTest {
+  fun postYweetWithNotLoggedIn() = runTest {
     val content = "content"
 
     coEvery {
-      statusRepository.create(
+      yweetRepository.create(
         any(),
         any(),
       )
@@ -101,22 +101,22 @@ class PostStatusUseCaseImplSpec {
 
 
     coVerify {
-      statusRepository.create(
+      yweetRepository.create(
         any(),
         any(),
       )
     }
 
-    assertThat(result).isEqualTo(PostStatusUseCaseResult.Failure.NotLoggedIn)
+    assertThat(result).isEqualTo(PostYweetUseCaseResult.Failure.NotLoggedIn)
   }
 
   @Test
-  fun postStatusWithOtherError() = runTest {
+  fun postYweetWithOtherError() = runTest {
     val content = "content"
     val exception = Exception()
 
     coEvery {
-      statusRepository.create(
+      yweetRepository.create(
         any(),
         any(),
       )
@@ -129,12 +129,12 @@ class PostStatusUseCaseImplSpec {
 
 
     coVerify {
-      statusRepository.create(
+      yweetRepository.create(
         any(),
         any(),
       )
     }
 
-    assertThat(result).isEqualTo(PostStatusUseCaseResult.Failure.OtherError(exception))
+    assertThat(result).isEqualTo(PostYweetUseCaseResult.Failure.OtherError(exception))
   }
 }

@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class PostStatusJson(
-  val status: String,
-  @Json(name = "medias") val mediaList: List<PostStatusMediaJson>,
+data class PostYweetImageJson(
+  @Json(name = "image_id") val imageId: Int,
+  val description: String,
 )
