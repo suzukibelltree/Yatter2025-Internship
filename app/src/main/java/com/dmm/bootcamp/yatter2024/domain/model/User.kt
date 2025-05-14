@@ -3,8 +3,8 @@ package com.dmm.bootcamp.yatter2024.domain.model
 import com.dmm.bootcamp.yatter2024.common.ddd.Entity
 import java.net.URL
 
-data class Account(
-  override val id: AccountId,
+data class User(
+  override val id: UserId,
   val username: Username,
   val displayName: String?,
   val note: String?,
@@ -12,4 +12,5 @@ data class Account(
   val header: URL,
   val followingCount: Int,
   val followerCount: Int,
-) : Entity<AccountId>(id)
+  val isMe: Boolean,
+) : Entity<UserId>(id)

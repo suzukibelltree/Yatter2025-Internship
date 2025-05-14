@@ -1,13 +1,11 @@
 package com.dmm.bootcamp.yatter2024.infra.api
 
-import com.dmm.bootcamp.yatter2024.infra.api.json.AccountJson
-import com.dmm.bootcamp.yatter2024.infra.api.json.CreateAccountJson
-import com.dmm.bootcamp.yatter2024.infra.api.json.FollowAccountJson
+import com.dmm.bootcamp.yatter2024.infra.api.json.UserJson
+import com.dmm.bootcamp.yatter2024.infra.api.json.CreateUserJson
 import com.dmm.bootcamp.yatter2024.infra.api.json.LoginRequestBodyJson
 import com.dmm.bootcamp.yatter2024.infra.api.json.LoginResponseJson
 import com.dmm.bootcamp.yatter2024.infra.api.json.PostStatusJson
 import com.dmm.bootcamp.yatter2024.infra.api.json.StatusJson
-import kotlinx.coroutines.Deferred
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -39,15 +37,15 @@ interface YatterApi {
     @Query("limit") limit: Int = 80
   ): List<StatusJson>
 
-  @POST("accounts")
-  suspend fun createNewAccount(
-    @Body accountJson: CreateAccountJson
-  ): AccountJson
+  @POST("users")
+  suspend fun createNewUser(
+    @Body userJson: CreateUserJson
+  ): UserJson
 
-  @GET("accounts/{username}")
-  suspend fun getAccountByUsername(
+  @GET("users/{username}")
+  suspend fun getUserByUsername(
     @Path("username") username: String
-  ): AccountJson
+  ): UserJson
 
   @POST("statuses")
   suspend fun postStatus(

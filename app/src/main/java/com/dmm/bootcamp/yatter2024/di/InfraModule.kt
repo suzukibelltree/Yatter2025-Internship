@@ -3,12 +3,12 @@ package com.dmm.bootcamp.yatter2024.di
 import com.dmm.bootcamp.yatter2024.auth.TokenProvider
 import com.dmm.bootcamp.yatter2024.auth.TokenProviderImpl
 import com.dmm.bootcamp.yatter2024.infra.api.YatterApiFactory
-import com.dmm.bootcamp.yatter2024.infra.pref.LoginAccountPreferences
+import com.dmm.bootcamp.yatter2024.infra.pref.LoginUserPreferences
 import com.dmm.bootcamp.yatter2024.infra.pref.TokenPreferences
 import org.koin.dsl.module
 
 internal val infraModule = module {
-  single { LoginAccountPreferences(get()) }
+  single { LoginUserPreferences(get()) }
   single { TokenPreferences(get()) }
   single { YatterApiFactory().create() }
 

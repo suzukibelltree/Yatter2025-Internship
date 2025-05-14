@@ -4,7 +4,7 @@ import com.dmm.bootcamp.yatter2024.common.ddd.Entity
 
 class Status(
   id: StatusId,
-  val account: Account,
+  val user: User,
   val content: String,
   val attachmentMediaList: List<Media>
 ) : Entity<StatusId>(id)

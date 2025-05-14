@@ -35,7 +35,7 @@ class MediaBindingModel {
 
 package domain {
 
-class Account {
+class User {
   + username: Username
   + displayName: String?
   + note: String?
@@ -47,7 +47,7 @@ class Account {
 
 class Status {
   + id: StatusId
-  + account: Account
+  + user: User
   + content: String
   + attachmentMediaList: List<Media>
 }
@@ -97,9 +97,9 @@ StatusBindingModel -- MediaBindingModel
 
 StatusRepository -- Status
 Status -- StatusId
-Status -- Account
+Status -- User
 Status -- Media
 Media -- MediaId
-Account -- Username
+User -- Username
 
 @enduml
