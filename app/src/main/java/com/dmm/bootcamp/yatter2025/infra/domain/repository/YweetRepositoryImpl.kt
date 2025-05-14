@@ -6,7 +6,7 @@ import com.dmm.bootcamp.yatter2025.domain.repository.YweetRepository
 import com.dmm.bootcamp.yatter2025.auth.TokenProvider
 import com.dmm.bootcamp.yatter2025.infra.api.YatterApi
 import com.dmm.bootcamp.yatter2025.infra.api.json.PostYweetJson
-import com.dmm.bootcamp.yatter2025.infra.domain.converter.StatusConverter
+import com.dmm.bootcamp.yatter2025.infra.domain.converter.YweetConverter
 import com.dmm.bootcamp.yatter2025.infra.pref.LoginUserPreferences
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
@@ -23,28 +23,28 @@ class YweetRepositoryImpl(
 
   override suspend fun findAllPublic(): List<Yweet> = withContext(IO) {
     val loginUsername = loginUserPreferences.getUsername()
-    val statusList = yatterApi.getPublicTimeline()
-    StatusConverter.convertToDomainModel(statusList, loginUsername = loginUsername)
+    val yweetList = yatterApi.getPublicTimeline()
+    YweetConverter.convertToDomainModel(yweetList, loginUsername = loginUsername)
   }
 
   override suspend fun findAllHome(): List<Yweet> = withContext(IO) {
     val loginUsername = loginUserPreferences.getUsername()
-    val statusList = yatterApi.getHomeTimeline(tokenProvider.provide())
-    StatusConverter.convertToDomainModel(statusList, loginUsername)
+    val yweetList = yatterApi.getHomeTimeline(tokenProvider.provide())
+    YweetConverter.convertToDomainModel(yweetList, loginUsername)
   }
 
   override suspend fun create(
     content: String,
     attachmentList: List<File>
   ): Yweet = withContext(IO) {
-    val statusJson = yatterApi.postStatus(
+    val yweetJson = yatterApi.postStatus(
       tokenProvider.provide(),
       PostYweetJson(
         content,
         listOf()
       )
     )
-    StatusConverter.convertToDomainModel(statusJson, isMe = true)
+    YweetConverter.convertToDomainModel(yweetJson, isMe = true)
   }
 
   override suspend fun delete(yweet: Yweet) {

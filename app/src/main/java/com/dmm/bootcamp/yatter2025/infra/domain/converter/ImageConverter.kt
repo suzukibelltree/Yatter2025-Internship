@@ -4,7 +4,7 @@ import com.dmm.bootcamp.yatter2025.domain.model.Image
 import com.dmm.bootcamp.yatter2025.domain.model.ImageId
 import com.dmm.bootcamp.yatter2025.infra.api.json.ImageJson
 
-object MediaConverter {
+object ImageConverter {
   fun convertToDomainModel(jsonList: List<ImageJson>): List<Image> =
     jsonList.map { convertToDomainModel(it) }
 

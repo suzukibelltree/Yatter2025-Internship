@@ -12,7 +12,7 @@ import com.dmm.bootcamp.yatter2025.infra.api.YatterApi
 import com.dmm.bootcamp.yatter2025.infra.api.json.UserJson
 import com.dmm.bootcamp.yatter2025.infra.api.json.PostYweetJson
 import com.dmm.bootcamp.yatter2025.infra.api.json.YweetJson
-import com.dmm.bootcamp.yatter2025.infra.domain.converter.StatusConverter
+import com.dmm.bootcamp.yatter2025.infra.domain.converter.YweetConverter
 import com.dmm.bootcamp.yatter2025.infra.pref.LoginUserPreferences
 import com.dmm.bootcamp.yatter2025.infra.pref.TokenPreferences
 import com.google.common.truth.Truth.assertThat
@@ -120,7 +120,7 @@ class YweetRepositoryImplSpec {
       yatterApi.postStatus(any(), any())
     } returns yweetJson
 
-    val expect = StatusConverter.convertToDomainModel(yweetJson, isMe = true)
+    val expect = YweetConverter.convertToDomainModel(yweetJson, isMe = true)
 
     val result = subject.create(
       content,

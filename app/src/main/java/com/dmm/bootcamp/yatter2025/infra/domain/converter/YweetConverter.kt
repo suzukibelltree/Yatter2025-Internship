@@ -4,7 +4,7 @@ import com.dmm.bootcamp.yatter2025.domain.model.Yweet
 import com.dmm.bootcamp.yatter2025.domain.model.YweetId
 import com.dmm.bootcamp.yatter2025.infra.api.json.YweetJson
 
-object StatusConverter {
+object YweetConverter {
   fun convertToDomainModel(jsonList: List<YweetJson>, loginUsername: String?): List<Yweet> =
     jsonList.map {
       convertToDomainModel(it, isMe = it.user.username == loginUsername)
@@ -14,6 +14,6 @@ object StatusConverter {
     id = YweetId(json.id),
     user = UserConverter.convertToDomainModel(json.user, isMe = isMe),
     content = json.content ?: "",
-    attachmentImageList =  MediaConverter.convertToDomainModel(json.attachmentImageList)
+    attachmentImageList =  ImageConverter.convertToDomainModel(json.attachmentImageList)
   )
 }
