@@ -3,8 +3,8 @@ package com.dmm.bootcamp.yatter2024.domain.model
 import com.dmm.bootcamp.yatter2024.common.ddd.Entity
 import java.net.URL
 
-abstract class Account(
-  id: AccountId,
+data class User(
+  override val id: UserId,
   val username: Username,
   val displayName: String?,
   val note: String?,
@@ -12,9 +12,5 @@ abstract class Account(
   val header: URL,
   val followingCount: Int,
   val followerCount: Int,
-) : Entity<AccountId>(id) {
-
-  abstract suspend fun followings(): List<Account>
-
-  abstract suspend fun followers(): List<Account>
-}
+  val isMe: Boolean,
+) : Entity<UserId>(id)

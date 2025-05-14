@@ -7,6 +7,6 @@ internal val viewModelModule = module {
 //  viewModel { MainViewModel(get()) }
 //  viewModel { PublicTimelineViewModel(get()) }
 //  viewModel { PostViewModel(get(), get()) }
-//  viewModel { RegisterAccountViewModel(get()) }
+//  viewModel { RegisterUserViewModel(get()) }
 //  viewModel { LoginViewModel(get()) }
 }

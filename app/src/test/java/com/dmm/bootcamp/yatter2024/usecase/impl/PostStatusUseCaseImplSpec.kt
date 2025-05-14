@@ -1,12 +1,12 @@
 package com.dmm.bootcamp.yatter2024.usecase.impl
 
 import android.accounts.AuthenticatorException
-import com.dmm.bootcamp.yatter2024.domain.model.AccountId
+import com.dmm.bootcamp.yatter2024.domain.model.User
+import com.dmm.bootcamp.yatter2024.domain.model.UserId
 import com.dmm.bootcamp.yatter2024.domain.model.Status
 import com.dmm.bootcamp.yatter2024.domain.model.StatusId
 import com.dmm.bootcamp.yatter2024.domain.model.Username
 import com.dmm.bootcamp.yatter2024.domain.repository.StatusRepository
-import com.dmm.bootcamp.yatter2024.infra.domain.model.MeImpl
 import com.dmm.bootcamp.yatter2024.usecase.impl.post.PostStatusUseCaseImpl
 import com.dmm.bootcamp.yatter2024.usecase.post.PostStatusUseCaseResult
 import com.google.common.truth.Truth.assertThat
@@ -27,15 +27,16 @@ class PostStatusUseCaseImplSpec {
 
     val status = Status(
       id = StatusId(value = ""),
-      account = MeImpl(
-        id = AccountId(value = ""),
+      user = User(
+        id = UserId(value = ""),
         username = Username(value = ""),
         displayName = null,
         note = null,
         avatar = URL("https://www.google.com"),
         header = URL("https://www.google.com"),
         followingCount = 0,
-        followerCount = 0
+        followerCount = 0,
+        isMe = true,
       ),
       content = content,
       attachmentMediaList = listOf(),
