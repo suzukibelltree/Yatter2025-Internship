@@ -29,7 +29,7 @@ class YweetRepositoryImplSpec {
   private val tokenPreferences = mockk<TokenPreferences>()
   private val tokenProvider: TokenProvider = TokenProviderImpl(tokenPreferences)
   private val loginUserPreferences = mockk<LoginUserPreferences>()
-  private val subject = StatusRepositoryImpl(yatterApi, tokenProvider, loginUserPreferences)
+  private val subject = YweetRepositoryImpl(yatterApi, tokenProvider, loginUserPreferences)
 
   @Test
   fun getPublicTimelineFromApi() = runTest {

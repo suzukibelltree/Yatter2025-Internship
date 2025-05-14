@@ -4,7 +4,7 @@ import com.dmm.bootcamp.yatter2025.domain.model.Yweet
 import com.dmm.bootcamp.yatter2025.domain.model.YweetId
 import java.io.File
 
-interface StatusRepository {
+interface YweetRepository {
   suspend fun findById(id: YweetId): Yweet?
 
   suspend fun findAllPublic(): List<Yweet>

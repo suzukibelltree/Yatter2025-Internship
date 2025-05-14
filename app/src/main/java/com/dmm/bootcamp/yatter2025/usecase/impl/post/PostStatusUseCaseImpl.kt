@@ -1,13 +1,13 @@
 package com.dmm.bootcamp.yatter2025.usecase.impl.post
 
 import android.accounts.AuthenticatorException
-import com.dmm.bootcamp.yatter2025.domain.repository.StatusRepository
+import com.dmm.bootcamp.yatter2025.domain.repository.YweetRepository
 import com.dmm.bootcamp.yatter2025.usecase.post.PostStatusUseCase
 import com.dmm.bootcamp.yatter2025.usecase.post.PostStatusUseCaseResult
 import java.io.File
 
 class PostStatusUseCaseImpl(
-  private val statusRepository: StatusRepository
+  private val yweetRepository: YweetRepository
 ) : PostStatusUseCase {
   override suspend fun execute(
     content: String,
@@ -18,7 +18,7 @@ class PostStatusUseCaseImpl(
     }
 
     return try {
-      statusRepository.create(
+      yweetRepository.create(
         content = content,
         attachmentList = emptyList()
       )

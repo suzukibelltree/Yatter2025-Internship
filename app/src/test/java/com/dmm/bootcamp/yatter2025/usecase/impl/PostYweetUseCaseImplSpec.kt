@@ -6,7 +6,7 @@ import com.dmm.bootcamp.yatter2025.domain.model.UserId
 import com.dmm.bootcamp.yatter2025.domain.model.Yweet
 import com.dmm.bootcamp.yatter2025.domain.model.YweetId
 import com.dmm.bootcamp.yatter2025.domain.model.Username
-import com.dmm.bootcamp.yatter2025.domain.repository.StatusRepository
+import com.dmm.bootcamp.yatter2025.domain.repository.YweetRepository
 import com.dmm.bootcamp.yatter2025.usecase.impl.post.PostStatusUseCaseImpl
 import com.dmm.bootcamp.yatter2025.usecase.post.PostStatusUseCaseResult
 import com.google.common.truth.Truth.assertThat
@@ -18,8 +18,8 @@ import org.junit.Test
 import java.net.URL
 
 class PostYweetUseCaseImplSpec {
-  private val statusRepository = mockk<StatusRepository>()
-  private val subject = PostStatusUseCaseImpl(statusRepository)
+  private val yweetRepository = mockk<YweetRepository>()
+  private val subject = PostStatusUseCaseImpl(yweetRepository)
 
   @Test
   fun postStatusWithSuccess() = runTest {
@@ -43,7 +43,7 @@ class PostYweetUseCaseImplSpec {
     )
 
     coEvery {
-      statusRepository.create(
+      yweetRepository.create(
         any(),
         any(),
       )
@@ -55,7 +55,7 @@ class PostYweetUseCaseImplSpec {
     )
 
     coVerify {
-      statusRepository.create(
+      yweetRepository.create(
         content,
         emptyList(),
       )
@@ -74,7 +74,7 @@ class PostYweetUseCaseImplSpec {
     )
 
     coVerify(inverse = true) {
-      statusRepository.create(
+      yweetRepository.create(
         any(),
         any(),
       )
@@ -88,7 +88,7 @@ class PostYweetUseCaseImplSpec {
     val content = "content"
 
     coEvery {
-      statusRepository.create(
+      yweetRepository.create(
         any(),
         any(),
       )
@@ -101,7 +101,7 @@ class PostYweetUseCaseImplSpec {
 
 
     coVerify {
-      statusRepository.create(
+      yweetRepository.create(
         any(),
         any(),
       )
@@ -116,7 +116,7 @@ class PostYweetUseCaseImplSpec {
     val exception = Exception()
 
     coEvery {
-      statusRepository.create(
+      yweetRepository.create(
         any(),
         any(),
       )
@@ -129,7 +129,7 @@ class PostYweetUseCaseImplSpec {
 
 
     coVerify {
-      statusRepository.create(
+      yweetRepository.create(
         any(),
         any(),
       )

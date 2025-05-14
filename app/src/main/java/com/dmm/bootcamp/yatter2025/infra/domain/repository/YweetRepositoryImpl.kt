@@ -2,7 +2,7 @@ package com.dmm.bootcamp.yatter2025.infra.domain.repository
 
 import com.dmm.bootcamp.yatter2025.domain.model.Yweet
 import com.dmm.bootcamp.yatter2025.domain.model.YweetId
-import com.dmm.bootcamp.yatter2025.domain.repository.StatusRepository
+import com.dmm.bootcamp.yatter2025.domain.repository.YweetRepository
 import com.dmm.bootcamp.yatter2025.auth.TokenProvider
 import com.dmm.bootcamp.yatter2025.infra.api.YatterApi
 import com.dmm.bootcamp.yatter2025.infra.api.json.PostStatusJson
@@ -12,11 +12,11 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class StatusRepositoryImpl(
+class YweetRepositoryImpl(
   private val yatterApi: YatterApi,
   private val tokenProvider: TokenProvider,
   private val loginUserPreferences: LoginUserPreferences,
-) : StatusRepository {
+) : YweetRepository {
   override suspend fun findById(id: YweetId): Yweet? {
     TODO("Not yet implemented")
   }
