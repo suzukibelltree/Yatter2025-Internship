@@ -2,19 +2,19 @@ package com.dmm.bootcamp.yatter2025.usecase.impl.post
 
 import android.accounts.AuthenticatorException
 import com.dmm.bootcamp.yatter2025.domain.repository.YweetRepository
-import com.dmm.bootcamp.yatter2025.usecase.post.PostStatusUseCase
-import com.dmm.bootcamp.yatter2025.usecase.post.PostStatusUseCaseResult
+import com.dmm.bootcamp.yatter2025.usecase.post.PostYweetUseCase
+import com.dmm.bootcamp.yatter2025.usecase.post.PostYweetUseCaseResult
 import java.io.File
 
-class PostStatusUseCaseImpl(
+class PostYweetUseCaseImpl(
   private val yweetRepository: YweetRepository
-) : PostStatusUseCase {
+) : PostYweetUseCase {
   override suspend fun execute(
     content: String,
     attachmentList: List<File>
-  ): PostStatusUseCaseResult {
+  ): PostYweetUseCaseResult {
     if (content == "" && attachmentList.isEmpty()) {
-      return PostStatusUseCaseResult.Failure.EmptyContent
+      return PostYweetUseCaseResult.Failure.EmptyContent
     }
 
     return try {
@@ -23,11 +23,11 @@ class PostStatusUseCaseImpl(
         attachmentList = emptyList()
       )
 
-      PostStatusUseCaseResult.Success
+      PostYweetUseCaseResult.Success
     } catch (e: AuthenticatorException) {
-      PostStatusUseCaseResult.Failure.NotLoggedIn
+      PostYweetUseCaseResult.Failure.NotLoggedIn
     } catch (e: Exception) {
-      PostStatusUseCaseResult.Failure.OtherError(e)
+      PostYweetUseCaseResult.Failure.OtherError(e)
     }
   }
 }

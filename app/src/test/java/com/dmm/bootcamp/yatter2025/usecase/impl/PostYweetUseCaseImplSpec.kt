@@ -7,8 +7,8 @@ import com.dmm.bootcamp.yatter2025.domain.model.Yweet
 import com.dmm.bootcamp.yatter2025.domain.model.YweetId
 import com.dmm.bootcamp.yatter2025.domain.model.Username
 import com.dmm.bootcamp.yatter2025.domain.repository.YweetRepository
-import com.dmm.bootcamp.yatter2025.usecase.impl.post.PostStatusUseCaseImpl
-import com.dmm.bootcamp.yatter2025.usecase.post.PostStatusUseCaseResult
+import com.dmm.bootcamp.yatter2025.usecase.impl.post.PostYweetUseCaseImpl
+import com.dmm.bootcamp.yatter2025.usecase.post.PostYweetUseCaseResult
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -19,7 +19,7 @@ import java.net.URL
 
 class PostYweetUseCaseImplSpec {
   private val yweetRepository = mockk<YweetRepository>()
-  private val subject = PostStatusUseCaseImpl(yweetRepository)
+  private val subject = PostYweetUseCaseImpl(yweetRepository)
 
   @Test
   fun postStatusWithSuccess() = runTest {
@@ -61,7 +61,7 @@ class PostYweetUseCaseImplSpec {
       )
     }
 
-    assertThat(result).isEqualTo(PostStatusUseCaseResult.Success)
+    assertThat(result).isEqualTo(PostYweetUseCaseResult.Success)
   }
 
   @Test
@@ -80,7 +80,7 @@ class PostYweetUseCaseImplSpec {
       )
     }
 
-    assertThat(result).isEqualTo(PostStatusUseCaseResult.Failure.EmptyContent)
+    assertThat(result).isEqualTo(PostYweetUseCaseResult.Failure.EmptyContent)
   }
 
   @Test
@@ -107,7 +107,7 @@ class PostYweetUseCaseImplSpec {
       )
     }
 
-    assertThat(result).isEqualTo(PostStatusUseCaseResult.Failure.NotLoggedIn)
+    assertThat(result).isEqualTo(PostYweetUseCaseResult.Failure.NotLoggedIn)
   }
 
   @Test
@@ -135,6 +135,6 @@ class PostYweetUseCaseImplSpec {
       )
     }
 
-    assertThat(result).isEqualTo(PostStatusUseCaseResult.Failure.OtherError(exception))
+    assertThat(result).isEqualTo(PostYweetUseCaseResult.Failure.OtherError(exception))
   }
 }
