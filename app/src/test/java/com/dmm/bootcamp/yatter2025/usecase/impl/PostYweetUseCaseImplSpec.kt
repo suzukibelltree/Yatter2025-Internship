@@ -3,8 +3,8 @@ package com.dmm.bootcamp.yatter2025.usecase.impl
 import android.accounts.AuthenticatorException
 import com.dmm.bootcamp.yatter2025.domain.model.User
 import com.dmm.bootcamp.yatter2025.domain.model.UserId
-import com.dmm.bootcamp.yatter2025.domain.model.Status
-import com.dmm.bootcamp.yatter2025.domain.model.StatusId
+import com.dmm.bootcamp.yatter2025.domain.model.Yweet
+import com.dmm.bootcamp.yatter2025.domain.model.YweetId
 import com.dmm.bootcamp.yatter2025.domain.model.Username
 import com.dmm.bootcamp.yatter2025.domain.repository.StatusRepository
 import com.dmm.bootcamp.yatter2025.usecase.impl.post.PostStatusUseCaseImpl
@@ -17,7 +17,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import java.net.URL
 
-class PostStatusUseCaseImplSpec {
+class PostYweetUseCaseImplSpec {
   private val statusRepository = mockk<StatusRepository>()
   private val subject = PostStatusUseCaseImpl(statusRepository)
 
@@ -25,8 +25,8 @@ class PostStatusUseCaseImplSpec {
   fun postStatusWithSuccess() = runTest {
     val content = "content"
 
-    val status = Status(
-      id = StatusId(value = ""),
+    val yweet = Yweet(
+      id = YweetId(value = ""),
       user = User(
         id = UserId(value = ""),
         username = Username(value = ""),
@@ -39,7 +39,7 @@ class PostStatusUseCaseImplSpec {
         isMe = true,
       ),
       content = content,
-      attachmentMediaList = listOf(),
+      attachmentImageList = listOf(),
     )
 
     coEvery {
@@ -47,7 +47,7 @@ class PostStatusUseCaseImplSpec {
         any(),
         any(),
       )
-    } returns status
+    } returns yweet
 
     val result = subject.execute(
       content,

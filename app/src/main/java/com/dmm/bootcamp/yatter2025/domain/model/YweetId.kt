@@ -2,4 +2,4 @@ package com.dmm.bootcamp.yatter2025.domain.model
 
 import com.dmm.bootcamp.yatter2025.common.ddd.Identifier
 
-class StatusId(value: String) : Identifier<String>(value)
+class YweetId(value: String) : Identifier<String>(value)

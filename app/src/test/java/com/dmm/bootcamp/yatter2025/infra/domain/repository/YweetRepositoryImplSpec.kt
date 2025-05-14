@@ -5,8 +5,8 @@ import com.dmm.bootcamp.yatter2025.auth.TokenProvider
 import com.dmm.bootcamp.yatter2025.auth.TokenProviderImpl
 import com.dmm.bootcamp.yatter2025.domain.model.User
 import com.dmm.bootcamp.yatter2025.domain.model.UserId
-import com.dmm.bootcamp.yatter2025.domain.model.Status
-import com.dmm.bootcamp.yatter2025.domain.model.StatusId
+import com.dmm.bootcamp.yatter2025.domain.model.Yweet
+import com.dmm.bootcamp.yatter2025.domain.model.YweetId
 import com.dmm.bootcamp.yatter2025.domain.model.Username
 import com.dmm.bootcamp.yatter2025.infra.api.YatterApi
 import com.dmm.bootcamp.yatter2025.infra.api.json.UserJson
@@ -24,7 +24,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import java.net.URL
 
-class StatusRepositoryImplSpec {
+class YweetRepositoryImplSpec {
   private val yatterApi = mockk<YatterApi>()
   private val tokenPreferences = mockk<TokenPreferences>()
   private val tokenProvider: TokenProvider = TokenProviderImpl(tokenPreferences)
@@ -54,8 +54,8 @@ class StatusRepositoryImplSpec {
     )
 
     val expect = listOf(
-      Status(
-        id = StatusId(value = "id"),
+      Yweet(
+        id = YweetId(value = "id"),
         user = User(
           id = UserId("id"),
           username = Username("username"),
@@ -68,7 +68,7 @@ class StatusRepositoryImplSpec {
           isMe = false,
         ),
         content = "content",
-        attachmentMediaList = emptyList()
+        attachmentImageList = emptyList()
       )
     )
 
@@ -79,7 +79,7 @@ class StatusRepositoryImplSpec {
       loginUserPreferences.getUsername()
     } returns null
 
-    val result: List<Status> = subject.findAllPublic()
+    val result: List<Yweet> = subject.findAllPublic()
 
     coVerify {
       yatterApi.getPublicTimeline()
@@ -155,7 +155,7 @@ class StatusRepositoryImplSpec {
 
 
     var error: Throwable? = null
-    var result: Status? = null
+    var result: Yweet? = null
 
     try {
       result = subject.create(

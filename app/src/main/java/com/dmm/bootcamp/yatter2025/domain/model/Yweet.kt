@@ -2,9 +2,9 @@ package com.dmm.bootcamp.yatter2025.domain.model
 
 import com.dmm.bootcamp.yatter2025.common.ddd.Entity
 
-class Status(
-  id: StatusId,
+class Yweet(
+  id: YweetId,
   val user: User,
   val content: String,
-  val attachmentMediaList: List<Media>
-) : Entity<StatusId>(id)
+  val attachmentImageList: List<Image>
+) : Entity<YweetId>(id)
