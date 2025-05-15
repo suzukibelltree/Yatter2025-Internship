@@ -4,7 +4,7 @@
 
 ツイート画面用に新規作成したDI実装を行う対象は次になります。  
 
-- `GetMeService`
+- `GetLoginUserService`
 - `UserRepository`
 - `PostYweetUseCase`
 - `PostViewModel`
@@ -17,7 +17,7 @@ internal val domainImplModule = module {
   single<UserRepository> { UserRepositoryImpl(get(), get()) }
   ...
 
-  factory<GetMeService> { GetMeServiceImpl(get()) }
+  factory<GetLoginUserService> { GetLoginUserServiceImpl(get()) }
 }
 
 // UseCaseModule

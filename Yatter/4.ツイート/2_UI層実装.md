@@ -44,12 +44,12 @@ data class PostUiState(
 ## ViewModelの実装
 ViewModelの実装に移ります。  
 `ui/post`パッケージに`PostViewModel`クラスを作成しましょう。  
-投稿用のUseCaseである`PostYweetUseCase`とログインユーザーの情報を取得する`getMeService`も引数に追加します。  
+投稿用のUseCaseである`PostYweetUseCase`とログインユーザーの情報を取得する`getLoginUserService`も引数に追加します。  
 
 ```Kotlin
 class PostViewModel(
   private val postYweetUseCase: PostYweetUseCase,
-  private val getMeService: GetMeService,
+  private val getLoginUserService: GetLoginUserService,
 ) : ViewModel() {}
 ```
 
@@ -85,7 +85,7 @@ class PostViewModel(...) : ViewModel() {
 ```
 
 `onCreate`でユーザー情報取得する部分から実装します。  
-`GetMeService`でログイン済みのユーザーを取得し、必要なアバター画像の情報のみをUiStateに更新します。  
+`GetLoginUserService`でログイン済みのユーザーを取得し、必要なアバター画像の情報のみをUiStateに更新します。  
 読み込みを行うため、`isLoading`も更新してローディング表示するようにしましょう。  
 
 ```Kotlin
@@ -93,7 +93,7 @@ fun onCreate() {
   viewModelScope.launch {
     _uiState.update { it.copy(isLoading = true) }
 
-    val me = getMeService.execute()
+    val me = getLoginUserService.execute()
 
     val snapshotBindingModel = uiState.value.bindingModel
     _uiState.update {
@@ -228,7 +228,7 @@ fun PostTemplate(
 ) {}
 ```
 
-続いてプレビュー側にも引数とテストようの値を追加します。
+続いてプレビュー側にも引数とテスト用の値を追加します。
 
 ```Kotlin
 @Preview
