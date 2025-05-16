@@ -485,7 +485,7 @@ import com.dmm.bootcamp.yatter2024.infra.domain.UserImpl
 import java.net.URL
 
 object UserConverter {
-  fun convertToDomainModel(json: UserJson, isMe: Boolean) = User(
+  fun convertToDomainModel(json: UserJson) = User(
     id = UserId(json.id),
     username = Username(json.username),
     displayName = json.displayName,
@@ -494,14 +494,11 @@ object UserConverter {
     header = URL(json.header),
     followingCount = json.followingCount,
     followerCount = json.followersCount,
-    isMe = isMe,
   )
 }
 ```
 
 ### YweetConverter
-`UserConverter.convertToDomainModel`で指定している`isMe`は`User`がログイン中のユーザーであるのかを指定するためのフラグです。  
-本来は、ログイン情報を利用して変更されるようにすべきですが、現時点のアプリにはログイン機能が存在しないため、`false`で固定しています。
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.infra.domain.converter
 
@@ -515,7 +512,7 @@ object YweetConverter {
 
   fun convertToDomainModel(json: YweetJson): Yweet = Yweet(
     id = YweetId(json.id),
-    user = UserConverter.convertToDomainModel(json.user, isMe = false),
+    user = UserConverter.convertToDomainModel(json.user),
     content = json.content ?: "",
     attachmentImageList = ImageConverter.convertToDomainModel(json.attachmentImageList),
   )
@@ -644,7 +641,6 @@ val expect = listOf(
       header = URL("https://www.google.com"),
       followingCount = 100,
       followerCount = 200
-      isMe = false,
     ),
     content = "content",
     attachmentImageList = emptyList()

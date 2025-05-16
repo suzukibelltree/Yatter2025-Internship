@@ -60,7 +60,6 @@ fun getPublicTimelineFromRepository() = runTest {
         header = URL("https://www.google.com"),
         followingCount = 100,
         followerCount = 200,
-        isMe = false,
       ),
       content = "content",
       attachmentImageList = listOf()
@@ -100,7 +99,6 @@ fun onRefreshPublicTimeline() = runTest {
         header = URL("https://www.google.com"),
         followingCount = 100,
         followerCount = 200,
-        isMe = false,
       ),
       content = "content",
       attachmentImageList = listOf()
