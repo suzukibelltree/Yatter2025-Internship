@@ -26,7 +26,6 @@ class GetLoginUserServiceImplSpec {
       header = URL("https://www.google.com"),
       followingCount = 0,
       followerCount = 0,
-      isMe = true,
     )
 
     coEvery { userRepository.findLoginUser(disableCache = any()) } returns user

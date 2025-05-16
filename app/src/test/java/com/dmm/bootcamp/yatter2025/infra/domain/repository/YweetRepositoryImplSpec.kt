@@ -28,8 +28,7 @@ class YweetRepositoryImplSpec {
   private val yatterApi = mockk<YatterApi>()
   private val tokenPreferences = mockk<TokenPreferences>()
   private val tokenProvider: TokenProvider = TokenProviderImpl(tokenPreferences)
-  private val loginUserPreferences = mockk<LoginUserPreferences>()
-  private val subject = YweetRepositoryImpl(yatterApi, tokenProvider, loginUserPreferences)
+  private val subject = YweetRepositoryImpl(yatterApi, tokenProvider)
 
   @Test
   fun getPublicTimelineFromApi() = runTest {
@@ -65,7 +64,6 @@ class YweetRepositoryImplSpec {
           header = URL("https://www.google.com"),
           followingCount = 100,
           followerCount = 200,
-          isMe = false,
         ),
         content = "content",
         attachmentImageList = emptyList()
@@ -75,9 +73,6 @@ class YweetRepositoryImplSpec {
     coEvery {
       yatterApi.getPublicTimeline()
     } returns jsonList
-    coEvery {
-      loginUserPreferences.getUsername()
-    } returns null
 
     val result: List<Yweet> = subject.findAllPublic()
 
@@ -120,7 +115,7 @@ class YweetRepositoryImplSpec {
       yatterApi.postYweet(any(), any())
     } returns yweetJson
 
-    val expect = YweetConverter.convertToDomainModel(yweetJson, isMe = true)
+    val expect = YweetConverter.convertToDomainModel(yweetJson)
 
     val result = subject.create(
       content,
@@ -143,12 +138,8 @@ class YweetRepositoryImplSpec {
 
   @Test
   fun postYweetWhenNotLoggedIn() = runTest {
-    val username = null
     val content = "content"
 
-    coEvery {
-      loginUserPreferences.getUsername()
-    } returns username
     coEvery {
       tokenProvider.provide()
     } throws AuthenticatorException()

@@ -36,7 +36,6 @@ class PostYweetUseCaseImplSpec {
         header = URL("https://www.google.com"),
         followingCount = 0,
         followerCount = 0,
-        isMe = true,
       ),
       content = content,
       attachmentImageList = listOf(),
