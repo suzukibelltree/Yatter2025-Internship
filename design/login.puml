@@ -27,6 +27,14 @@ package infra {
       + putAccessToken(token: String?)
       + clear()
     }
+
+    class LoginUserPreferences {
+      - context: Context
+      - sharedPreferences: SharedPreferences
+      + getUsername(): String
+      + putUsername(username: String?)
+      + clear()
+    }
   }
 
   package domain {
