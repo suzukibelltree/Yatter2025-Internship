@@ -19,7 +19,7 @@ class LoginUserPreferences(context: Context) {
     ""
   )
 
-  fun putUserName(username: String?) {
+  fun putUsername(username: String?) {
     sharedPreferences.edit {
       putString(
         KEY_USERNAME,

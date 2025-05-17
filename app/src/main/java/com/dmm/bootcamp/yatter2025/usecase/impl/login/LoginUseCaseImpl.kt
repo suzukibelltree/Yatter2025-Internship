@@ -21,7 +21,7 @@ internal class LoginUseCaseImpl(
 
       if (!password.validate()) return LoginUseCaseResult.Failure.InvalidPassword
       loginService.execute(username, password)
-      loginUserPreferences.putUserName(username.value)
+      loginUserPreferences.putUsername(username.value)
       return LoginUseCaseResult.Success
     } catch (e: Exception) {
       return LoginUseCaseResult.Failure.OtherError(e)

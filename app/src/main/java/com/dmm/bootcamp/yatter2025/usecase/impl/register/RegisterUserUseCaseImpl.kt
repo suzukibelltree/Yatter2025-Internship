@@ -34,7 +34,7 @@ class RegisterUserUseCaseImpl(
         newUsername,
         newPassword,
       )
-      loginUserPreferences.putUserName(me.username.value)
+      loginUserPreferences.putUsername(me.username.value)
     }.onFailure {
       return RegisterUserUseCaseResult.Failure.CreateUserError(it)
     }
