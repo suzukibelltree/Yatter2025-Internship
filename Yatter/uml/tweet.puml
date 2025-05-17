@@ -1,39 +1,41 @@
 @startuml
 
 package domain {
-  class Me
+  package model {
+    class User
+  }
+
   interface UserRepository {
-    + findMe(): Me?
+    + findLoginUser(): User?
     + findByUsername(username: Username): User?
     + create(...)
     + update(...)
   }
 
-  interface GetMeService {
-    + execute(): Me?
+  interface GetLoginUserService {
+    + execute(): User?
   }
 
-  interface YweetRepository {
-    + create(...): Yweet
+  interface StatusRepository {
+    + create(...): Status
   }
 }
 
 package infra {
   package domain {
-    class MeImpl
     package repository {
       class UserRepositoryImpl {
-        - mePreferences: MePreferences
+        - loginUserPreference: LoginUserPreference
         - yatterApi: YatterApi
       }
 
-      class YweetRepositoryImpl {
-        - mePreferences: MePreferences
+      class StatusRepositoryImpl {
+        - loginUserPreference: LoginUserPreference
         - yatterApi: YatterApi
       }
     }
     package service {
-      class GetMeServiceImpl {
+      class GetLoginUserServiceImpl {
         - userRepository: UserRepository
       }
     }
@@ -41,27 +43,27 @@ package infra {
 }
 
 package usecase {
-  interface PostYweetUseCase {
-    + execute(yweetText: String): PostYweetUseCaseResult
+  interface PostStatusUseCase {
+    + execute(statusText: String): PostStatusUseCaseResult
   }
 
-  class PostYweetUseCaseImpl {
-    - yweetRepository: YweetRepository
+  class PostStatusUseCaseImpl {
+    - statusRepository: StatusRepository
   }
 
-  class PostYweetUseCaseResult
+  class PostStatusUseCaseResult
 }
 
 package ui.post {
   class PostViewModel {
-    - postYweetUseCase: PostYweetUseCase
-    - getMeService: GetMeService
+    - postStatusUseCase: PostStatusUseCase
+    - getLoginUserService: GetLoginUserServiceImpl
 
     + uiState: StateFlow<PostUiState>
     + destination: StateFlow<Destination?>
 
     + onCreate()
-    + onChangedYweetText(yweetText: String)
+    + onChangedStatusText(statusText: String)
     + onClickPost()
     + onClickNavIcon()
     + onCompleteNavigation()
@@ -75,27 +77,25 @@ package ui.post {
 
   class PostBindingModel {
     + avatarUrl: String?
-    + yweetText: String
+    + statusText: String
   }
 }
 
-MeImpl --|> Me
-UserRepository -- Me
-GetMeService -- Me
+GetLoginUserService -- User
 
-GetMeServiceImpl --|> GetMeService
+GetLoginUserServiceImpl --|> GetLoginUserService
 UserRepositoryImpl --|> UserRepository
-YweetRepositoryImpl --|> YweetRepository
+StatusRepositoryImpl --|> StatusRepository
 
-GetMeService -- UserRepository
+GetLoginUserService -- UserRepository
 
-PostYweetUseCaseImpl --|> PostYweetUseCase
-PostYweetUseCase -- PostYweetUseCaseResult
-PostYweetUseCaseImpl -- YweetRepository
+PostStatusUseCaseImpl --|> PostStatusUseCase
+PostStatusUseCase -- PostStatusUseCaseResult
+PostStatusUseCaseImpl -- StatusRepository
 
 PostViewModel -- PostUiState
 PostUiState -- PostBindingModel
 
-PostViewModel -- PostYweetUseCase
-PostViewModel -- GetMeService
+PostViewModel -- PostStatusUseCase
+PostViewModel -- GetLoginUserService
 @enduml
