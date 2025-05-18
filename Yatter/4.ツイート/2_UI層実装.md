@@ -178,7 +178,7 @@ fun PostTemplate() {
 @Preview
 @Composable
 private fun PostTemplatePreview() {
-  Yatter2024Theme {
+  Yatter2025Theme {
     Surface() {
       PostTemplate()
     }
@@ -234,7 +234,7 @@ fun PostTemplate(
 @Preview
 @Composable
 private fun PostTemplatePreview() {
-    Yatter2024Theme {
+    Yatter2025Theme {
         Surface {
             PostTemplate(
                 postBindingModel = PostBindingModel(

@@ -23,7 +23,7 @@ BindingModelは、画面を表示する上で必要な情報をまとめた`data
 BindingModelは`ui/timeline/bindingmodel`パッケージにファイルを作成していきましょう。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel
+package com.dmm.bootcamp.yatter2025.ui.timeline.bindingmodel
 
 data class ImageBindingModel(
   val id: String,
@@ -34,7 +34,7 @@ data class ImageBindingModel(
 ```
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel
+package com.dmm.bootcamp.yatter2025.ui.timeline.bindingmodel
 
 data class YweetBindingModel(
   val id: String,
@@ -50,10 +50,10 @@ data class YweetBindingModel(
 `ui/timeline/bindingmodel/converter`パッケージにファイルを作成していきます。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel.converter
+package com.dmm.bootcamp.yatter2025.ui.timeline.bindingmodel.converter
 
-import com.dmm.bootcamp.yatter2024.domain.model.Image
-import com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel.ImageBindingModel
+import com.dmm.bootcamp.yatter2025.domain.model.Image
+import com.dmm.bootcamp.yatter2025.ui.timeline.bindingmodel.ImageBindingModel
 
 object ImageConverter {
   fun convertToBindingModel(imageList: List<Image>): List<ImageBindingModel> =
@@ -69,10 +69,10 @@ object ImageConverter {
 ```
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel.converter
+package com.dmm.bootcamp.yatter2025.ui.timeline.bindingmodel.converter
 
-import com.dmm.bootcamp.yatter2024.domain.model.Yweet
-import com.dmm.bootcamp.yatter2024.ui.timeline.bindingmodel.YweetBindingModel
+import com.dmm.bootcamp.yatter2025.domain.model.Yweet
+import com.dmm.bootcamp.yatter2025.ui.timeline.bindingmodel.YweetBindingModel
 
 object YweetConverter {
   fun convertToBindingModel(yweetList: List<Yweet>): List<YweetBindingModel> =
@@ -137,10 +137,10 @@ data class PublicTimelineUiState(
 ### ViewModelの実装
 続いては、UI表示に必要な実装を行うためのViewModelを実装します。  
 
-まずは、ViewModelクラスを`com.dmm.bootcamp.yatter2024.ui.timeline`に定義します。  
+まずは、ViewModelクラスを`com.dmm.bootcamp.yatter2025.ui.timeline`に定義します。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.ui.timeline
+package com.dmm.bootcamp.yatter2025.ui.timeline
 
 class PublicTimelineViewModel : ViewModel() {
   // TODO
@@ -334,13 +334,13 @@ Previewの利用は、`@Preview`アノテーションを使って次のような
 IDE右上に`Code`/`Split`/`Design`並んでいる箇所で`Split`を選択するとコードを書きながらプレビューを確認できるためおすすめです。  
 `YweetRow`引数の`YweetBindingModel`はプレビュー用のため、適当な値で問題ありません。  
 
-`Yatter2024Theme`や`Surface`に関しては後述しますのでひとまずそのまま写経してください。  
+`Yatter2025Theme`や`Surface`に関しては後述しますのでひとまずそのまま写経してください。  
 
 ```Kotlin
 @Preview
 @Composable
 private fun YweetRowPreview() {
-  Yatter2024Theme {
+  Yatter2025Theme {
     Surface {
       YweetRow(
         yweetBindingModel = YweetBindingModel(
@@ -584,7 +584,7 @@ fun PublicTimelineTemplate(
 @Preview
 @Composable
 private fun PublicTimelineTemplatePreview() {
-  Yatter2024Theme {
+  Yatter2025Theme {
     Surface {
       PublicTimelineTemplate(
         yweetList = listOf(
@@ -985,7 +985,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
   super.onCreate(savedInstanceState)
 
   setContent {
-    Yatter2024Theme {
+    Yatter2025Theme {
       Surface {
         PublicTimelinePage()
       }
@@ -994,14 +994,14 @@ override fun onCreate(savedInstanceState: Bundle?) {
 }
 ```
 
-`Yatter2024Theme`と`Surface`が再度出てきました。  
+`Yatter2025Theme`と`Surface`が再度出てきました。  
 
 この2つのメソッドはアプリ全体で利用する色や文字スタイル、UIコンポーネントの形状といったものを管理してアプリ全体を一つのテーマで統一するために用いられるものです。  
 
 この2つを利用しないと、1つのアプリなのに画面によって使われている色や見た目が違っていたり、統一するためにボイラーコードを多く書く必要が出てきます。  
 それらを完結にするために利用されます。  
 
-`Yatter2024Theme`でアプリ全体のテーマ（色や文字スタイル、UIコンポーネントの形状を含みます）を管理するコンポーザブルで、デフォルトの場合`${プロジェクト名}Theme`といった命名でプロジェクト作成時に自動生成されています。  
+`Yatter2025Theme`でアプリ全体のテーマ（色や文字スタイル、UIコンポーネントの形状を含みます）を管理するコンポーザブルで、デフォルトの場合`${プロジェクト名}Theme`といった命名でプロジェクト作成時に自動生成されています。  
 `Theme.kt`というファイルでテーマが定義されていますので、アプリ全体の色を変えたい時などに変更してみてください。  
 
 `Surface`コンポーザブルでは、ダークテーマ対応をはじめとする背景色に対して適切なコンテンツカラーを利用できるようにサポートするコンポーザブルです。  

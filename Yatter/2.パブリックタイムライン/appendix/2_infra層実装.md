@@ -77,7 +77,7 @@ GET /timelines/public
 ちなみに、今回は[Moshi](https://github.com/square/moshi)というライブラリを使用します。
 
 早速、`YweetJson`クラス・`UserJson`クラス・`ImageAttachmentJson`クラスを実装してみましょう。  
-`com.dmm.bootcamp.yatter2024.infra.api.json`パッケージを作り、そこにそれぞれのクラスを追加していきます。  
+`com.dmm.bootcamp.yatter2025.infra.api.json`パッケージを作り、そこにそれぞれのクラスを追加していきます。  
 まずは、サンプルとして`UserJson`を実装してみます。`User`のJsonはこうなってます。
 
 ```
@@ -98,7 +98,7 @@ GET /timelines/public
 Moshiライブラリを使うため、Jsonのキーと名前が一致する
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.infra.api.json
+package com.dmm.bootcamp.yatter2025.infra.api.json
 
 data class UserJson(
   val id: String,
@@ -124,7 +124,7 @@ Androidをはじめとするモバイルアプリ開発において、アプリ�
 このままのクラス実装でも動作するのですが、一般的にAndroidの開発で推奨されているコーディング規約には変数の命名は`camelCase`であるため`display_name`や`created_at`という命名は規約違反となっています。そのため、下記のように`camelCase`に修正します。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.infra.api.json
+package com.dmm.bootcamp.yatter2025.infra.api.json
 
 data class UserJson(
   val id: String,
@@ -143,7 +143,7 @@ data class UserJson(
 この対応関係を揃えるための機能を`Moshi`が用意しているため、`UserJson`クラスは下記のように修正します。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.infra.api.json
+package com.dmm.bootcamp.yatter2025.infra.api.json
 
 @JsonClass(generateAdapter = true) // @Json(name = )を利用するクラスに必要
 data class UserJson(
@@ -164,7 +164,7 @@ data class UserJson(
 動作も変わらないため、好みやチームの方針に合わせる形で問題ありません。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.infra.api.json
+package com.dmm.bootcamp.yatter2025.infra.api.json
 
 @JsonClass(generateAdapter = true)
 data class UserJson(
@@ -202,7 +202,7 @@ data class YweetJson(
 これらの実装例は一例になりますので変数名等が多少違っていても問題ありません。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.infra.api.json
+package com.dmm.bootcamp.yatter2025.infra.api.json
 
 import com.squareup.moshi.Json
 
@@ -217,7 +217,7 @@ data class YweetJson(
 ```
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.infra.api.json
+package com.dmm.bootcamp.yatter2025.infra.api.json
 
 import com.squareup.moshi.Json
 
@@ -233,10 +233,10 @@ data class ImageJson(
 ### API実装
 
 必要なJsonクラスが定義できたところで、APIの実装を行います。  
-`com.dmm.bootcamp.yatter2024/infra/api`に`YatterApi`のinterfaceを定義します。  
+`com.dmm.bootcamp.yatter2025/infra/api`に`YatterApi`のinterfaceを定義します。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.infra.api
+package com.dmm.bootcamp.yatter2025.infra.api
 
 interface YatterApi
 ```
@@ -398,13 +398,13 @@ Androidアプリのインターネット接続を許可するためには、`And
 
 
 ## Repositoryの実装
-`com.dmm.bootcamp.yatter2024.infra.domain.repository`というパッケージを作成します。  
+`com.dmm.bootcamp.yatter2025.infra.domain.repository`というパッケージを作成します。  
 作成したパッケージに属するように、`YweetRepositoryImpl`クラスを作成し、`YweetRepository`の実装を行います。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.infra.domain.repository
+package com.dmm.bootcamp.yatter2025.infra.domain.repository
 
-import com.dmm.bootcamp.yatter2024.domain.repository.YweetRepository
+import com.dmm.bootcamp.yatter2025.domain.repository.YweetRepository
 
 class YweetRepositoryImpl : YweetRepository
 ```
@@ -477,10 +477,10 @@ package通りに配置していってください。
 
 ### UserImpl
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.infra.domain
+package com.dmm.bootcamp.yatter2025.infra.domain
 
-import com.dmm.bootcamp.yatter2024.domain.User
-import com.dmm.bootcamp.yatter2024.domain.Username
+import com.dmm.bootcamp.yatter2025.domain.User
+import com.dmm.bootcamp.yatter2025.domain.Username
 import java.net.URL
 
 class UserImpl(
@@ -514,13 +514,13 @@ class UserImpl(
 
 ### UserConverter
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.infra.domain.converter
+package com.dmm.bootcamp.yatter2025.infra.domain.converter
 
-import com.dmm.bootcamp.yatter2024.BuildConfig
-import com.dmm.bootcamp.yatter2024.domain.User
-import com.dmm.bootcamp.yatter2024.domain.Username
-import com.dmm.bootcamp.yatter2024.infra.api.json.UserJson
-import com.dmm.bootcamp.yatter2024.infra.domain.UserImpl
+import com.dmm.bootcamp.yatter2025.BuildConfig
+import com.dmm.bootcamp.yatter2025.domain.User
+import com.dmm.bootcamp.yatter2025.domain.Username
+import com.dmm.bootcamp.yatter2025.infra.api.json.UserJson
+import com.dmm.bootcamp.yatter2025.infra.domain.UserImpl
 import java.net.URL
 
 object UserConverter {
@@ -543,11 +543,11 @@ object UserConverter {
 
 ### YweetConverter
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.infra.domain.converter
+package com.dmm.bootcamp.yatter2025.infra.domain.converter
 
-import com.dmm.bootcamp.yatter2024.domain.Yweet
-import com.dmm.bootcamp.yatter2024.domain.YweetId
-import com.dmm.bootcamp.yatter2024.infra.api.json.YweetJson
+import com.dmm.bootcamp.yatter2025.domain.Yweet
+import com.dmm.bootcamp.yatter2025.domain.YweetId
+import com.dmm.bootcamp.yatter2025.infra.api.json.YweetJson
 
 object YweetConverter {
   fun convertToDomainModel(jsonList: List<YweetJson>): List<Yweet> =

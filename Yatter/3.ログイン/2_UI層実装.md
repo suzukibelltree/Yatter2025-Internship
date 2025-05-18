@@ -284,7 +284,7 @@ fun LoginTemplate() {
 @Preview
 @Composable
 private fun LoginTemplatePreview() {
-  Yatter2024Theme {
+  Yatter2025Theme {
     Surface {
       LoginTemplate()
     }
@@ -325,7 +325,7 @@ fun LoginTemplate(
 @Preview
 @Composable
 fun LoginTemplatePreview() {
-  Yatter2024Theme {
+  Yatter2025Theme {
     Surface {
       LoginTemplate(
         userName = "username",
@@ -542,7 +542,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
   super.onCreate(savedInstanceState)
 
   setContent {
-    Yatter2024Theme {
+    Yatter2025Theme {
       Surface {
         LoginPage()
       }

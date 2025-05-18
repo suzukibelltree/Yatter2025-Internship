@@ -123,7 +123,7 @@ UserドメインはYweetドメインと違い、[abstract](https://kotlinlang.or
 ### Repositoryの実装
 
 ドメインモデルを作成したらRepositoryの定義をします。  
-`YweetRepository`ファイルを`com.dmm.bootcamp.yatter2024.domain.repositroy`パッケージに作成します。  
+`YweetRepository`ファイルを`com.dmm.bootcamp.yatter2025.domain.repositroy`パッケージに作成します。  
 Domain層では、Repositoryのinterface定義のみをするので、interfaceとして`domain/repository`配下に`YweetRepository`を作成します。  
 
 ```Kotlin
