@@ -60,6 +60,7 @@ class Yweet(
   id: YweetId, // 一意のID
   val user: User, // 投稿者を表すドメイン、現状エラーになるが許容
   val content: String, // 投稿内容
+  val attachmentImageList: List<Image>, // 画像のリスト
 ) : Entity<YweetId>(id)
 ```
 

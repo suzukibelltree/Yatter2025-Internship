@@ -259,7 +259,7 @@ API Docを見るとリクエストに必要な値は次のようになってい�
 |パラメータ名|option/required|Param Type|Type|説明|
 |-|-|-|-|-|
 |only_image|option|query|boolean|Only return yweets that have image attachments (public and tag timelines only)|
-|offset|option|query|0-indexed offset of the first yweet to return|
+|offset|option|query|Integer|0-indexed offset of the first yweet to return|
 |limit|option|query|integer|Maximum number of followings to get (Default 40, Max 80)|
 
 `Retrofit`ではリクエストに必要な値を引数で表現します。  
@@ -269,7 +269,7 @@ interface YatterApi {
   @GET("timelines/public")
   suspend fun getPublicTimeline(
     @Query("only_image") onlyImage: Boolean,
-    @Query("offset") offset: Int?,
+    @Query("offset") offset: Int,
     @Query("limit") limit: Int,
   ): List<YweetJson>
 }
@@ -282,7 +282,7 @@ interface YatterApi {
   @GET("timelines/public")
   suspend fun getPublicTimeline(
     @Query("only_image") onlyImage: Boolean = false,
-    @Query("offset") offset: Int?,
+    @Query("offset") offset: Int = 0,
     @Query("limit") limit: Int = 40,
   ): List<YweetJson>
 }
