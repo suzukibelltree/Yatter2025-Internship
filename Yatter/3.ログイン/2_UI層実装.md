@@ -14,7 +14,7 @@
 
 ## BindingModelの実装
 まずは、BindingModelの実装からです。  
-`ui/login`パッケージに`LoginBindingModel`ファイルを作成します。  
+`ui/login/bindingmodel`パッケージに`LoginBindingModel`ファイルを作成します。  
 
 ログイン画面で表示する内容としては、ユーザーによって入力されるユーザー名とパスワードの値で、Stringとして保持します。  
 
