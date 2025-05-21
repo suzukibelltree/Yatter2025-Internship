@@ -4,7 +4,7 @@
 
 まずはQuery部分から実装します。  
 
-必要なドメインモデルとして、`User`ドメインがあります。`User`ドメインには、ログイン中のユーザーであることを表す、`isMe`プロパティが存在しました。
+必要なドメインモデルとして、`User`ドメインがありますが、すでに実装済みですね。
 
 ```Kotlin
 package com.dmm.bootcamp.yatter2024.domain.model
@@ -21,7 +21,6 @@ data class User(
   val header: URL,
   val followingCount: Int,
   val followerCount: Int,
-  val isMe: Boolean,
 ) : Entity<UserId>(id)
 ```
 
@@ -36,6 +35,19 @@ import com.dmm.bootcamp.yatter2024.domain.model.User
 
 interface GetLoginUserService {
   suspend fun execute(): User?
+}
+```
+
+ついでに、後々の実装で必要になる`GetLoginUsernameService`も実装しておきます。  
+このDomainServiceは、ログイン済みのアカウントのユーザー名を取得し、ツイートに表示するメニューなどを変更する際に利用します。  
+
+```Kotlin
+package com.dmm.bootcamp.yatter2025.domain.service
+
+import com.dmm.bootcamp.yatter2025.domain.model.Username
+
+interface GetLoginUsernameService {
+  fun execute(): Username?
 }
 ```
 
