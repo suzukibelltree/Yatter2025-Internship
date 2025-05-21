@@ -14,7 +14,7 @@
 
 ## BindingModelの実装
 まずは、BindingModelの実装からです。  
-`ui/login`パッケージに`LoginBindingModel`ファイルを作成します。  
+`ui/login/bindingmodel`パッケージに`LoginBindingModel`ファイルを作成します。  
 
 ログイン画面で表示する内容としては、ユーザーによって入力されるユーザー名とパスワードの値で、Stringとして保持します。  
 
@@ -284,7 +284,7 @@ fun LoginTemplate() {
 @Preview
 @Composable
 private fun LoginTemplatePreview() {
-  Yatter2024Theme {
+  Yatter2025Theme {
     Surface {
       LoginTemplate()
     }
@@ -325,7 +325,7 @@ fun LoginTemplate(
 @Preview
 @Composable
 fun LoginTemplatePreview() {
-  Yatter2024Theme {
+  Yatter2025Theme {
     Surface {
       LoginTemplate(
         userName = "username",
@@ -542,7 +542,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
   super.onCreate(savedInstanceState)
 
   setContent {
-    Yatter2024Theme {
+    Yatter2025Theme {
       Surface {
         LoginPage()
       }

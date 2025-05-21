@@ -7,9 +7,9 @@
 必要なドメインモデルとして、`User`ドメインがありますが、すでに実装済みですね。
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.domain.model
+package com.dmm.bootcamp.yatter2025.domain.model
 
-import com.dmm.bootcamp.yatter2024.common.ddd.Entity
+import com.dmm.bootcamp.yatter2025.common.ddd.Entity
 import java.net.URL
 
 data class User(
@@ -29,9 +29,9 @@ data class User(
 このDomainServiceを利用して、ログイン済みのアカウント情報を取得し、ツイート画面のアイコン表示やトークン取得に活用します。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.domain.service
+package com.dmm.bootcamp.yatter2025.domain.service
 
-import com.dmm.bootcamp.yatter2024.domain.model.User
+import com.dmm.bootcamp.yatter2025.domain.model.User
 
 interface GetLoginUserService {
   suspend fun execute(): User?
@@ -58,11 +58,11 @@ interface GetLoginUsernameService {
 `UserRepository`でユーザーの検索や追加、更新といったユーザー周りの制御・操作を行えるようにします。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.domain.repository
+package com.dmm.bootcamp.yatter2025.domain.repository
 
-import com.dmm.bootcamp.yatter2024.domain.model.User
-import com.dmm.bootcamp.yatter2024.domain.model.Password
-import com.dmm.bootcamp.yatter2024.domain.model.Username
+import com.dmm.bootcamp.yatter2025.domain.model.User
+import com.dmm.bootcamp.yatter2025.domain.model.Password
+import com.dmm.bootcamp.yatter2025.domain.model.Username
 import java.net.URL
 
 interface UserRepository {

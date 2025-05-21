@@ -60,6 +60,7 @@ class Yweet(
   id: YweetId, // 一意のID
   val user: User, // 投稿者を表すドメイン、現状エラーになるが許容
   val content: String, // 投稿内容
+  val attachmentImageList: List<Image>, // 画像のリスト
 ) : Entity<YweetId>(id)
 ```
 
@@ -107,7 +108,7 @@ Userドメインでも同じ表示名やユーザー名を使う可能性があ�
 ### Repositoryの実装
 
 ドメインモデルを作成したらRepositoryの定義をします。  
-`YweetRepository`ファイルを`com.dmm.bootcamp.yatter2024.domain.repositroy`パッケージに作成します。  
+`YweetRepository`ファイルを`com.dmm.bootcamp.yatter2025.domain.repositroy`パッケージに作成します。  
 Domain層では、Repositoryのinterface定義のみをするので、interfaceとして`domain/repository`配下に`YweetRepository`を作成します。  
 
 ```Kotlin

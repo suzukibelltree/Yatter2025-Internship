@@ -4,7 +4,7 @@
 
 ## BindingModelの実装
 まずはBindingModelの実装からです。  
-`ui/post`パッケージに`PostBindingModel`ファイルを作成し、定義します。  
+`ui/post/bindingmodel`パッケージに`PostBindingModel`ファイルを作成し、定義します。  
 
 ツイート画面で表示する内容としては、ツイート主のアイコンとツイート内容をBindingModelが持つようにします。  
 
@@ -178,7 +178,7 @@ fun PostTemplate() {
 @Preview
 @Composable
 private fun PostTemplatePreview() {
-  Yatter2024Theme {
+  Yatter2025Theme {
     Surface() {
       PostTemplate()
     }
@@ -234,7 +234,7 @@ fun PostTemplate(
 @Preview
 @Composable
 private fun PostTemplatePreview() {
-    Yatter2024Theme {
+    Yatter2025Theme {
         Surface {
             PostTemplate(
                 postBindingModel = PostBindingModel(
