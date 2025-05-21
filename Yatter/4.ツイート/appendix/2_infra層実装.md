@@ -1,37 +1,44 @@
 # [前の資料](./1_domain層実装.md)
 # ツイート画面のinfra層実装
 ツイート画面のinfra層実装を行います。
-infra層では、domain層実装時に定義した`GetMeService`と`UserRepository`、`YweetRepository`の実装を行います。
+infra層では、domain層実装時に定義した`GetLoginUserService`と`GetLoginUsernameService`、`UserRepository`、`YweetRepository`の実装を行います。
 
-まずは、`Me`の実装から始めます。
-`infra/domina`に`MeImpl`クラスを作成し実装します。  
-基本的には`UserImpl`と同じような内容になります。  
+まずは`UserRepository`の実装です。  
+必要な引数と`impl`クラスの定義を`infra/domain/repository`に追加します。  
 
 ```Kotlin
-class MeImpl(
-  id: UserId,
-  username: Username,
-  displayName: String?,
-  note: String?,
-  avatar: URL,
-  header: URL,
-  followingCount: Int,
-  followerCount: Int,
-) : Me(
-  id = id,
-  username = username,
-  displayName = displayName,
-  note = note,
-  avatar = avatar,
-  header = header,
-  followingCount = followingCount,
-  followerCount = followerCount,
-) {
-  override suspend fun follow(username: Username) {
+class UserRepositoryImpl(
+  private val yatterApi: YatterApi,
+  private val getLoginUsernameService: GetLoginUsernameService,
+) : UserRepository {
+}
+```
+必要なメソッドをオーバーライドします。  
+
+```Kotlin
+class UserRepositoryImpl(
+  private val yatterApi: YatterApi,
+  private val getLoginUsernameService: GetLoginUsernameService,
+) : UserRepository {
+  override suspend fun findLoginUser(disableCache: Boolean): User? {
     TODO("Not yet implemented")
   }
 
-  override suspend fun unfollow(username: Username) {
+  override suspend fun findByUsername(username: Username, disableCache: Boolean): User? {
+    TODO("Not yet implemented")
+  }
+
+  override suspend fun create(username: Username, password: Password): User {
+    TODO("Not yet implemented")
+  }
+
+  override suspend fun update(
+    me: User,
+    newDisplayName: String?,
+    newNote: String?,
+    newAvatar: URL?,
+    newHeader: URL?
+  ): User {
     TODO("Not yet implemented")
   }
 
@@ -42,65 +49,12 @@ class MeImpl(
   override suspend fun followers(): List<User> {
     TODO("Not yet implemented")
   }
-}
-```
 
-`MeImpl`が実装できたところでコンバーターも実装します。  
-`UserConverter`と同じディレクトリに`MeConverter`を定義します。  
-
-```Kotlin
-object MeConverter {
-  fun convertToMe(user: User): Me {
-    return MeImpl(
-      id = user.id,
-      username = user.username,
-      displayName = user.displayName,
-      note = user.note,
-      avatar = user.avatar,
-      header = user.header,
-      followingCount = user.followingCount,
-      followerCount = user.followerCount,
-    )
-  }
-}
-```
-
-続いては`UserRepository`の実装です。  
-必要な引数と`impl`クラスの定義を`infra/domain/repository`に追加します。  
-
-```Kotlin
-class UserRepositoryImpl(
-  private val yatterApi: YatterApi,
-  private val mePreferences: MePreferences
-) : UserRepository {
-}
-```
-必要なメソッドをオーバーライドします。  
-
-```Kotlin
-class UserRepositoryImpl(
-  private val yatterApi: YatterApi,
-  private val mePreferences: MePreferences
-) : UserRepository {
-  override suspend fun findMe(): Me? {
+  override suspend fun follow(me: User, username: Username) {
     TODO("Not yet implemented")
   }
 
-  override suspend fun findByUsername(username: Username): User? {
-    TODO("Not yet implemented")
-  }
-
-  override suspend fun create(username: Username, password: Password): Me {
-    TODO("Not yet implemented")
-  }
-
-  override suspend fun update(
-    me: Me,
-    newDisplayName: String?,
-    newNote: String?,
-    newAvatar: URL?,
-    newHeader: URL?
-  ): Me {
+  override suspend fun unfollow(me: User, username: Username) {
     TODO("Not yet implemented")
   }
 }
@@ -118,30 +72,62 @@ suspend fun getUserByUsername(
 ): UserJson
 ```
 
-APIの定義ができたらツイート機能に必要な`findMe`と`findByUsername`をまずは実装します。  
+APIの定義ができたらツイート機能に必要な`findLoginUser`,`findByUsername`をまずは実装します。  
 処理は次の手順を実装します。  
 
-- mePreferencesからログイン済みユーザー情報取得
+- getLoginUsernameServiceからログイン済みユーザー情報取得
   - ユーザー情報取得できなければ取得不可(null)
 - ユーザー名からAPIを経由してアカウント情報取得
-- `Me`ドメインへ変換
+- `User`ドメインへ変換
 
 コードは次のようになります。  
 
 ```Kotlin
-override suspend fun findMe(): Me? = withContext(Dispatchers.IO) {
-  val username = mePreferences.getUsername() ?: return@withContext null
-  if (username.isEmpty()) return@withContext null
+  override suspend fun findLoginUser(disableCache: Boolean): User? = withContext(Dispatchers.IO) {
+    val username = getLoginUsernameService.execute() ?: return@withContext null
+    findByUsername(username = username, disableCache = disableCache)
+  }
 
-  val user = findByUsername(username = Username(username)) ?: return@withContext null
-  MeConverter.convertToMe(user)
-}
+  override suspend fun findByUsername(
+    username: Username,
+    disableCache: Boolean,
+  ): User? = withContext(Dispatchers.IO) {
+    if (!disableCache) {
+      userCache[username]?.let {
+        return@withContext it
+      }
+    }
+    try {
+      val userJson = yatterApi.getUserByUsername(username = username.value)
+      val user = UserConverter.convertToDomainModel(userJson)
+      userCache[username] = user
+      return@withContext user
+    } catch (e: HttpException) {
+      Log.d("UserRepositoryImpl", "HTTP error: ${e.code()} message:${e.message()}")
+      null
+    } catch (e: Exception) {
+      Log.d("UserRepositoryImpl", "Error: ${e.message}")
+      null
+    }
+  }
+```
 
-override suspend fun findByUsername(username: Username): User? = withContext(Dispatchers.IO) {
-  val userJson = yatterApi.getUserByUsername(username = username.value)
-  UserConverter.convertToDomainModel(userJson)
+ここで、`userCache`という変数が出てきました。
+これは、過去に取得したことのあるユーザー情報をキャッシュしておくためのMapです。  
+キャッシュを利用することで、APIの呼び出し回数を減らすことができ、アプリのパフォーマンス向上や通信量の削減に役立ちます。
+
+キャッシュの実装は次のように行います。
+```Kotlin
+class UserRepositoryImpl(
+  private val yatterApi: YatterApi,
+  private val loginUserPreferences: LoginUserPreferences,
+) : UserRepository {
+  private val userCache: MutableMap<Username, User> = mutableMapOf()
+  ...
 }
 ```
+
+
 
 残りのメソッドは今回の機能では利用しないため、ひとまずTODOのままにしておきます。  
 実装したメソッドには単体テストを書いてみましょう。  
@@ -152,20 +138,20 @@ override suspend fun findByUsername(username: Username): User? = withContext(Dis
 
 ```Kotlin
 class UserRepositoryImplSpec {
-  val yatterApi = mockk<YatterApi>()
-  val mePreferences = mockk<MePreferences>()
-  val subject = UserRepositoryImpl(yatterApi, mePreferences)
+  private val yatterApi = mockk<YatterApi>()
+  private val getLoginUsernameService = mockk<GetLoginUsernameService>()
+  private val subject = UserRepositoryImpl(yatterApi, getLoginUsernameService)
 
   @Test
-  fun getUserByUsername() = runTest {
+  fun findByUsername() = runTest {
     val username = Username("username")
     val userJson = UserJson(
       id = "id",
       username = "username",
       displayName = "display name",
       note = null,
-      avatar = "",
-      header = "",
+      avatar = "https://www.google.com",
+      header = "https://www.google.com",
       followingCount = 0,
       followersCount = 0,
       createdAt = ""
@@ -177,7 +163,7 @@ class UserRepositoryImplSpec {
       yatterApi.getUserByUsername(any())
     } returns userJson
 
-    val result = subject.findByUsername(username)
+    val result = subject.findByUsername(username, disableCache = false)
 
     coVerify {
       yatterApi.getUserByUsername(username.value)
@@ -187,38 +173,35 @@ class UserRepositoryImplSpec {
   }
 
   @Test
-  fun getMe() = runTest {
+  fun findLoginUser() = runTest {
     val username = "username"
     val userJson = UserJson(
       id = "id",
       username = "username",
       displayName = "display name",
       note = null,
-      avatar = "",
-      header = "",
+      avatar = "https://www.google.com",
+      header = "https://www.google.com",
       followingCount = 0,
       followersCount = 0,
       createdAt = ""
     )
-
     val expect = UserConverter.convertToDomainModel(userJson)
 
+    coEvery {
+      getLoginUsernameService.execute()
+    } returns Username(username)
     coEvery {
       yatterApi.getUserByUsername(any())
     } returns userJson
 
-    coEvery {
-      mePreferences.getUsername()
-    } returns username
-
-    val result = subject.findMe()
+    val result = subject.findLoginUser(disableCache = false)
 
     coVerify {
       yatterApi.getUserByUsername(username)
     }
-
     coVerify {
-      mePreferences.getUsername()
+      getLoginUsernameService.execute()
     }
 
     assertThat(result).isEqualTo(expect)
@@ -230,42 +213,42 @@ class UserRepositoryImplSpec {
 
 ---
 
-続いて`GetMeService`の実装です。
+続いて`GetLoginUserService`の実装です。
 
-`infra/domain/service`に`GetMeServiceImpl`クラスを定義します。  
-`UserRepository`を介して`Me`クラスを取得するため引数に`UserRepository`も追加しておきます。  
+`infra/domain/service`に`GetLoginUserServiceImpl`クラスを定義します。  
+`UserRepository`を介して`User`クラスを取得するため引数に`UserRepository`も追加しておきます。  
 
 ```Kotlin
-class GetMeServiceImpl(
+class GetLoginUserServiceImpl(
   private val userRepository: UserRepository,
-) : GetMeService {
-  suspend fun execute(): Me? {
+) : GetLoginUserService {
+  suspend fun execute(): User? {
     TODO("Not yet implemented")
   }
 }
 ```
 
-`UserRepository`を利用して`Me`ドメインを取得します。  
+`UserRepository`を利用して`User`ドメインを取得します。  
 
 ```Kotlin
-override suspend fun execute(): Me? = withContext(Dispatchers.IO) {
-  userRepository.findMe()
+override suspend fun execute(): User? = withContext(Dispatchers.IO) {
+  userRepository.findLoginUser(disableCache = false)
 }
 ```
 
 こちらもテストを実装して動作の担保をします。  
 
 <details>
-<summary>GetMeServiceImplSpecのテスト実装例</summary>
+<summary>GetLoginUserServiceImplSpecのテスト実装例</summary>
 
 ```Kotlin
-class GetMeServiceImplSpec {
+class GetLoginUserServiceImplSpec {
   private val userRepository = mockk<UserRepository>()
-  private val subject = GetMeServiceImpl(userRepository)
+  private val subject = GetLoginUserServiceImpl(userRepository)
 
   @Test
-  fun getMe() {
-    val user = UserImpl(
+  fun getLoginUser() {
+    val user = User(
       id = UserId(value = ""),
       username = Username(value = ""),
       displayName = null,
@@ -273,19 +256,72 @@ class GetMeServiceImplSpec {
       avatar = URL("https://www.google.com"),
       header = URL("https://www.google.com"),
       followingCount = 0,
-      followerCount = 0
+      followerCount = 0,
     )
-    val expect = MeConverter.convertToMe(user)
 
-    coEvery { userRepository.findMe() } returns MeConverter.convertToMe(user)
+    coEvery { userRepository.findLoginUser(disableCache = any()) } returns user
 
     val result = runBlocking { subject.execute() }
 
-    assertThat(result).isEqualTo(expect)
+    assertThat(result).isEqualTo(user)
   }
 }
 ```
 
+</details>
+
+---
+
+次は`GetLoginUsernameService`の実装です。
+`infra/domain/service`に`GetLoginUsernameServiceImpl`クラスを定義します。
+```Kotlin
+class GetLoginUsernameServiceImpl(
+  private val loginUserPreferences: LoginUserPreferences,
+) : GetLoginUsernameService {
+  override fun execute(): Username? = TODO("Not yet implemented")T
+}
+```
+
+`LoginUserPreferences`を利用して、ログイン済みのユーザー名を取得します。
+
+```Kotlin
+class GetLoginUsernameServiceImpl(
+  private val loginUserPreferences: LoginUserPreferences,
+) : GetLoginUsernameService {
+  override fun execute(): Username? = loginUserPreferences.getUsername()?.let { Username(it) }
+}
+```
+
+こちらもテストを実装して動作の担保をします。
+<details>
+<summary>GetLoginUsernameServiceImplSpecのテスト実装例</summary>
+
+```Kotlin
+class GetLoginUsernameServiceImplSpec {
+  private val loginUserPreferences = mockk<LoginUserPreferences>()
+  private val subject = GetLoginUsernameServiceImpl(loginUserPreferences)
+
+  @Test
+  fun getLoginUsername() {
+    val username = "username"
+
+    every { loginUserPreferences.getUsername() } returns username
+
+    val result = subject.execute()
+
+    assertThat(result).isEqualTo(Username(value = username))
+  }
+
+  @Test
+  fun getLoginUsernameNull() {
+    every { loginUserPreferences.getUsername() } returns null
+
+    val result = subject.execute()
+
+    assertThat(result).isNull()
+  }
+}
+```
 </details>
 
 ---
@@ -326,15 +362,15 @@ APIの定義ができたらRepositoryの実装に戻ります。
   - 画像ファイルの投稿は今は考えない
 - 投稿完了したらYweetを返す
 
-ログイン済みか確認する方法として、`MePreferences.getUsername()`の実行時にユーザー名が返るかどうかで判定します。  
+ログイン済みか確認する方法として、`LoginUserPreferences.getUsername()`の実行時にユーザー名が返るかどうかで判定します。  
 `getUsername()`がnull(=ログインしていない)であれば`AuthenticatorException`をスローします。  
 
-`MePreferences`を利用するには`YweetRepositoryImpl`の引数に追加してあげる必要があるのでまずは引数の追加から行います。  
+`LoginUserPreferences`を利用するには`YweetRepositoryImpl`の引数に追加してあげる必要があるので、まずは引数の追加から行います。  
 
 ```Kotlin
 class YweetRepositoryImpl(
   private val yatterApi: YatterApi,
-  private val mePreferences: MePreferences,
+  private val loginUserPreferences: LoginUserPreferences,
 ) : YweetRepository {...}
 ```
 
@@ -357,7 +393,7 @@ override suspend fun create(
   content: String,
   attachmentList: List<File>
 ): Yweet = withContext(IO) {
-  val username = mePreferences.getUsername() ?: throw AuthenticatorException()
+  val username = loginUserPreferences.getUsername() ?: throw AuthenticatorException()
   val yweetJson = yatterApi.postYweet(
     getToken(username),
     PostYweetJson(
@@ -408,6 +444,7 @@ interface TokenProvider {
 class YweetRepositoryImpl(
   private val yatterApi: YatterApi,
   private val tokenProvider: TokenProvider,
+  private val loginUserPreferences: LoginUserPreferences,
 ) : YweetRepository {
   ...
   override suspend fun create(
@@ -433,10 +470,9 @@ class YweetRepositoryImpl(
 auth/impl/TokenProviderImpl.kt  
 
 ```Kotlin
-class TokenProviderImpl(private val getMeService: GetMeService) : TokenProvider {
+class TokenProviderImpl(private val tokenPreferences: TokenPreferences) : TokenProvider {
   override suspend fun provide(): String {
-    val me = getMeService.execute()
-    return me?.username?.value?.let { "username $it" } ?: throw AuthenticatorException()
+    return tokenPreferences.getAccessToken()?.let { "username $it" } ?: throw AuthenticatorException()
   }
 }
 ```
@@ -454,47 +490,37 @@ TokenProviderImplのテスト
 
 ```Kotlin
 class TokenProviderImplSpec {
-  private val getMeService = mockk<GetMeService>()
-  private val subject = TokenProviderImpl(getMeService)
+  private val tokenPreferences = mockk<TokenPreferences>()
+  private val subject = TokenProviderImpl(tokenPreferences)
 
   @Test
   fun getTokenSuccess() = runTest {
     val username = "username"
-    val me = MeImpl(
-      id = UserId(value = "id"),
-      username = Username(value = username),
-      displayName = null,
-      note = null,
-      avatar = URL("https:www.google.com"),
-      header = URL("https:www.google.com"),
-      followingCount = 0,
-      followerCount = 0
-    )
-    
+
     val expect = "username $username"
 
     coEvery {
-      getMeService.execute()
-    } returns me
-    
+      tokenPreferences.getAccessToken()
+    } returns username
+
     val result = subject.provide()
-    
-    coVerify { 
-      getMeService.execute()
+
+    coVerify {
+      tokenPreferences.getAccessToken()
     }
-    
+
     assertThat(result).isEqualTo(expect)
   }
-  
+
   @Test
-  fun getTokenFailure() = runTest { 
-    coEvery { 
-      getMeService.execute()
+  fun getTokenFailure() = runTest {
+    coEvery {
+      tokenPreferences.getAccessToken()
     } returns null
-    
-    var error: Throwable? = null 
+
+    var error: Throwable? = null
     var result: String? = null
-    
+
     try {
       result = subject.provide()
     } catch (e: Exception) {
@@ -502,9 +528,9 @@ class TokenProviderImplSpec {
     }
 
     coVerify {
-      getMeService.execute()
+      tokenPreferences.getAccessToken()
     }
-    
+
     assertThat(result).isNull()
     assertThat(error).isInstanceOf(AuthenticatorException::class.java)
   }
@@ -527,86 +553,100 @@ class TokenProviderImplSpec {
 <summary>YweetRepositoryImpl#createのテスト実装例</summary>
 
 ```Kotlin
-@Test
-fun postYweetWhenLoggedIn() = runTest {
-  val username = "username"
-  val content = "content"
+class YweetRepositoryImplSpec {
+  private val yatterApi = mockk<YatterApi>()
+  private val tokenPreferences = mockk<TokenPreferences>()
+  private val tokenProvider: TokenProvider = TokenProviderImpl(tokenPreferences)
+  private val loginUserPreferences = mockk<LoginUserPreferences>()
+  private val subject = YweetRepositoryImpl(yatterApi, tokenProvider, loginUserPreferences)
+  
+  ...
+  
+  @Test
+  fun postYweetWhenLoggedIn() = runTest {
+    val loginUsername = "token"
+    val content = "content"
+    val token = "username $loginUsername"
 
   val yweetJson = YweetJson(
-    id = "id",
-    user = UserJson(
       id = "id",
-      username = username,
-      displayName = "",
-      note = null,
-      avatar = "",
-      header = "",
-      followingCount = 0,
-      followersCount = 0,
+      user = UserJson(
+        id = "id",
+        username = loginUsername,
+        displayName = "",
+        note = null,
+        avatar = "https://www.google.com",
+        header = "https://www.google.com",
+        followingCount = 0,
+        followersCount = 0,
       createdAt = ""
-    ),
-    content = content,
+      ),
+      content = content,
     createdAt = ""
-
-  )
-
-  coEvery {
-    mePreferences.getUsername()
-  } returns username
-
-  coEvery {
-    yatterApi.postYweet(any(), any())
-  } returns yweetJson
-
-  val expect = YweetConverter.convertToDomainModel(yweetJson)
-
-  val result = subject.create(
-    content,
-    emptyList()
-  )
-
-  assertThat(result).isEqualTo(expect)
-
-  coVerifyAll {
-    mePreferences.getUsername()
-    yatterApi.postYweet(
-      username,
-      PostYweetJson(
-        content = content,
-        imageIds = emptyList()
-      )
+      attachmentMediaList = emptyList(),
     )
-  }
-}
 
-@Test
-fun postYweetWhenNotLoggedIn() = runTest {
-  val username = null
-  val content = "content"
+    coEvery {
+      tokenPreferences.getAccessToken()
+    } returns loginUsername
 
-  coEvery {
-    mePreferences.getUsername()
-  } returns username
+    coEvery {
+      yatterApi.postYweet(any(), any())
+    } returns yweetJson
 
+    val expect = YweetConverter.convertToDomainModel(yweetJson)
 
-  var error: Throwable? = null
-  var result: Yweet? = null
-
-  try {
-    result = subject.create(
+    val result = subject.create(
       content,
       emptyList()
     )
-  } catch (e: Exception) {
-    error = e
+
+    assertThat(result).isEqualTo(expect)
+
+    coVerifyAll {
+      tokenPreferences.getAccessToken()
+      yatterApi.postYweet(
+        token,
+        PostYweetJson(
+          content = content,
+          imageIds = emptyList()
+        )
+      )
+    }
   }
 
+  @Test
+  fun postYweetWhenNotLoggedIn() = runTest {
+    val username = null
+    val content = "content"
 
-  assertThat(result).isNull()
-  assertThat(error).isInstanceOf(AuthenticatorException::class.java)
+    coEvery {
+      loginUserPreferences.getUsername()
+    } returns username
+    coEvery {
+      tokenProvider.provide()
+    } throws AuthenticatorException()
 
-  coVerify {
-    mePreferences.getUsername()
+
+    var error: Throwable? = null
+    var result: Yweet? = null
+
+    try {
+      result = subject.create(
+        content,
+        emptyList()
+      )
+    } catch (e: Exception) {
+      error = e
+    }
+
+
+    assertThat(result).isNull()
+    assertThat(error).isInstanceOf(AuthenticatorException::class.java)
+
+    coVerify {
+      tokenProvider.provide()
+    }
   }
 }
 ```

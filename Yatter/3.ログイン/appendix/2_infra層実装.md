@@ -79,6 +79,50 @@ class TokenPreferences(...) {
 
 ログインユーザーのアクセストークンを記録する`TokenPreferences`を実装できました。  
 
+## LoginUserPreferencesの実装
+Yatterアプリのアクセストークンは、直接ログインユーザーの情報を取得することができません。  
+(実際にはトークンそのものがユーザー名ですが、これはバックエンドのトークン実装に依存するため、これを判定に使うのは仕様変更にも弱くなり推奨されません。)  
+そのため、ログインしているユーザーの情報を別途保持しておく必要があります。
+
+`TokenPreferences`と同様に、`SharedPreferences`を利用してログインしているユーザーのユーザー名を保存する、`LoginUserPreferences`クラスを実装してみましょう。
+
+<details>
+<summary>LoginUserPreferencesの実装例</summary>
+
+```Kotlin
+class LoginUserPreferences(context: Context) {
+  companion object {
+    private const val PREF_NAME = "login_user"
+    private const val KEY_USERNAME = "username"
+  }
+
+  private val sharedPreferences = context.getSharedPreferences(
+    PREF_NAME,
+    Context.MODE_PRIVATE
+  )
+
+  fun getUsername(): String? = sharedPreferences.getString(
+    KEY_USERNAME,
+    ""
+  )
+
+  fun putUsername(username: String?) {
+    sharedPreferences.edit {
+      putString(
+        KEY_USERNAME,
+        username
+      )
+    }
+  }
+
+  fun clear() = sharedPreferences.edit {
+    clear()
+  }
+}
+```
+</details>
+
+
 ## YatterApi#loginの実装
 
 続いてはYatterApi#loginの実装です。  
@@ -309,7 +353,7 @@ class CheckLoginServiceImplSpec {
 
 ---
 
-ここまでで`TokenPreferences`と`LoginService`、`CheckLoginService`とが属するinfra層の実装は完了しました。  
+ここまでで`TokenPreferences`と`LoginUserPreferences`、`LoginService`、`CheckLoginService`とが属するinfra層の実装は完了しました。  
 
 続いてusecase層の実装に移ります。  
 

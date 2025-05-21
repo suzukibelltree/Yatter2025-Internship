@@ -14,7 +14,7 @@ domain層には、次のクラスを定義します。
 - Domain Service
 - Repository
 
-それぞれの詳細はアーキテクチャドキュメント(tutorial>アーキテクチャについて>arthitecture)でも解説されていますのでそちらをご確認ください。  
+それぞれの詳細は[アーキテクチャドキュメント](../../../tutorial/アーキテクチャについて/architecture.md)でも解説されていますのでそちらをご確認ください。  
 
 ここでは、軽い特徴のみに絞って説明します。  
 
@@ -81,8 +81,8 @@ Yweetドメインですでに利用されている、投稿者を表すための
 ユーザー名が空文字になることは許容されていないため、Usernameドメインに`validate`メソッドを作成しバリデーションチェックできるようにしておきます。  
 
 ```Kotlin
-abstract class User(
-  id: UserId,
+data class User(
+  override val id: UserId,
   val username: Username, // ユーザー名
   val displayName: String?, // 表示名
   val note: String?, // ユーザーノート
@@ -90,12 +90,7 @@ abstract class User(
   val header: URL, // ヘッダー画像URL
   val followingCount: Int, // フォロー数
   val followerCount: Int, // フォロワー数
-) : Entity<UserId>(id) {
-
-  abstract suspend fun followings(): List<User>
-
-  abstract suspend fun followers(): List<User>
-}
+) : Entity<UserId>(id)
 ```
 
 ```Kotlin
@@ -109,17 +104,6 @@ class Username(value: String): Identifier<String>(value) {
 ```
 
 Userドメインでも同じ表示名やユーザー名を使う可能性があるため、一意性を担保するため今回のプロジェクトではidで同一性を担保します。  
-また、Userドメインには`followings`と`followers`というメソッドを用意しています。  
-あるユーザーのフォローとフォロワーはそのユーザーのユーザードメインに属する値として考えることができますが、`user/{username}`のAPIでは取得できない要素になります。  
-そこで`followings`や`followers`といったドメインメソッドを用意することによって、ドメインを扱う側としては通常のユーザードメイン内の値の一部として読み取ることができます。  
-
-UserドメインはYweetドメインと違い、[abstract](https://kotlinlang.org/docs/classes.html#abstract-classes)で定義されています。  
-`followings()`と`followers()`メソッドをドメインモデルで定義したことによってabstractなクラスにする必要が出てきています。  
-
-繰り返しにはなりますが、あるユーザーのフォロー・フォロワーを取得するには`user/{username}`のAPIを実行する必要があります。  
-愚直に実装しようとした場合は`followings()`と`followers()`メソッド内でAPI実行のコードを書くことになります。  
-ですが、設計方針としてAPIなどのアプリ外部へアクセスするのはinfra層でのみとしています。  
-ドメインモデルから直接API呼び出しを行わずにdomain層ではあくまでドメインモデルの定義のみを行うために、abstractを付けて定義しています。  
 
 ### Repositoryの実装
 

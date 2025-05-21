@@ -190,8 +190,8 @@ class PublicTimelineViewModel(
 
 メソッド内では以下の手順を実装します。  
 
-1.`YweetRepository`からYweet一覧を取得
-2.`PublicTimeline`内の`yweetList`を更新
+1. `YweetRepository`からYweet一覧を取得
+2. `PublicTimeline`内の`yweetList`を更新
 
 ```Kotlin
 class PublicTimelineViewModel(...) {

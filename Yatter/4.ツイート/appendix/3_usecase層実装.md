@@ -120,7 +120,7 @@ class PostYweetUseCaseImplSpec {
 
     val yweet = Yweet(
       id = YweetId(value = ""),
-      user = MeImpl(
+      user = User(
         id = UserId(value = ""),
         username = Username(value = ""),
         displayName = null,

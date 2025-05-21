@@ -4,48 +4,50 @@
 
 まずはQuery部分から実装します。  
 
-必要なドメインモデルとして、ログインしているユーザーの情報を扱う`Me`ドメインも実装します。  
-`Me`ドメインの実態は`User`ドメインと同じ値を保持しますが、自身のユーザーであるという情報を扱いやすくするために、`User`ドメインを継承して定義します。  
+必要なドメインモデルとして、`User`ドメインがありますが、すでに実装済みですね。
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2025.domain
+package com.dmm.bootcamp.yatter2025.domain.model
 
-abstract class Me(
-  id: UserId,
-  username: Username,
-  displayName: String?,
-  note: String?,
-  avatar: URL,
-  header: URL,
-  followingCount: Int,
-  followerCount: Int,
-) : User(
-  id,
-  username,
-  displayName,
-  note,
-  avatar,
-  header,
-  followingCount,
-  followerCount,
-) {
+import com.dmm.bootcamp.yatter2025.common.ddd.Entity
+import java.net.URL
 
-  abstract suspend fun follow(username: Username)
-
-  abstract suspend fun unfollow(username: Username)
-}
-
+data class User(
+  override val id: UserId,
+  val username: Username,
+  val displayName: String?,
+  val note: String?,
+  val avatar: URL,
+  val header: URL,
+  val followingCount: Int,
+  val followerCount: Int,
+) : Entity<UserId>(id)
 ```
 
 続いてDomainServiceの実装を行います。  
-必要なDomainServiceは`GetMeService`です。  
+必要なDomainServiceは`GetLoginUserService`です。  
 このDomainServiceを利用して、ログイン済みのアカウント情報を取得し、ツイート画面のアイコン表示やトークン取得に活用します。  
 
 ```Kotlin
 package com.dmm.bootcamp.yatter2025.domain.service
 
-interface GetMeService {
-  suspend fun execute(): Me?
+import com.dmm.bootcamp.yatter2025.domain.model.User
+
+interface GetLoginUserService {
+  suspend fun execute(): User?
+}
+```
+
+ついでに、後々の実装で必要になる`GetLoginUsernameService`も実装しておきます。  
+このDomainServiceは、ログイン済みのアカウントのユーザー名を取得し、ツイートに表示するメニューなどを変更する際に利用します。  
+
+```Kotlin
+package com.dmm.bootcamp.yatter2025.domain.service
+
+import com.dmm.bootcamp.yatter2025.domain.model.Username
+
+interface GetLoginUsernameService {
+  fun execute(): Username?
 }
 ```
 
@@ -56,23 +58,36 @@ interface GetMeService {
 `UserRepository`でユーザーの検索や追加、更新といったユーザー周りの制御・操作を行えるようにします。  
 
 ```Kotlin
-interface UserRepository {
-  suspend fun findMe(): Me?
+package com.dmm.bootcamp.yatter2025.domain.repository
 
-  suspend fun findByUsername(username: Username): User?
+import com.dmm.bootcamp.yatter2025.domain.model.User
+import com.dmm.bootcamp.yatter2025.domain.model.Password
+import com.dmm.bootcamp.yatter2025.domain.model.Username
+import java.net.URL
+
+interface UserRepository {
+  suspend fun findLoginUser(disableCache: Boolean): User?
+
+  suspend fun findByUsername(username: Username, disableCache: Boolean): User?
 
   suspend fun create(
     username: Username,
     password: Password
-  ): Me
+  ): User
 
   suspend fun update(
-    me: Me,
+    me: User,
     newDisplayName: String?,
     newNote: String?,
     newAvatar: URL?,
     newHeader: URL?
-  ): Me
+  ): User
+
+  suspend fun followings(): List<User>
+  suspend fun followers(): List<User>
+
+  suspend fun follow(me: User, username: Username)
+  suspend fun unfollow(me: User, username: Username)
 }
 ```
 

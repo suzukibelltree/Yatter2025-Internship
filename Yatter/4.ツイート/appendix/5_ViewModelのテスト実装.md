@@ -18,11 +18,11 @@
 
 ```Kotlin
 class PostViewModelSpec {
-  private val getMeService = mockk<GetMeService>()
+  private val getLoginUserService = mockk<GetLoginUserService>()
   private val postYweetUseCase = mockk<PostYweetUseCase>()
   private val subject = PostViewModel(
     postYweetUseCase,
-    getMeService,
+    getLoginUserService,
   )
 
   @get:Rule
@@ -34,7 +34,7 @@ class PostViewModelSpec {
   @Test
   fun getMeWhenOnCreate() = runTest {
     val avatarUrl = URL("https://www.dmm.com")
-    val me = MeImpl(
+    val me = User(
       id = UserId(value = "me user"),
       username = Username(value = ""),
       displayName = null,
@@ -45,7 +45,7 @@ class PostViewModelSpec {
       followerCount = 0
     )
     coEvery {
-      getMeService.execute()
+      getLoginUserService.execute()
     } returns me
 
     subject.onCreate()
