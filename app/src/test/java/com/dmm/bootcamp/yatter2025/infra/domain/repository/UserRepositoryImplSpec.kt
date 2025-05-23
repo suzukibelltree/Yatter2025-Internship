@@ -1,6 +1,7 @@
 package com.dmm.bootcamp.yatter2025.infra.domain.repository
 
 import com.dmm.bootcamp.yatter2025.domain.model.Username
+import com.dmm.bootcamp.yatter2025.domain.service.GetLoginUsernameService
 import com.dmm.bootcamp.yatter2025.infra.api.YatterApi
 import com.dmm.bootcamp.yatter2025.infra.api.json.UserJson
 import com.dmm.bootcamp.yatter2025.infra.domain.converter.UserConverter
@@ -14,8 +15,8 @@ import org.junit.Test
 
 class UserRepositoryImplSpec {
   private val yatterApi = mockk<YatterApi>()
-  private val loginUserPreferences = mockk<LoginUserPreferences>()
-  private val subject = UserRepositoryImpl(yatterApi, loginUserPreferences)
+  private val getLoginUsernameService = mockk<GetLoginUsernameService>()
+  private val subject = UserRepositoryImpl(yatterApi, getLoginUsernameService)
 
   @Test
   fun findByUsername() = runTest {
@@ -32,14 +33,11 @@ class UserRepositoryImplSpec {
       createdAt = ""
     )
 
-    val expect = UserConverter.convertToDomainModel(userJson, isMe = true)
+    val expect = UserConverter.convertToDomainModel(userJson)
 
     coEvery {
       yatterApi.getUserByUsername(any())
     } returns userJson
-    coEvery {
-      loginUserPreferences.getUsername()
-    } returns "username"
 
     val result = subject.findByUsername(username, disableCache = false)
 
@@ -64,11 +62,11 @@ class UserRepositoryImplSpec {
       followersCount = 0,
       createdAt = ""
     )
-    val expect = UserConverter.convertToDomainModel(userJson, isMe = true)
+    val expect = UserConverter.convertToDomainModel(userJson)
 
     coEvery {
-      loginUserPreferences.getUsername()
-    } returns username
+      getLoginUsernameService.execute()
+    } returns Username(username)
     coEvery {
       yatterApi.getUserByUsername(any())
     } returns userJson
@@ -79,7 +77,7 @@ class UserRepositoryImplSpec {
       yatterApi.getUserByUsername(username)
     }
     coVerify {
-      loginUserPreferences.getUsername()
+      getLoginUsernameService.execute()
     }
 
     assertThat(result).isEqualTo(expect)

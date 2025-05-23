@@ -7,7 +7,7 @@ import com.dmm.bootcamp.yatter2025.infra.api.json.UserJson
 import java.net.URL
 
 object UserConverter {
-  fun convertToDomainModel(json: UserJson, isMe: Boolean) = User(
+  fun convertToDomainModel(json: UserJson) = User(
     id = UserId(json.id),
     username = Username(json.username),
     displayName = json.displayName,
@@ -16,6 +16,5 @@ object UserConverter {
     header = URL(json.header),
     followingCount = json.followingCount,
     followerCount = json.followersCount,
-    isMe = isMe,
   )
 }

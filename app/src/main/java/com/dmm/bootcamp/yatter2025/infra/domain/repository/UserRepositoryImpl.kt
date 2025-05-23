@@ -5,6 +5,7 @@ import com.dmm.bootcamp.yatter2025.domain.model.User
 import com.dmm.bootcamp.yatter2025.domain.model.Password
 import com.dmm.bootcamp.yatter2025.domain.model.Username
 import com.dmm.bootcamp.yatter2025.domain.repository.UserRepository
+import com.dmm.bootcamp.yatter2025.domain.service.GetLoginUsernameService
 import com.dmm.bootcamp.yatter2025.infra.api.YatterApi
 import com.dmm.bootcamp.yatter2025.infra.api.json.CreateUserJson
 import com.dmm.bootcamp.yatter2025.infra.domain.converter.UserConverter
@@ -16,7 +17,7 @@ import java.net.URL
 
 class UserRepositoryImpl(
   private val yatterApi: YatterApi,
-  private val loginUserPreferences: LoginUserPreferences,
+  private val getLoginUsernameService: GetLoginUsernameService,
 ) : UserRepository {
   private val userCache: MutableMap<Username, User> = mutableMapOf()
 
@@ -30,13 +31,12 @@ class UserRepositoryImpl(
         password = password.value
       )
     )
-    UserConverter.convertToDomainModel(userJson, isMe = true)
+    UserConverter.convertToDomainModel(userJson)
   }
 
   override suspend fun findLoginUser(disableCache: Boolean): User? = withContext(Dispatchers.IO) {
-    val username = loginUserPreferences.getUsername() ?: return@withContext null
-    if (username.isEmpty()) return@withContext null
-    findByUsername(username = Username(username), disableCache = disableCache)
+    val username = getLoginUsernameService.execute() ?: return@withContext null
+    findByUsername(username = username, disableCache = disableCache)
   }
 
   override suspend fun findByUsername(
@@ -51,8 +51,7 @@ class UserRepositoryImpl(
     }
     try {
       val userJson = yatterApi.getUserByUsername(username = username.value)
-      val isMe = userJson.username == loginUserPreferences.getUsername()
-      val user = UserConverter.convertToDomainModel(userJson, isMe)
+      val user = UserConverter.convertToDomainModel(userJson)
       userCache[username] = user
       return@withContext user
     } catch (e: HttpException) {

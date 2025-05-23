@@ -15,22 +15,19 @@ import java.io.File
 class YweetRepositoryImpl(
   private val yatterApi: YatterApi,
   private val tokenProvider: TokenProvider,
-  private val loginUserPreferences: LoginUserPreferences,
 ) : YweetRepository {
   override suspend fun findById(id: YweetId): Yweet? {
     TODO("Not yet implemented")
   }
 
   override suspend fun findAllPublic(): List<Yweet> = withContext(IO) {
-    val loginUsername = loginUserPreferences.getUsername()
     val yweetList = yatterApi.getPublicTimeline()
-    YweetConverter.convertToDomainModel(yweetList, loginUsername = loginUsername)
+    YweetConverter.convertToDomainModel(yweetList)
   }
 
   override suspend fun findAllHome(): List<Yweet> = withContext(IO) {
-    val loginUsername = loginUserPreferences.getUsername()
     val yweetList = yatterApi.getHomeTimeline(tokenProvider.provide())
-    YweetConverter.convertToDomainModel(yweetList, loginUsername)
+    YweetConverter.convertToDomainModel(yweetList)
   }
 
   override suspend fun create(
@@ -44,7 +41,7 @@ class YweetRepositoryImpl(
         listOf()
       )
     )
-    YweetConverter.convertToDomainModel(yweetJson, isMe = true)
+    YweetConverter.convertToDomainModel(yweetJson)
   }
 
   override suspend fun delete(yweet: Yweet) {

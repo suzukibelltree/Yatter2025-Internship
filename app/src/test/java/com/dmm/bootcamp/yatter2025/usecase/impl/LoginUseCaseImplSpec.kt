@@ -30,7 +30,7 @@ class LoginUseCaseImplSpec {
       loginService.execute(any(), any())
     }
     justRun {
-      loginUserPreferences.putUserName(any())
+      loginUserPreferences.putUsername(any())
     }
 
     val result = subject.execute(username, password)
@@ -39,7 +39,7 @@ class LoginUseCaseImplSpec {
       loginService.execute(username, password)
     }
     verify {
-      loginUserPreferences.putUserName(username.value)
+      loginUserPreferences.putUsername(username.value)
     }
 
     assertThat(result).isEqualTo(LoginUseCaseResult.Success)
@@ -54,7 +54,7 @@ class LoginUseCaseImplSpec {
       loginService.execute(any(), any())
     }
     justRun {
-      loginUserPreferences.putUserName(any())
+      loginUserPreferences.putUsername(any())
     }
 
     val result = subject.execute(username, password)
@@ -63,7 +63,7 @@ class LoginUseCaseImplSpec {
       loginService.execute(any(), any())
     }
     verify(inverse = true) {
-      loginUserPreferences.putUserName(any())
+      loginUserPreferences.putUsername(any())
     }
 
     assertThat(result).isEqualTo(LoginUseCaseResult.Failure.EmptyUsername)
@@ -78,7 +78,7 @@ class LoginUseCaseImplSpec {
       loginService.execute(any(), any())
     }
     justRun {
-      loginUserPreferences.putUserName(any())
+      loginUserPreferences.putUsername(any())
     }
 
     val result = subject.execute(username, password)
@@ -87,7 +87,7 @@ class LoginUseCaseImplSpec {
       loginService.execute(any(), any())
     }
     verify(inverse = true) {
-      loginUserPreferences.putUserName(any())
+      loginUserPreferences.putUsername(any())
     }
 
     assertThat(result).isEqualTo(LoginUseCaseResult.Failure.EmptyPassword)
@@ -102,7 +102,7 @@ class LoginUseCaseImplSpec {
       loginService.execute(any(), any())
     }
     justRun {
-      loginUserPreferences.putUserName(any())
+      loginUserPreferences.putUsername(any())
     }
 
     val result = subject.execute(username, password)
@@ -111,7 +111,7 @@ class LoginUseCaseImplSpec {
       loginService.execute(any(), any())
     }
     verify(inverse = true) {
-      loginUserPreferences.putUserName(any())
+      loginUserPreferences.putUsername(any())
     }
 
     assertThat(result).isEqualTo(LoginUseCaseResult.Failure.InvalidPassword)
@@ -127,7 +127,7 @@ class LoginUseCaseImplSpec {
       loginService.execute(any(), any())
     } throws error
     justRun {
-      loginUserPreferences.putUserName(any())
+      loginUserPreferences.putUsername(any())
     }
 
     val result = subject.execute(username, password)
@@ -136,7 +136,7 @@ class LoginUseCaseImplSpec {
       loginService.execute(any(), any())
     }
     verify(inverse = true) {
-      loginUserPreferences.putUserName(any())
+      loginUserPreferences.putUsername(any())
     }
 
     assertThat(result).isEqualTo(LoginUseCaseResult.Failure.OtherError(error))
