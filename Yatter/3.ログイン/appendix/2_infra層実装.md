@@ -154,7 +154,7 @@ suspend fun login(
 domain層実装時に定義した`LoginService`インターフェースを継承してメソッドをオーバーライドします。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.infra.domain.service
+package com.dmm.bootcamp.yatter2025.infra.domain.service
 
 class LoginServiceImpl(
   private val tokenPreferences: TokenPreferences,

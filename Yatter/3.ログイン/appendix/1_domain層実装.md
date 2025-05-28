@@ -17,7 +17,7 @@ LoginServiceドメインサービスでは、ユーザー名とパスワード�
 まずは、`Password`ドメインモデルの定義をします。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.domain
+package com.dmm.bootcamp.yatter2025.domain
 
 data class Password(
   val value: String,
@@ -107,7 +107,7 @@ class PasswordSpec {
 `Repository`の時と同様にdomain層ではinterface定義のみ行います。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.domain.service
+package com.dmm.bootcamp.yatter2025.domain.service
 
 interface LoginService {
   suspend fun execute(
@@ -124,7 +124,7 @@ interface LoginService {
 `Repository`の時と同様にdomain層ではinterface定義のみ行います。  
 
 ```Kotlin
-package com.dmm.bootcamp.yatter2024.domain.service
+package com.dmm.bootcamp.yatter2025.domain.service
 
 interface CheckLoginService {
   suspend fun execute(): Boolean
