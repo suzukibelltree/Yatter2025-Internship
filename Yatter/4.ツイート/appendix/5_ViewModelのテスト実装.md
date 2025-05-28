@@ -18,11 +18,11 @@
 
 ```Kotlin
 class PostViewModelSpec {
-  private val getMeService = mockk<GetMeService>()
-  private val postStatusUseCase = mockk<PostStatusUseCase>()
+  private val getLoginUserService = mockk<GetLoginUserService>()
+  private val postYweetUseCase = mockk<PostYweetUseCase>()
   private val subject = PostViewModel(
-    postStatusUseCase,
-    getMeService,
+    postYweetUseCase,
+    getLoginUserService,
   )
 
   @get:Rule
@@ -34,8 +34,8 @@ class PostViewModelSpec {
   @Test
   fun getMeWhenOnCreate() = runTest {
     val avatarUrl = URL("https://www.dmm.com")
-    val me = MeImpl(
-      id = AccountId(value = "me account"),
+    val me = User(
+      id = UserId(value = "me user"),
       username = Username(value = ""),
       displayName = null,
       note = null,
@@ -45,7 +45,7 @@ class PostViewModelSpec {
       followerCount = 0
     )
     coEvery {
-      getMeService.execute()
+      getLoginUserService.execute()
     } returns me
 
     subject.onCreate()
@@ -55,43 +55,43 @@ class PostViewModelSpec {
 
 
   @Test
-  fun changeStatusAndCanPost() = runTest {
-    val newStatusText = "new"
+  fun changeYweetAndCanPost() = runTest {
+    val newYweetText = "new"
 
-    subject.onChangedStatusText(newStatusText)
+    subject.onChangedYweetText(newYweetText)
 
-    assertThat(subject.uiState.value.bindingModel.statusText).isEqualTo(newStatusText)
+    assertThat(subject.uiState.value.bindingModel.yweetText).isEqualTo(newYweetText)
     assertThat(subject.uiState.value.canPost).isTrue()
   }
 
   @Test
-  fun changeStatusAndCannotPost() = runTest {
-    val oldStatusText = "old"
-    val newStatusText = ""
+  fun changeYweetAndCannotPost() = runTest {
+    val oldYweetText = "old"
+    val newYweetText = ""
 
-    subject.onChangedStatusText(oldStatusText)
-    assertThat(subject.uiState.value.bindingModel.statusText).isEqualTo(oldStatusText)
+    subject.onChangedYweetText(oldYweetText)
+    assertThat(subject.uiState.value.bindingModel.yweetText).isEqualTo(oldYweetText)
     assertThat(subject.uiState.value.canPost).isTrue()
 
-    subject.onChangedStatusText(newStatusText)
+    subject.onChangedYweetText(newYweetText)
 
-    assertThat(subject.uiState.value.bindingModel.statusText).isEqualTo(newStatusText)
+    assertThat(subject.uiState.value.bindingModel.yweetText).isEqualTo(newYweetText)
     assertThat(subject.uiState.value.canPost).isFalse()
   }
 
   @Test
   fun postSuccess() = runTest {
-    val status = "status"
-    subject.onChangedStatusText(status)
+    val yweet = "yweet"
+    subject.onChangedYweetText(yweet)
 
     coEvery {
-      postStatusUseCase.execute(any(), any())
-    } returns PostStatusUseCaseResult.Success
+      postYweetUseCase.execute(any(), any())
+    } returns PostYweetUseCaseResult.Success
 
     subject.onClickPost()
 
     coVerify {
-      postStatusUseCase.execute(status, emptyList())
+      postYweetUseCase.execute(yweet, emptyList())
     }
 
     assertThat(subject.destination.value).isInstanceOf(PopBackDestination::class.java)
@@ -99,17 +99,17 @@ class PostViewModelSpec {
 
   @Test
   fun postFailure() = runTest {
-    val status = "status"
-    subject.onChangedStatusText(status)
+    val yweet = "yweet"
+    subject.onChangedYweetText(yweet)
 
     coEvery {
-      postStatusUseCase.execute(any(), any())
-    } returns PostStatusUseCaseResult.Failure.OtherError(Exception())
+      postYweetUseCase.execute(any(), any())
+    } returns PostYweetUseCaseResult.Failure.OtherError(Exception())
 
     subject.onClickPost()
 
     coVerify {
-      postStatusUseCase.execute(status, emptyList())
+      postYweetUseCase.execute(yweet, emptyList())
     }
 
     assertThat(subject.destination.value).isNull()
@@ -126,4 +126,4 @@ class PostViewModelSpec {
 
 </details>
 
-# [次の章へ](../5.その次は/1_その次は.md)
+# [次の章へ](../../5.その次は/1_その次は.md)

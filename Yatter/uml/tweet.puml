@@ -1,16 +1,19 @@
 @startuml
 
 package domain {
-  class Me
-  interface AccountRepository {
-    + findMe(): Me?
-    + findByUsername(username: Username): Account?
+  package model {
+    class User
+  }
+
+  interface UserRepository {
+    + findLoginUser(): User?
+    + findByUsername(username: Username): User?
     + create(...)
     + update(...)
   }
 
-  interface GetMeService {
-    + execute(): Me?
+  interface GetLoginUserService {
+    + execute(): User?
   }
 
   interface StatusRepository {
@@ -20,21 +23,20 @@ package domain {
 
 package infra {
   package domain {
-    class MeImpl
     package repository {
-      class AccountRepositoryImpl {
-        - mePreferences: MePreferences
+      class UserRepositoryImpl {
+        - loginUserPreference: LoginUserPreference
         - yatterApi: YatterApi
       }
 
       class StatusRepositoryImpl {
-        - mePreferences: MePreferences
+        - loginUserPreference: LoginUserPreference
         - yatterApi: YatterApi
       }
     }
     package service {
-      class GetMeServiceImpl {
-        - accountRepository: AccountRepository
+      class GetLoginUserServiceImpl {
+        - userRepository: UserRepository
       }
     }
   }
@@ -55,7 +57,7 @@ package usecase {
 package ui.post {
   class PostViewModel {
     - postStatusUseCase: PostStatusUseCase
-    - getMeService: GetMeService
+    - getLoginUserService: GetLoginUserServiceImpl
 
     + uiState: StateFlow<PostUiState>
     + destination: StateFlow<Destination?>
@@ -79,15 +81,13 @@ package ui.post {
   }
 }
 
-MeImpl --|> Me
-AccountRepository -- Me
-GetMeService -- Me
+GetLoginUserService -- User
 
-GetMeServiceImpl --|> GetMeService
-AccountRepositoryImpl --|> AccountRepository
+GetLoginUserServiceImpl --|> GetLoginUserService
+UserRepositoryImpl --|> UserRepository
 StatusRepositoryImpl --|> StatusRepository
 
-GetMeService -- AccountRepository
+GetLoginUserService -- UserRepository
 
 PostStatusUseCaseImpl --|> PostStatusUseCase
 PostStatusUseCase -- PostStatusUseCaseResult
@@ -97,5 +97,5 @@ PostViewModel -- PostUiState
 PostUiState -- PostBindingModel
 
 PostViewModel -- PostStatusUseCase
-PostViewModel -- GetMeService
+PostViewModel -- GetLoginUserService
 @enduml

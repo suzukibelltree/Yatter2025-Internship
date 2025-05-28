@@ -12,8 +12,8 @@ ViewModelにもテストを書きます。
 
 ```Kotlin
 class PublicTimelineViewModelSpec {
-  private val statusRepository = mockk<StatusRepository>()
-  private val subject = PublicTimelineViewModel(statusRepository)
+  private val yweetRepository = mockk<YweetRepository>()
+  private val subject = PublicTimelineViewModel(yweetRepository)
 }
 ```
 
@@ -48,37 +48,37 @@ class PublicTimelineViewModelSpec {
 ```Kotlin
 @Test
 fun getPublicTimelineFromRepository() = runTest {
-  val statusList = listOf(
-    Status(
-      id = StatusId(value = "id"),
-      account = AccountImpl(
-        id= AccountId("id"),
+  val yweetList = listOf(
+    Yweet(
+      id = YweetId(value = "id"),
+      user = User(
+        id= UserId("id"),
         username = Username("username"),
         displayName = "display name",
         note = "note",
         avatar = URL("https://www.google.com"),
         header = URL("https://www.google.com"),
         followingCount = 100,
-        followerCount = 200
+        followerCount = 200,
       ),
       content = "content",
-      attachmentMediaList = listOf()
+      attachmentImageList = listOf()
     )
   )
 
-  val expect = StatusConverter.convertToBindingModel(statusList)
+  val expect = YweetConverter.convertToBindingModel(yweetList)
 
   coEvery {
-    statusRepository.findAllPublic()
-  } returns statusList
+    yweetRepository.findAllPublic()
+  } returns yweetList
 
   subject.onResume()
 
   coVerify {
-    statusRepository.findAllPublic()
+    yweetRepository.findAllPublic()
   }
 
-  assertThat(subject.uiState.value.statusList).isEqualTo(expect)
+  assertThat(subject.uiState.value.yweetList).isEqualTo(expect)
 }
 ```
 
@@ -87,38 +87,38 @@ fun getPublicTimelineFromRepository() = runTest {
 ```Kotlin
 @Test
 fun onRefreshPublicTimeline() = runTest {
-  val statusList = listOf(
-    Status(
-      id = StatusId(value = "id"),
-      account = AccountImpl(
-        id= AccountId("id"),
+  val yweetList = listOf(
+    Yweet(
+      id = YweetId(value = "id"),
+      user = User(
+        id= UserId("id"),
         username = Username("username"),
         displayName = "display name",
         note = "note",
         avatar = URL("https://www.google.com"),
         header = URL("https://www.google.com"),
         followingCount = 100,
-        followerCount = 200
+        followerCount = 200,
       ),
       content = "content",
-      attachmentMediaList = listOf()
+      attachmentImageList = listOf()
     )
   )
 
-  val expect = StatusConverter.convertToBindingModel(statusList)
+  val expect = YweetConverter.convertToBindingModel(yweetList)
 
   coEvery {
-    statusRepository.findAllPublic()
-  } returns statusList
+    yweetRepository.findAllPublic()
+  } returns yweetList
 
   subject.onRefresh()
 
   coVerify {
-    statusRepository.findAllPublic()
+    yweetRepository.findAllPublic()
   }
 
-  assertThat(subject.uiState.value.statusList).isEqualTo(expect)
+  assertThat(subject.uiState.value.yweetList).isEqualTo(expect)
 }
 ```
 
-# [次の章へ](../3.ログイン/1_ログイン機能概要.md)
+# [次の章へ](../../3.ログイン/1_ログイン機能概要.md)

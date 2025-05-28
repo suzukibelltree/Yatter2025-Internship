@@ -4,14 +4,14 @@
 
 ## BindingModelの実装
 まずはBindingModelの実装からです。  
-`ui/post`パッケージに`PostBindingModel`ファイルを作成し、定義します。  
+`ui/post/bindingmodel`パッケージに`PostBindingModel`ファイルを作成し、定義します。  
 
 ツイート画面で表示する内容としては、ツイート主のアイコンとツイート内容をBindingModelが持つようにします。  
 
 ```Kotlin
 data class PostBindingModel(
   val avatarUrl: String?,
-  val statusText: String,
+  val yweetText: String,
 )
 ```
 
@@ -19,7 +19,7 @@ data class PostBindingModel(
 続いて、UiStateの実装です。
 `ui/post`パッケージに`PostUiState`クラスを作成しましょう。
 UiStateではツイートの投稿内容`PostBindingModel`と読み込み中かを表す`isLoading`、そしてツイートの投稿ができるかどうかの`canPost`を実装します。  
-`canPost`は`PostBindingModel#statusText`が空かどうかで判断するようにします。
+`canPost`は`PostBindingModel#yweetText`が空かどうかで判断するようにします。
 
 ```Kotlin
 data class PostUiState(
@@ -30,31 +30,31 @@ data class PostUiState(
     fun empty(): PostUiState = PostUiState(
       bindingModel = PostBindingModel(
         avatarUrl = null,
-        statusText = ""
+        yweetText = ""
       ),
       isLoading = false,
     )
   }
 
   val canPost: Boolean
-    get() = bindingModel.statusText.isNotBlank()
+    get() = bindingModel.yweetText.isNotBlank()
 }
 ```
 
 ## ViewModelの実装
 ViewModelの実装に移ります。  
 `ui/post`パッケージに`PostViewModel`クラスを作成しましょう。  
-投稿用のUseCaseである`PostStatusUseCase`とログインユーザーの情報を取得する`getMeService`も引数に追加します。  
+投稿用のUseCaseである`PostYweetUseCase`とログインユーザーの情報を取得する`getLoginUserService`も引数に追加します。  
 
 ```Kotlin
 class PostViewModel(
-  private val postStatusUseCase: PostStatusUseCase,
-  private val getMeService: GetMeService,
+  private val postYweetUseCase: PostYweetUseCase,
+  private val getLoginUserService: GetLoginUserService,
 ) : ViewModel() {}
 ```
 
 次に、必要なメソッドを定義します。  
-今回は画面の初期起動時にユーザー情報取得する`onCreate`とStatusの内容を書き換えた時に呼び出される`onChangedStatusText`、そして投稿ボタンを押下した時の`onClickPost`を用意します。  
+今回は画面の初期起動時にユーザー情報取得する`onCreate`とYweetの内容を書き換えた時に呼び出される`onChangedYweetText`、そして投稿ボタンを押下した時の`onClickPost`を用意します。  
 さらにツイート画面ではパブリックタイムライン画面に戻るために表示するボタン押下時の`onClickNavIcon`と画面遷移が終わったあとにDestinationを初期化する`onCompleteNavigation`も定義します。  
 
 
@@ -62,7 +62,7 @@ class PostViewModel(
 class PostViewModel(...) : ViewModel() {
   fun onCreate() {}
 
-  fun onChangedStatusText(statusText: String) {}
+  fun onChangedYweetText(yweetText: String) {}
 
   fun onClickPost() {}
 
@@ -85,7 +85,7 @@ class PostViewModel(...) : ViewModel() {
 ```
 
 `onCreate`でユーザー情報取得する部分から実装します。  
-`GetMeService`でログイン済みのユーザーを取得し、必要なアバター画像の情報のみをUiStateに更新します。  
+`GetLoginUserService`でログイン済みのユーザーを取得し、必要なアバター画像の情報のみをUiStateに更新します。  
 読み込みを行うため、`isLoading`も更新してローディング表示するようにしましょう。  
 
 ```Kotlin
@@ -93,7 +93,7 @@ fun onCreate() {
   viewModelScope.launch {
     _uiState.update { it.copy(isLoading = true) }
 
-    val me = getMeService.execute()
+    val me = getLoginUserService.execute()
 
     val snapshotBindingModel = uiState.value.bindingModel
     _uiState.update {
@@ -106,11 +106,11 @@ fun onCreate() {
 }
 ```
 
-次は、入力された文字列にUiStateを更新するための`onChangedStatusText`の実装です。  
+次は、入力された文字列にUiStateを更新するための`onChangedYweetText`の実装です。  
 
 ```Kotlin
-fun onChangedStatusText(statusText: String) {
-  _uiState.update { it.copy(bindingModel = uiState.value.bindingModel.copy(statusText = statusText)) }
+fun onChangedYweetText(yweetText: String) {
+  _uiState.update { it.copy(bindingModel = uiState.value.bindingModel.copy(yweetText = yweetText)) }
 }
 ```
 
@@ -121,15 +121,15 @@ fun onChangedStatusText(statusText: String) {
 fun onClickPost() {
   viewModelScope.launch {
     _uiState.update { it.copy(isLoading = true) }
-    val result = postStatusUseCase.execute(
-      content = uiState.value.bindingModel.statusText,
+    val result = postYweetUseCase.execute(
+      content = uiState.value.bindingModel.yweetText,
       attachmentList = listOf()
     )
     when (result) {
-      PostStatusUseCaseResult.Success -> {
+      PostYweetUseCaseResult.Success -> {
         _destination.value = PopBackDestination
       }
-      is PostStatusUseCaseResult.Failure -> {
+      is PostYweetUseCaseResult.Failure -> {
         // エラー表示
       }
     }
@@ -178,7 +178,7 @@ fun PostTemplate() {
 @Preview
 @Composable
 private fun PostTemplatePreview() {
-  Yatter2024Theme {
+  Yatter2025Theme {
     Surface() {
       PostTemplate()
     }
@@ -192,7 +192,7 @@ private fun PostTemplatePreview() {
   - ページタイトル
   - 戻るボタン
 - 投稿者のアバターアイコン
-- 入力中のツイート(Status)内容
+- 入力中のツイート(Yweet)内容
 - 投稿用ボタン
 
 これらの要素を順番に実装していきます。  
@@ -207,7 +207,7 @@ private fun PostTemplatePreview() {
   - Boolean
 - 投稿可能フラグ
   - Boolean
-- Status入力状況監視ラムダ
+- Yweet入力状況監視ラムダ
   - (String) -> Unit
 - 投稿ボタン押下ラムダ
   - () -> Unit
@@ -222,28 +222,28 @@ fun PostTemplate(
   postBindingModel: PostBindingModel,
   isLoading: Boolean,
   canPost: Boolean,
-  onStatusTextChanged: (String) -> Unit,
+  onYweetTextChanged: (String) -> Unit,
   onClickPost: () -> Unit,
   onClickNavIcon: () -> Unit,
 ) {}
 ```
 
-続いてプレビュー側にも引数とテストようの値を追加します。
+続いてプレビュー側にも引数とテスト用の値を追加します。
 
 ```Kotlin
 @Preview
 @Composable
 private fun PostTemplatePreview() {
-    Yatter2024Theme {
+    Yatter2025Theme {
         Surface {
             PostTemplate(
                 postBindingModel = PostBindingModel(
                     avatarUrl = "https://avatars.githubusercontent.com/u/19385268?v=4",
-                    statusText = ""
+                    yweetText = ""
                 ),
                 isLoading = false,
                 canPost = false,
-                onStatusTextChanged = {},
+                onYweetTextChanged = {},
                 onClickPost = {},
                 onClickNavIcon = {},
             )
@@ -333,8 +333,8 @@ Box(...) {
         modifier = Modifier
           .fillMaxWidth() // 横幅最大サイズ確保
           .weight(1f), // 他のコンポーザブルのサイズを確保した上で最大サイズを取る
-        value = postBindingModel.statusText,
-        onValueChange = onStatusTextChanged,
+        value = postBindingModel.yweetText,
+        onValueChange = onYweetTextChanged,
         colors = TextFieldDefaults.textFieldColors(
           backgroundColor = Color.Transparent,
           focusedIndicatorColor = Color.Transparent,
@@ -410,7 +410,7 @@ fun PostPage(
     postBindingModel = uiState.bindingModel,
     isLoading = uiState.isLoading,
     canPost = uiState.canPost,
-    onStatusTextChanged = viewModel::onChangedStatusText,
+    onYweetTextChanged = viewModel::onChangedYweetText,
     onClickPost = viewModel::onClickPost,
     onClickNavIcon = viewModel::onClickNavIcon,
   )
@@ -430,7 +430,7 @@ internal val viewModelModule = module {
   viewModel { MainViewModel(get()) }
   viewModel { PublicTimelineViewModel(get()) }
   viewModel { PostViewModel(get(), get()) } // こちらの//を削除
-//  viewModel { RegisterAccountViewModel(get()) }
+//  viewModel { RegisterUserViewModel(get()) }
   viewModel { LoginViewModel(get()) }
 }
 ```
