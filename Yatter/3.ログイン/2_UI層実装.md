@@ -65,9 +65,9 @@ data class LoginUiState(...) {
         username = "",
         password = ""
       ),
+      isLoading = false,
       validUsername = false,
       validPassword = false,
-      isLoading = false,
     )
   }
 }
@@ -109,7 +109,7 @@ UiStateの保持ができたら、イベントメソッドの定義を行いま�
 
 `onClick~`メソッドはログインボタンや会員登録へ進むためのボタンをユーザーが押下したときに呼び出すメソッドです。  
 ログインボタンの場合はログイン処理を、会員登録ボタンは会員登録画面への遷移を実装します。  
-会員登録画面の実装自体は本研修では解説しないため時間がある時に実装してみてください。  
+会員登録画面の実装自体は解説しないため時間がある時に実装してみてください。  
 
 まずは、メソッドの定義からです。  
 
@@ -190,7 +190,7 @@ fun onChangedPassword(password: String) {
 まずは、ログイン処理成功時の画面遷移の準備をします。  
 画面遷移処理はViewModel内では実施できないため、UI側に画面遷移することを通達する手段が必要になります。  
 
-UiStateと同じように、`StateFlow`で定義します。`Destination`については[3_導線実装](./3_導線実装.md)で後述します。
+UiStateと同じように、`StateFlow`で定義します。
 
 ```Kotlin
 private val _destination = MutableStateFlow<Destination?>(null)
@@ -198,7 +198,7 @@ val destination: StateFlow<Destination?> = _destination.asStateFlow()
 ```
 
 この値は次のようにすることで、外部に画面遷移する必要があることを伝播します。
-`PublicTimelineDestination`はまだ未実装のため、一旦ここの実装は後回しにします。
+`PublicTimelineDestination`はまだ未実装のため、ここでは実装せずに[3_導線実装](./3_導線実装.md)で詳細を解説します。
 
 ```Kotlin
 // ViewModel内
@@ -255,7 +255,7 @@ fun onClickLogin() {
 ```
 
 `onClickLogin`までの実装ができたら、続いては`onClickRegister`です。  
-`_destination`にユーザー登録画面のDestinationを渡しますが、実装がまだなので後回しです。
+`_destination`にユーザー登録画面のDestinationを渡しますが、実装がまだなためコメントアウトしておきます。
 
 ```Kotlin
 fun onClickRegister() {
@@ -358,7 +358,7 @@ fun LoginTemplate(...) {
         }
       )
     }
-  ) {}
+  ) { paddingValues -> }
 }
 ```
 
@@ -370,11 +370,11 @@ fun LoginTemplate(...) {
 ```Kotlin
 @Composable
 fun LoginTemplate(...) {
-  Scaffold(...) {
+  Scaffold(...) { paddingValues ->
     Box(
       modifier = Modifier
         .fillMaxSize()
-        .padding(it)
+        .padding(paddingValues)
         .padding(8.dp),
     ) {}
   }
@@ -384,10 +384,10 @@ fun LoginTemplate(...) {
 ユーザー名とパスワードを入力するためのテキストボックスと補助用のテキストを縦に並べて表示します。  
 
 Jetpack Composeでテキストボックスを実装するために利用するコンポーザブルにはいくつか種類があります。  
-その中でも今回はテキストボックスが枠で囲われた`OutlinedTextField`を利用します。  
-他のテキストボックス用のコンポーザブルも見た目と名前が違うだけで引数や使い方に違いはないため、好きなものを使って問題ありません。  
+その中でも今回はテキストボックスが枠線で囲われた`OutlinedTextField`を利用します。  
+他のテキストボックス用のコンポーザブルも見た目と名前が違うだけで引数や使い方に大きな違いはないため、好きなものを使っても問題ありません。  
 
-`OutlinedTextField`は`value`に現在表示されるテキストの内容、`onValueChange`にユーザーがテキストボックス入力したときに実行される`(String) -> Unit`なラムダを渡すことで入力の変更を検知することができます。  
+`OutlinedTextField`は`value`に現在表示されるテキストの内容、`onValueChange`にユーザーがテキストボックス入力したときに実行される`(String) -> Unit`のラムダを渡すことで入力の変更を検知することができます。  
 今回はさらに、`placeholder`引数も利用して、ユーザーが何も入力していない時(入力文字が空文字の時)に表示する補助テキストを表示します。  
 
 `OutlinedTextField`コンポーザブルと`Text`コンポーザブルを利用して入力箇所のUI構築を行います。  
@@ -511,7 +511,7 @@ Templateまで実装できたらPageの実装を行います。
 パブリックタイムライン画面と同様にViewModelとTemplateの繋ぎこみを行います。  
 
 `viewModel::メソッド名`のように記述することで、関数オブジェクトを渡すことができます。  
-ひとまずはこうすることによって、メソッドを変数のように扱うことができるくらいの認識でも問題ありません。  
+この記法によって、メソッドを変数のように扱うことができるくらいの認識でも問題ありません。  
 
 関数オブジェクトの詳細について知りたい方は次の資料をご一読ください。  
 https://developer.android.com/codelabs/basic-android-kotlin-compose-function-types-and-lambda?hl=ja#0
