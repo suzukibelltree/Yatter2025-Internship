@@ -14,7 +14,7 @@
 
 ## BindingModelの実装
 まずは、BindingModelの実装からです。  
-`ui/login`パッケージに`LoginBindingModel`ファイルを作成します。  
+`ui/login/bindingmodel`パッケージに`LoginBindingModel`ファイルを作成します。  
 
 ログイン画面で表示する内容としては、ユーザーによって入力されるユーザー名とパスワードの値で、Stringとして保持します。  
 
@@ -255,11 +255,11 @@ fun onClickLogin() {
 ```
 
 `onClickLogin`までの実装ができたら、続いては`onClickRegister`です。  
-`_destination`に登録画面のDestinationを渡しますが、実装がまだなので後回しです。
+`_destination`にユーザー登録画面のDestinationを渡しますが、実装がまだなので後回しです。
 
 ```Kotlin
 fun onClickRegister() {
-  // _destination.value = RegisterAccountDestination()
+  // _destination.value = RegisterUserDestination()
 }
 ```
 
@@ -284,7 +284,7 @@ fun LoginTemplate() {
 @Preview
 @Composable
 private fun LoginTemplatePreview() {
-  Yatter2024Theme {
+  Yatter2025Theme {
     Surface {
       LoginTemplate()
     }
@@ -292,7 +292,7 @@ private fun LoginTemplatePreview() {
 }
 ```
 
-ログイン画面で最低限必要な要素としてはユーザー名とパスワードを入力するテキストボックス2つにログイン・会員登録のボタン2つというシンプルな作りです。  
+ログイン画面で最低限必要な要素としてはユーザー名とパスワードを入力するテキストボックス2つにログイン・ユーザー登録のボタン2つというシンプルな作りです。  
 
 今回は要件を満たしつつ、操作間違いが少なそうな次の見た目を作成することを目指します。  
 
@@ -325,7 +325,7 @@ fun LoginTemplate(
 @Preview
 @Composable
 fun LoginTemplatePreview() {
-  Yatter2024Theme {
+  Yatter2025Theme {
     Surface {
       LoginTemplate(
         userName = "username",
@@ -439,7 +439,7 @@ fun LoginTemplate(...) {
 
 ![login_text_field](../image/3/login_text_field.png)
 
-入力箇所の表示ができたら続いてはログインボタン、および会員登録画面への遷移ボタンを配置します。  
+入力箇所の表示ができたら続いてはログインボタン、およびユーザー登録画面への遷移ボタンを配置します。  
 
 新たに3つのコンポーザブルが登場します。  
 
@@ -480,7 +480,7 @@ fun LoginTemplate(...) {
           onClick = onClickRegister,
           modifier = Modifier.fillMaxWidth()
         ) {
-          Text(text = "新規会員登録")
+          Text(text = "新規ユーザー登録")
         }
       }
     }
@@ -542,7 +542,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
   super.onCreate(savedInstanceState)
 
   setContent {
-    Yatter2024Theme {
+    Yatter2025Theme {
       Surface {
         LoginPage()
       }
@@ -565,7 +565,7 @@ internal val viewModelModule = module {
 //  viewModel { MainViewModel(get()) }
   viewModel { PublicTimelineViewModel(get()) }
 //  viewModel { PostViewModel(get(), get()) }
-//  viewModel { RegisterAccountViewModel(get()) }
+//  viewModel { RegisterUserViewModel(get()) }
   viewModel { LoginViewModel(get()) } // こちらの//を削除
 }
 ```

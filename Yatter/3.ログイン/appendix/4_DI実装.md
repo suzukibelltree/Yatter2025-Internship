@@ -28,7 +28,7 @@ modules(
 
 UseCase用のDIモジュールの用意ができたところでログイン画面実装時に追加したクラスを各層のDIモジュールに定義していきます。  
 
-`DomainImplModule`に`LoginService`と`CheckLoginService`、`InfraModule`に`MePreferences`と`TokenPreferences`、`UseCaseModule`に`LoginUseCase`、`ViewModelModule`に`LoginViewModel`を定義してみましょう。  
+`DomainImplModule`に`LoginService`と`CheckLoginService`、`InfraModule`に`LoginUserPreferences`と`TokenPreferences`、`UseCaseModule`に`LoginUseCase`、`ViewModelModule`に`LoginViewModel`を定義してみましょう。  
 
 ```Kotlin
 // DomainImplModule
@@ -44,7 +44,7 @@ val domainImplModule = module {
 
 val infraModule = module {
   ...
-  single { MePreferences(get()) }
+  single { LoginUserPreferences(get()) }
   single { TokenPreferences(get()) }
   ...
 }

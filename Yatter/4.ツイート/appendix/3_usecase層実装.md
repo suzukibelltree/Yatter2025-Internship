@@ -2,11 +2,11 @@
 # ツイート画面のusecase層実装
 
 ツイート画面実装に必要なUseCaseの実装を行います。  
-今回必要なUseCaseはツイートを行う`PostStatusUseCase`のみですので、次のファイルを作成しましょう。  
+今回必要なUseCaseはツイートを行う`PostYweetUseCase`のみですので、次のファイルを作成しましょう。  
 
-- usecase/post/PostStatusUseCase.kt
-- usecase/post/PostStatusUseCaseResult.kt
-- usecase/impl/post/PostStatusUseCaseImpl.kt
+- usecase/post/PostYweetUseCase.kt
+- usecase/post/PostYweetUseCaseResult.kt
+- usecase/impl/post/PostYweetUseCaseImpl.kt
 
 ## UseCaseReusltの定義
 まずは、UseCaseResultの定義を行います。  
@@ -21,9 +21,9 @@
 これらの実行結果を`UseCaseResult`ととして定義すると次のようになります。  
 
 ```Kotlin
-sealed interface PostStatusUseCaseResult {
-  object Success : PostStatusUseCaseResult
-  sealed interface Failure : PostStatusUseCaseResult {
+sealed interface PostYweetUseCaseResult {
+  object Success : PostYweetUseCaseResult
+  sealed interface Failure : PostYweetUseCaseResult {
     object EmptyContent : Failure
     object NotLoggedIn : Failure
     data class OtherError(val throwable: Throwable) : Failure
@@ -35,21 +35,21 @@ sealed interface PostStatusUseCaseResult {
 UseCaseResultの定義ができたら、UseCaseのinterfaceを定義します。  
 
 ```Kotlin
-interface PostStatusUseCase {
+interface PostYweetUseCase {
   suspend fun execute(
     content: String,
     attachmentList: List<File>
-  ): PostStatusUseCaseResult
+  ): PostYweetUseCaseResult
 }
 ```
 
 ## UseCaseの実装
 続いてUseCaseの実装に入ります。  
 
-`PostStatusUseCase`では次のような処理を行います。  
+`PostYweetUseCase`では次のような処理を行います。  
 
-- 投稿内容が文字列もメディアも無い時は`EmptyContent`
-- `StatusRepository`で投稿する
+- 投稿内容が文字列も画像も無い時は`EmptyContent`
+- `YweetRepository`で投稿する
 - 投稿時に例外が発生しなければ`Success`
 - 投稿時に`AuthenticatorException`が発生すると`NotLoggedIn`
 - 投稿時に`AuthenticatorException`以外の例外が発生すると`OtherError`
@@ -60,31 +60,31 @@ interface PostStatusUseCase {
 もちろん、実装例とコードが同じである必要はなく、動作に問題なければ大丈夫です。  
 
 <details>
-<summary>PostStatusUseCaseImplの実装例</summary>
+<summary>PostYweetUseCaseImplの実装例</summary>
 
 ```Kotlin
-class PostStatusUseCaseImpl(
-  private val statusRepository: StatusRepository,
-) : PostStatusUseCase {
+class PostYweetUseCaseImpl(
+  private val yweetRepository: YweetRepository,
+) : PostYweetUseCase {
   override suspend fun execute(
     content: String,
     attachmentList: List<File>
-  ): PostStatusUseCaseResult {
+  ): PostYweetUseCaseResult {
     if (content == "" && attachmentList.isEmpty()) {
-      return PostStatusUseCaseResult.Failure.EmptyContent
+      return PostYweetUseCaseResult.Failure.EmptyContent
     }
 
     return try {
-      statusRepository.create(
+      yweetRepository.create(
         content = content,
         attachmentList = emptyList(),
       )
 
-      PostStatusUseCaseResult.Success
+      PostYweetUseCaseResult.Success
     } catch (e: AuthenticatorException) {
-      PostStatusUseCaseResult.Failure.NotLoggedIn
+      PostYweetUseCaseResult.Failure.NotLoggedIn
     } catch (e: Exception) {
-      PostStatusUseCaseResult.Failure.OtherError(e)
+      PostYweetUseCaseResult.Failure.OtherError(e)
     }
   }
 }
@@ -97,7 +97,7 @@ class PostStatusUseCaseImpl(
 
 UseCaseの実装ができたら単体テストを書きます。
 
-テスト用の`usecase/impl`に`PostStatusUseCaseImplSpec`ファイルを作成し、次の項目のテストを書いて実行してみましょう。  
+テスト用の`usecase/impl`に`PostYweetUseCaseImplSpec`ファイルを作成し、次の項目のテストを書いて実行してみましょう。  
 
 - ログイン済みで投稿内容も空でなければ投稿に成功する
 - 投稿内容が空の場合は、対応した失敗になる
@@ -107,20 +107,21 @@ UseCaseの実装ができたら単体テストを書きます。
 テストが無事に通過すればUseCaseの実装も完了です。  
 
 <details>
-<summary>PostStatusUseCaseImplのテスト実装例</summary>
+<summary>PostYweetUseCaseImplのテスト実装例</summary>
 
-```Kotlinclass PostStatusUseCaseImplSpec {
-  private val statusRepository = mockk<StatusRepository>()
-  private val subject = PostStatusUseCaseImpl(statusRepository)
+```Kotlin
+class PostYweetUseCaseImplSpec {
+  private val yweetRepository = mockk<YweetRepository>()
+  private val subject = PostYweetUseCaseImpl(yweetRepository)
 
   @Test
-  fun postStatusWithSuccess() = runTest {
+  fun postYweetWithSuccess() = runTest {
     val content = "content"
 
-    val status = Status(
-      id = StatusId(value = ""),
-      account = MeImpl(
-        id = AccountId(value = ""),
+    val yweet = Yweet(
+      id = YweetId(value = ""),
+      user = User(
+        id = UserId(value = ""),
         username = Username(value = ""),
         displayName = null,
         note = null,
@@ -130,15 +131,15 @@ UseCaseの実装ができたら単体テストを書きます。
         followerCount = 0
       ),
       content = content,
-      attachmentMediaList = listOf(),
+      attachmentImageList = listOf(),
     )
 
     coEvery {
-      statusRepository.create(
+      yweetRepository.create(
         any(),
         any(),
       )
-    } returns status
+    } returns yweet
 
     val result = subject.execute(
       content,
@@ -146,17 +147,17 @@ UseCaseの実装ができたら単体テストを書きます。
     )
 
     coVerify {
-      statusRepository.create(
+      yweetRepository.create(
         content,
         emptyList(),
       )
     }
 
-    assertThat(result).isEqualTo(PostStatusUseCaseResult.Success)
+    assertThat(result).isEqualTo(PostYweetUseCaseResult.Success)
   }
 
   @Test
-  fun postStatusWithEmptyContent() = runTest {
+  fun postYweetWithEmptyContent() = runTest {
     val content = ""
 
     val result = subject.execute(
@@ -165,21 +166,21 @@ UseCaseの実装ができたら単体テストを書きます。
     )
 
     coVerify(inverse = true) {
-      statusRepository.create(
+      yweetRepository.create(
         any(),
         any(),
       )
     }
 
-    assertThat(result).isEqualTo(PostStatusUseCaseResult.Failure.EmptyContent)
+    assertThat(result).isEqualTo(PostYweetUseCaseResult.Failure.EmptyContent)
   }
 
   @Test
-  fun postStatusWithNotLoggedIn() = runTest {
+  fun postYweetWithNotLoggedIn() = runTest {
     val content = "content"
 
     coEvery {
-      statusRepository.create(
+      yweetRepository.create(
         any(),
         any(),
       )
@@ -192,22 +193,22 @@ UseCaseの実装ができたら単体テストを書きます。
 
 
     coVerify {
-      statusRepository.create(
+      yweetRepository.create(
         any(),
         any(),
       )
     }
 
-    assertThat(result).isEqualTo(PostStatusUseCaseResult.Failure.NotLoggedIn)
+    assertThat(result).isEqualTo(PostYweetUseCaseResult.Failure.NotLoggedIn)
   }
 
   @Test
-  fun postStatusWithOtherError() = runTest {
+  fun postYweetWithOtherError() = runTest {
     val content = "content"
     val exception = Exception()
 
     coEvery {
-      statusRepository.create(
+      yweetRepository.create(
         any(),
         any(),
       )
@@ -220,13 +221,13 @@ UseCaseの実装ができたら単体テストを書きます。
 
 
     coVerify {
-      statusRepository.create(
+      yweetRepository.create(
         any(),
         any(),
       )
     }
 
-    assertThat(result).isEqualTo(PostStatusUseCaseResult.Failure.OtherError(exception))
+    assertThat(result).isEqualTo(PostYweetUseCaseResult.Failure.OtherError(exception))
   }
 }
 ```

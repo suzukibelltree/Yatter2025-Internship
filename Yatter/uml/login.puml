@@ -27,10 +27,11 @@ package infra {
       + putAccessToken(token: String?)
       + clear()
     }
-    class MePreferences {
+
+    class LoginUserPreferences {
       - context: Context
       - sharedPreferences: SharedPreferences
-      + getUsername(): String?
+      + getUsername(): String
       + putUsername(username: String?)
       + clear()
     }
@@ -59,7 +60,6 @@ package usecase {
 
   class LoginUseCaseImpl {
     - loginService: LoginService
-    - mePreferences: MePreferences
   }
 
   class LoginUseCaseResult {
@@ -103,7 +103,6 @@ LoginViewModel -- LoginUiState
 LoginUiState -- LoginBindingModel
 
 LoginUseCaseImpl -- LoginService
-LoginUseCaseImpl -- MePreferences
 LoginUseCaseImpl --|> LoginUseCase
 
 LoginUseCase -- LoginUseCaseResult
