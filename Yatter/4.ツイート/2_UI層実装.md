@@ -234,21 +234,21 @@ fun PostTemplate(
 @Preview
 @Composable
 private fun PostTemplatePreview() {
-    Yatter2025Theme {
-        Surface {
-            PostTemplate(
-                postBindingModel = PostBindingModel(
-                    avatarUrl = "https://avatars.githubusercontent.com/u/19385268?v=4",
-                    yweetText = ""
-                ),
-                isLoading = false,
-                canPost = false,
-                onYweetTextChanged = {},
-                onClickPost = {},
-                onClickNavIcon = {},
-            )
-        }
+  Yatter2025Theme {
+    Surface {
+      PostTemplate(
+        postBindingModel = PostBindingModel(
+          avatarUrl = "https://avatars.githubusercontent.com/u/19385268?v=4",
+          yweetText = ""
+        ),
+        isLoading = false,
+        canPost = false,
+        onYweetTextChanged = {},
+        onClickPost = {},
+        onClickNavIcon = {},
+      )
     }
+  }
 }
 ```
 
@@ -289,7 +289,9 @@ fun PostTemplate(...) {
 ```Kotlin
 Scaffold(...) {
   Box(
-    modifier = Modifier.fillMaxSize(),
+    modifier = Modifier
+      .fillMaxSize()
+      .padding(it),
     contentAlignment = Alignment.Center,
   ) {}
 }
@@ -316,14 +318,13 @@ Row(...) {
 Box(...) {
   Row(
     modifier = Modifier
-      .fillMaxSize()
-      .padding(it)
+      .fillMaxSize(),
   ) {
     AsyncImage(
       modifier = Modifier.size(64.dp),
       model = postBindingModel.avatarUrl,
       contentDescription = "アバター画像",
-      contentScale = ContentScale.Crop
+      contentScale = ContentScale.Crop,
     )
 
     Column(
