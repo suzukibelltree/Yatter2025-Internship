@@ -297,7 +297,7 @@ Jetpack Composeではコンポーザブルと呼ばれるコンポーザブル�
 本来、Kotlinの関数名は小文字始まりが一般的ですがコンポーザブルの命名は大文字始まりにします。  
 
 ```Kotlin
-@Composale
+@Composable
 fun FirstComposable() {
 }
 ```
