@@ -133,12 +133,12 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun EditText(viewModel: MainViewModel = viewModel()) {
-    val text by viewModel.textStateFlow.collectAsState()
+fun EditText(mainViewModel: MainViewModel = viewModel()) {
+    val text by mainViewModel.textStateFlow.collectAsState()
 
     OutlinedTextField(
         value = text,
-        onValueChange = viewModel::onTextChange,
+        onValueChange = mainViewModel::onTextChange,
         label = { Text("テキストを入力") },
         singleLine = true,
         modifier = Modifier.wrapContentSize()
@@ -148,7 +148,7 @@ fun EditText(viewModel: MainViewModel = viewModel()) {
 
 これでビルドして起動すると、画面回転してもテキストが消えないことが確認できると思います。
 
-※viewModel()の部分が解決できない場合は、MainActivity.ktの以下を追加してみてください。
+※viewModel()の部分が解決できずエラーとなってしまう場合は、MainActivity.ktに以下のimportを追加してみてください。
 ```Kotlin
 import androidx.lifecycle.viewmodel.compose.viewModel
 ```
