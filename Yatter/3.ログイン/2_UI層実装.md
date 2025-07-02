@@ -205,12 +205,12 @@ val destination: StateFlow<Destination?> = _destination.asStateFlow()
 _destination.value = PublicTimelineDestination()
 
 // Page側
-val destination by viewModel.destination.collectAsStateWithLifecycle()
+val destination by loginViewModel.destination.collectAsStateWithLifecycle()
 val navController = LocalNavController.current
 LaunchedEffect(destination)  {
   destination?.let {
     it.navigate(navController)
-    viewModel.onCompleteNavigation()
+    loginViewModel.onCompleteNavigation()
   }
 }
 ```
@@ -519,18 +519,18 @@ https://developer.android.com/codelabs/basic-android-kotlin-compose-function-typ
 ```Kotlin
 @Composable
 fun LoginPage(
-  viewModel: LoginViewModel = getViewModel(),
+  loginViewModel: LoginViewModel = getViewModel(),
 ) {
-  val uiState: LoginUiState by viewModel.uiState.collectAsStateWithLifecycle()
+  val uiState: LoginUiState by loginViewModel.uiState.collectAsStateWithLifecycle()
   LoginTemplate(
     userName = uiState.loginBindingModel.username,
-    onChangedUserName = viewModel::onChangedUsername,
+    onChangedUserName = loginViewModel::onChangedUsername,
     password = uiState.loginBindingModel.password,
-    onChangedPassword = viewModel::onChangedPassword,
+    onChangedPassword = loginViewModel::onChangedPassword,
     isEnableLogin = uiState.isEnableLogin,
     isLoading = uiState.isLoading,
-    onClickLogin = viewModel::onClickLogin,
-    onClickRegister = viewModel::onClickRegister,
+    onClickLogin = loginViewModel::onClickLogin,
+    onClickRegister = loginViewModel::onClickRegister,
   )
 }
 ```
