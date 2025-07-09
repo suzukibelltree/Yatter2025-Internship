@@ -871,7 +871,7 @@ fun PublicTimelinePage() {
 ```Kotlin
 @Composable
 fun PublicTimelinePage(
-  viewModel: PublicTimelineViewModel = getViewModel(),
+  publicTimelineViewModel: PublicTimelineViewModel = getViewModel(),
 ) {
 }
 ```
@@ -880,10 +880,10 @@ ViewModelを引数で受け取ったら、ViewModelから状態を抜き出し�
 今回の設計では画面に表示するための状態をUiStateととしてまとめていますのでまずは次のコードでUiStateを抜き出します。  
 
 ```Kotlin
-val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+val uiState by publicTimelineViewModel.uiState.collectAsStateWithLifecycle()
 ```
 
-このコードを記載することで`ViewModel#uiState`の変更を監視することができ、更新をUIに反映することができます。  
+このコードを記載することで`publicTimelineViewModel#uiState`の変更を監視することができ、更新をUIに反映することができます。  
 
 UiStateの監視準備ができたところで`Page`コンポーザブルから`Template`コンポーザブルを呼び出し、渡せる値は引数に渡します。  
 
@@ -892,9 +892,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun PublicTimelinePage(
-  viewModel: PublicTimelineViewModel = getViewModel(),
+  publicTimelineViewModel: PublicTimelineViewModel = getViewModel(),
 ) {
-  val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+  val uiState by publicTimelineViewModel.uiState.collectAsStateWithLifecycle()
 
   PublicTimelineTemplate(
     yweetList = uiState.yweetList,
@@ -909,22 +909,22 @@ fun PublicTimelinePage(
 メソッドを引数として渡すときは関数オブジェクトとして渡す必要があります。  
 
 関数オブジェクトとして渡すには`::`をメソッド名の前に利用します。  
-今回は特に`ViewModel`内のメソッドのため、`viewModel::onRefresh`と記載します。  
+今回は特に`ViewModel`内のメソッドのため、`publicTimelineViewModel::onRefresh`と記載します。  
 
 ```Kotlin
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun PublicTimelinePage(
-  viewModel: PublicTimelineViewModel = getViewModel(),
+  publicTimelineViewModel: PublicTimelineViewModel = getViewModel(),
 ) {
-  val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+  val uiState by publicTimelineViewModel.uiState.collectAsStateWithLifecycle()
 
   PublicTimelineTemplate(
     yweetList = uiState.yweetList,
     isLoading = uiState.isLoading,
     isRefreshing = uiState.isRefreshing,
-    onRefresh = viewModel::onRefresh,
+    onRefresh = publicTimelineViewModel::onRefresh,
   )
 }
 ```
@@ -936,19 +936,19 @@ fun PublicTimelinePage(
 ```kotlin
 @Composable
 fun PublicTimelinePage(
-  viewModel: PublicTimelineViewModel = getViewModel(),
+  publicTimelineViewModel: PublicTimelineViewModel = getViewModel(),
 ) {
-  val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+  val uiState by publicTimelineViewModel.uiState.collectAsStateWithLifecycle()
   
   LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {
-    viewModel.onResume()
+    publicTimelineViewModel.onResume()
   }
 
   PublicTimelineTemplate(
     yweetList = uiState.yweetList,
     isLoading = uiState.isLoading,
     isRefreshing = uiState.isRefreshing,
-    onRefresh = viewModel::onRefresh,
+    onRefresh = publicTimelineViewModel::onRefresh,
   )
 }
 ```

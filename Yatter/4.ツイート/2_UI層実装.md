@@ -381,7 +381,7 @@ Templateの実装が完了したら、Pageの実装に入ります。
 ```Kotlin
 @Composable
 fun PostPage(
-  viewModel: PostViewModel = getViewModel(),
+  postViewModel: PostViewModel = getViewModel(),
 ) {
 }
 ```
@@ -395,25 +395,25 @@ fun PostPage(
 ```kotlin
 @Composable
 fun PostPage(
-  viewModel: PostViewModel = getViewModel(),
+  postViewModel: PostViewModel = getViewModel(),
 ) {
-  val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-  val destination by viewModel.destination.collectAsStateWithLifecycle()
+  val uiState by postViewModel.uiState.collectAsStateWithLifecycle()
+  val destination by postViewModel.destination.collectAsStateWithLifecycle()
   val navController = LocalNavController.current
   LaunchedEffect(destination) {
     destination?.navigate(navController)
-    viewModel.onCompleteNavigation()
+    postViewModel.onCompleteNavigation()
   }
   LifecycleEventEffect(event = Lifecycle.Event.ON_CREATE) {
-    viewModel.onCreate()
+    postViewModel.onCreate()
   }
   PostTemplate(
     postBindingModel = uiState.bindingModel,
     isLoading = uiState.isLoading,
     canPost = uiState.canPost,
-    onYweetTextChanged = viewModel::onChangedYweetText,
-    onClickPost = viewModel::onClickPost,
-    onClickNavIcon = viewModel::onClickNavIcon,
+    onYweetTextChanged = postViewModel::onChangedYweetText,
+    onClickPost = postViewModel::onClickPost,
+    onClickNavIcon = postViewModel::onClickNavIcon,
   )
 }
 ```
