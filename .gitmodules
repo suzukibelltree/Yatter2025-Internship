@@ -1,0 +1,6 @@
+[submodule "template"]
+	path = template
+	url = git@github.com:dmm-com/bootcamp-yatter-android-template-2025.git
+[submodule "docs"]
+	path = docs
+	url = git@github.com:dmm-com/bootcamp-android-doc-2025.git
