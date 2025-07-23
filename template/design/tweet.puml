@@ -1,0 +1,101 @@
+@startuml
+
+package domain {
+  package model {
+    class User
+  }
+
+  interface UserRepository {
+    + findLoginUser(): User?
+    + findByUsername(username: Username): User?
+    + create(...)
+    + update(...)
+  }
+
+  interface GetLoginUserService {
+    + execute(): User?
+  }
+
+  interface StatusRepository {
+    + create(...): Status
+  }
+}
+
+package infra {
+  package domain {
+    package repository {
+      class UserRepositoryImpl {
+        - loginUserPreference: LoginUserPreference
+        - yatterApi: YatterApi
+      }
+
+      class StatusRepositoryImpl {
+        - loginUserPreference: LoginUserPreference
+        - yatterApi: YatterApi
+      }
+    }
+    package service {
+      class GetLoginUserServiceImpl {
+        - userRepository: UserRepository
+      }
+    }
+  }
+}
+
+package usecase {
+  interface PostStatusUseCase {
+    + execute(statusText: String): PostStatusUseCaseResult
+  }
+
+  class PostStatusUseCaseImpl {
+    - statusRepository: StatusRepository
+  }
+
+  class PostStatusUseCaseResult
+}
+
+package ui.post {
+  class PostViewModel {
+    - postStatusUseCase: PostStatusUseCase
+    - getLoginUserService: GetLoginUserServiceImpl
+
+    + uiState: StateFlow<PostUiState>
+    + destination: StateFlow<Destination?>
+
+    + onCreate()
+    + onChangedStatusText(statusText: String)
+    + onClickPost()
+    + onClickNavIcon()
+    + onCompleteNavigation()
+  }
+
+  class PostUiState {
+    + bindingModel: PostBindingModel
+    + isLoading: Boolean
+    + canPost: Boolean
+  }
+
+  class PostBindingModel {
+    + avatarUrl: String?
+    + statusText: String
+  }
+}
+
+GetLoginUserService -- User
+
+GetLoginUserServiceImpl --|> GetLoginUserService
+UserRepositoryImpl --|> UserRepository
+StatusRepositoryImpl --|> StatusRepository
+
+GetLoginUserService -- UserRepository
+
+PostStatusUseCaseImpl --|> PostStatusUseCase
+PostStatusUseCase -- PostStatusUseCaseResult
+PostStatusUseCaseImpl -- StatusRepository
+
+PostViewModel -- PostUiState
+PostUiState -- PostBindingModel
+
+PostViewModel -- PostStatusUseCase
+PostViewModel -- GetLoginUserService
+@enduml
