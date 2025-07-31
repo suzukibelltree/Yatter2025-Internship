@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.dmm.bootcamp.yatter2025.common.navigation.Destination
 import com.dmm.bootcamp.yatter2025.domain.model.Password
 import com.dmm.bootcamp.yatter2025.domain.model.Username
+import com.dmm.bootcamp.yatter2025.ui.timeline.PublicTimelineDestination
 import com.dmm.bootcamp.yatter2025.usecase.register.RegisterUserUseCase
 import com.dmm.bootcamp.yatter2025.usecase.register.RegisterUserUseCaseResult
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,6 +34,7 @@ class RegisterUserViewModel(
                 )
             )
         }
+        checkValidOrNot(username, snapshotBindingModel.password)
     }
 
     fun onChangedPassword(password: String) {
@@ -45,6 +47,7 @@ class RegisterUserViewModel(
                 )
             )
         }
+        checkValidOrNot(snapshotBindingModel.username, password)
     }
 
     fun onClickRegister() {
@@ -59,16 +62,37 @@ class RegisterUserViewModel(
             )
             ) {
                 is RegisterUserUseCaseResult.Success -> {
-                    // タイムライン画面に遷移する
+                    _destination.value = RegisterUserDestination()
                 }
 
                 is RegisterUserUseCaseResult.Failure -> {
-                    // エラー表示
+
                 }
             }
             _uiState.update { it.copy(isLoading = false) }
         }
+        _destination.value = PublicTimelineDestination()
     }
 
-    fun onCompleteNavigation() {}
+    fun checkValidOrNot(userName: String, password: String) {
+        viewModelScope.launch {
+            if (!Password(password).validate()) {
+                _uiState.update {
+                    it.copy(
+                        errorMessage = "パスワードは大文字・小文字・記号を含む8文字以上にしてください"
+                    )
+                }
+            } else if (!Username(userName).validate()) {
+                _uiState.update {
+                    it.copy(
+                        errorMessage = "ユーザー名が空になっています"
+                    )
+                }
+            }
+        }
+    }
+
+    fun onCompleteNavigation() {
+        _destination.value = null
+    }
 }

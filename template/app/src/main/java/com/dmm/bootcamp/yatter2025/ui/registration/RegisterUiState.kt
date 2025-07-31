@@ -6,7 +6,8 @@ data class RegisterUiState(
     val userBindingModel: UserBindingModel,
     val validUsername: Boolean,
     val validPassword: Boolean,
-    val isLoading: Boolean
+    val isLoading: Boolean,
+    val errorMessage: String
 ) {
     val isEnableRegister: Boolean = validUsername && validPassword
 
@@ -18,7 +19,8 @@ data class RegisterUiState(
             ),
             validUsername = false,
             validPassword = false,
-            isLoading = false
+            isLoading = false,
+            errorMessage = ""
         )
     }
 }

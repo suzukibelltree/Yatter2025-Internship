@@ -13,6 +13,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,7 +27,8 @@ fun RegisterTemplate(
     onChangedPassword: (String) -> Unit,
     isEnableRegister: Boolean,
     isLoading: Boolean,
-    onClickRegister: () -> Unit
+    onClickRegister: () -> Unit,
+    errorMessage: String
 ) {
     Scaffold(
         topBar = {
@@ -44,7 +46,8 @@ fun RegisterTemplate(
                 .padding(8.dp)
         ) {
             Column(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     modifier = Modifier
@@ -82,6 +85,9 @@ fun RegisterTemplate(
                         )
                     }
                 )
+                Text(
+                    text = errorMessage
+                )
                 Button(
                     enabled = isEnableRegister,
                     onClick = onClickRegister,
@@ -91,9 +97,9 @@ fun RegisterTemplate(
                         text = "登録"
                     )
                 }
-            }
-            if (isLoading) {
-                CircularProgressIndicator()
+                if (isLoading) {
+                    CircularProgressIndicator()
+                }
             }
         }
     }
@@ -112,7 +118,8 @@ private fun RegisterTemplatePreview() {
                 onChangedPassword = {},
                 isEnableRegister = false,
                 isLoading = false,
-                onClickRegister = {}
+                onClickRegister = {},
+                errorMessage = ""
             )
         }
     }
