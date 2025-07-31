@@ -51,6 +51,9 @@ fun LoginTemplate(
                     .fillMaxWidth()
             ) {
                 Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
                     text = "ユーザー名"
                 )
                 OutlinedTextField(
