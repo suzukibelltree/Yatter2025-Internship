@@ -8,10 +8,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -30,6 +34,7 @@ fun PublicTimelineTemplate(
     isLoading: Boolean,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
+    onClickPost: () -> Unit
 ) {
     val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefresh)
     Scaffold(
@@ -37,6 +42,16 @@ fun PublicTimelineTemplate(
             TopAppBar(
                 title = { Text(text = "タイムライン") }
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onClickPost
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "post"
+                )
+            }
         }
     ) { paddingValues ->
         Box(
@@ -92,7 +107,8 @@ private fun PublicTimelineTemplatePreview() {
                 ),
                 isLoading = false,
                 isRefreshing = false,
-                onRefresh = {}
+                onRefresh = {},
+                onClickPost = {}
             )
         }
     }
