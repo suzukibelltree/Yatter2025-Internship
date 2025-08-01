@@ -61,7 +61,6 @@ fun PublicTimelineTemplate(
                             onClick = { selectedTabIndex = index },
                             text = { Text(text = title) }
                         )
-
                     }
                 }
             }
