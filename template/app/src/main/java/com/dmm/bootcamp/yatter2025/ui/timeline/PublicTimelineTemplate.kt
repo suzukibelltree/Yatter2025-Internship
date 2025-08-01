@@ -1,6 +1,7 @@
 package com.dmm.bootcamp.yatter2025.ui.timeline
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -12,6 +13,8 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
+import androidx.compose.material.Tab
+import androidx.compose.material.TabRow
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -20,6 +23,10 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,11 +44,27 @@ fun PublicTimelineTemplate(
     onClickPost: () -> Unit
 ) {
     val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefresh)
+    val tabs = listOf("全ユーザー", "フォロー中")
+    var selectedTabIndex by remember { mutableStateOf(0) }
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(text = "タイムライン") }
-            )
+            Column {
+                TopAppBar(
+                    title = { Text(text = "タイムライン") }
+                )
+                TabRow(
+                    selectedTabIndex = selectedTabIndex
+                ) {
+                    tabs.forEachIndexed { index, title ->
+                        Tab(
+                            selected = selectedTabIndex == index,
+                            onClick = { selectedTabIndex = index },
+                            text = { Text(text = title) }
+                        )
+
+                    }
+                }
+            }
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -65,8 +88,10 @@ fun PublicTimelineTemplate(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(8.dp),
             ) {
-                items(yweetList) { item ->
-                    YweetRow(yweetBindingModel = item)
+                if (selectedTabIndex == 0) {
+                    items(yweetList) { item ->
+                        YweetRow(yweetBindingModel = item)
+                    }
                 }
             }
             PullRefreshIndicator(
